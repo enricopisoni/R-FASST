@@ -1,18 +1,14 @@
 # -*- mode: R -*-
 
-# calculates with an analytical function the Risk Rate (RR) for a given PM exposure;
-#
-# Input parameters:
-#   - C	 - cause of death currently evaluated;
-#   - PM - PM concentration (can be an array);
-#
-# Output parameters:
-#   none;
-#
-# Returns:
-#   RR with same dimension as PM grid map with
-#   corresponding RR calculated in each grid cell;
-#
+#' Calculates with an analytical function the Risk Rate (RR)
+#' for a given PM exposure;
+#'
+#' @param C  cause of death currently evaluated;
+#' @param PM PM concentration (can be an array);
+#'
+#' @return RR with same dimension as PM grid map with
+#'         corresponding RR calculated in each grid cell;
+#'
 rrate <- function( C, PM )
 {
 	# Initialize RR with same dimensions as PM
