@@ -30,7 +30,14 @@ health.impact.config <- function()
                 in.file.dmt2        = file.path( in.dir.gbd, 'DMT2_MORT_RATE_GBD2016.csv' ),
                 in.file.lri         = file.path( in.dir.gbd, 'LRI_MORT_RATE_GBD2016.csv' ),
                 in.file.ihd         = file.path( in.dir.gbd, 'IHD_MORT_RATE_GBD2016.csv' ),
-                in.file.stroke      = file.path( in.dir.gbd, 'STROKE_MORT_RATE_GBD2016.csv' )
+                in.file.stroke      = file.path( in.dir.gbd, 'STROKE_MORT_RATE_GBD2016.csv' ),
+
+                # project dependent scenarios
+                scenarios           = data.frame(
+                                                "name" = c( "SSP1_26" ),
+                                                "year" = c( 2015 ),
+                                                "ssp"  = c( "sep1" )
+                                      )
 
         )
 }
