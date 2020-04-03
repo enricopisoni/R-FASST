@@ -4,7 +4,9 @@
 #' needed by function: health:impact (health-impacts.R);
 #'
 #' Notes:
-#'   - all files paths are relative to working directory;
+#' \itemize{
+#'      \item all files paths are relative to working directory;
+#' }
 #'
 #' @Return
 #'   named list with input/output files;
