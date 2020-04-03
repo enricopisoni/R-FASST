@@ -15,7 +15,7 @@
 #'   - ...
 #'
 
-health:impact <- function(
+health.impact <- function(
                    project,
                    model,
                    version,

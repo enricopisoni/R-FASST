@@ -10,7 +10,7 @@
 #'   named list with input/output files;
 #'
 
-health:impact:config <- function()
+health.impact.config <- function()
 {
         in.dir.root     <- '.'
         in.dir.ancil    <- file.path( in.dir.root, 'ANCILLARY' )
