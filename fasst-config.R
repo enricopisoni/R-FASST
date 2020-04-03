@@ -19,9 +19,8 @@ health:impact:config <- function()
         in.dir.tmpls    <- file.path( in.dir.root, 'CODE', 'TEMPLATES' )
         in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
         
-        c
-        (
-                in.file.pop-country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv),
+        list(
+                in.file.pop.country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
                 # files with base mortality rates (per 100k population)
                 in.file.copd        = file.path( in.dir.gbd, 'COPD_MORT_RATE_GBD2016.csv' ),
