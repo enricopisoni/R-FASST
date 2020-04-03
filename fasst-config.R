@@ -8,7 +8,7 @@
 #'      \item all files paths are relative to working directory;
 #' }
 #'
-#' @Return
+#' @return
 #'   named list with input/output files;
 #'
 
