@@ -1,0 +1,16 @@
+{
+  "in.file.pop.country":  "./ancillary/mortality/basemort2018/pop_1990-2100_un2017_agegrp.csv",
+  "in.file.copd":         "./ancillary/mortality/basemort2018/copd_mort_rate_gbd2016.csv",
+  "in.file.lc":           "./ancillary/mortality/basemort2018/lc_mort_rate_gbd2016.csv",
+  "in.file.dmt2":         "./ancillary/mortality/basemort2018/dmt2_mort_rate_gbd2016.csv",
+  "in.file.lri":          "./ancillary/mortality/basemort2018/lri_mort_rate_gbd2016.csv",
+  "in.file.ihd":          "./ancillary/mortality/basemort2018/ihd_mort_rate_gbd2016.csv",
+  "in.file.stroke":       "./ancillary/mortality/basemort2018/stroke_mort_rate_gbd2016.csv",
+
+  "scenarios":
+  {
+    "name": [ "SSP1_26" ],
+    "year": [ 2015 ],
+    "ssp":  [ "sep1" ]
+  }
+}
