@@ -2,17 +2,19 @@
 
 #' Health impacts from high resolution FASST grid maps;
 #'
+#' Function constraints:
+#' \itemize{
+#'      \item output directory defined by formal parameter \code{dir.root.out} must exist;
+#' }
+#'
 #' @param project       project name;
 #' @param model         model name;
 #' @param version       current version;
 #' @param dir.root.out  output directory root (absolute path or
 #'                      relative to working directory);
-#' @param dir.config    named list with paths configuration;
+#' @param config        named list with paths configuration;
 #'                      the list should define fields listed
 #'                      in file: fasst-config.R;
-#'
-#' Side effects:
-#'   - ...
 #'
 
 health.impact <- function(
@@ -20,7 +22,30 @@ health.impact <- function(
                    model,
                    version,
                    dir.root.out,
-                   dir.config
+                   config
                  )
 {
+    # check input parameters
+    if ( ! file.exists( dir.root.out ) )
+    {
+        stop( sprintf( "output directory '%s' does not exist (current working directory: '%s').", dir.root.out, getwd() ) )
+    }
+
+    # set working directory
+    dir.home <- getwd()
+    setwd( dir.root.out )
+
+    # internal configuration
+    dir.output  <- file.path( dir.root.out, project )
+    dir.tables  <- file.path( dir.output, 'tables' )
+    dir.netcdf  <- file.path( dir.output, 'ncdf' )
+
+    # prepare output directories
+    dir.create( dir.tables, recursive = TRUE, showWarnings = FALSE )
+
+
+#    -- line 36
+
+    # as last return back to home
+    setwd( dir.home )
 }
