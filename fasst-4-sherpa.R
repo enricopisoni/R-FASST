@@ -9,7 +9,6 @@
 
 
 source( 'fasst-config.R' )
-source( 'config-json.R' )
 source( 'health-impacts.R' )
 
 
@@ -47,13 +46,7 @@ args = commandArgs( trailingOnly = TRUE )
 
 if ( length( args ) >= length( script.args ) )
 {
-    if ( length( args ) > length( script.args ) )
-    {
-        config <- health.impact.config.json( args[ 5 ] )
-    } else {
-        config <- health.impact.config()
-    }
-
+    config <- health.impact.config( args[ 5 ] )
     health.impact( args[ 1 ], args[ 2 ], args[ 3 ], args[ 4 ], config )
 } else {
     stop( help.banner( script.name, script.args, optiona = script.opts ) )

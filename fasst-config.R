@@ -22,7 +22,6 @@ health.impact.config <- function( file = NULL )
         } else {
                 files <- health.impact.config.json( file )
         }
-
         list(
                 model = health.impact.config.model(),
                 files = files

@@ -1,10 +1,5 @@
 # -*- mode: R -*-
 
-# this is an internal configuration and must NOT be modified;
-#
-
-
-
 #' Health impacts from high resolution FASST grid maps;
 #'
 #' Function constraints:
@@ -45,15 +40,12 @@ health.impact <- function(
     dir.tables  <- file.path( dir.output, 'tables' )
     dir.netcdf  <- file.path( dir.output, 'ncdf' )
 
-    # internal configuration - do not modify block - begin
-
-
 
     #    -- line 72 - block 2
-    print( config.internal$L1 )
+    print( config )
 
 
-    # internal configuration - do not modify block - end
+
 
     # prepare output directories
     dir.create( dir.tables, recursive = TRUE, showWarnings = FALSE )
