@@ -18,7 +18,7 @@ script.args <- c(
     "project name",
     "model name",
     "version",
-    "either a relative path from working directory or full path to output directory"
+    "path to output directory, it must be a either a full path or a relative path from working directory"
 )
 script.opts <- c(
     "path to the configuration JSON file"
