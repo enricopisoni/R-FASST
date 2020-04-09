@@ -1,7 +1,7 @@
 # -*- mode: R -*-
 
 #' FASST configuration with the definition of files
-#' needed by function: health:impact (health-impacts.R);
+#' needed by function: \code{\link{health:impact()}};
 #'
 #' Notes:
 #' \itemize{
