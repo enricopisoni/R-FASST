@@ -1,5 +1,36 @@
 # -*- mode: R -*-
 
+#' FASST configuration, with both model and files configuration;
+#'
+#' @param file path to JSON file with path to ancillary files,
+#'             or NA to use internal static configuration;
+#'
+#' @return
+#'      a list with following entries:
+#'      \describe{
+#'              \item{model}
+#'                      {the static model cofiguration;}
+#'              \item{files}
+#'                      {paths to files;}
+#'      }
+#'
+health.impact.config <- function( file = NULL )
+{
+        if ( is.null( file ) || is.na( file ) )
+        {
+                files <- health.impact.config.static()
+        } else {
+                files <- health.impact.config.json( file )
+        }
+
+        list(
+                model = health.impact.config.model(),
+                files = files
+        )
+}
+
+# --------------------------------------------------------------------------------
+
 #' FASST configuration with the definition of files
 #' needed by function: \code{\link{health:impact()}};
 #'
@@ -12,15 +43,15 @@
 #'   named list with input/output files;
 #'
 
-health.impact.config <- function()
+health.impact.config.static <- function()
 {
         in.dir.root     <- '.'
-        in.dir.ancil    <- file.path( in.dir.root, 'ANCILLARY' )
+        in.dir.ancil    <- file.path( in.dir.root,  'ANCILLARY' )
         in.dir.gbd      <- file.path( in.dir.ancil, 'MORTALITY', 'BASEMORT2018' )
         in.dir.rr       <- file.path( in.dir.ancil, 'MORTALITY', 'RRs2018', 'FIT' )
-        in.dir.tmpls    <- file.path( in.dir.root, 'CODE', 'TEMPLATES' )
+        in.dir.tmpls    <- file.path( in.dir.root,  'CODE', 'TEMPLATES' )
         in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
-        
+
         list(
                 in.file.pop.country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
@@ -38,6 +69,132 @@ health.impact.config <- function()
                                                 "year" = c( 2015 ),
                                                 "ssp"  = c( "sep1" )
                                       )
-
         )
+}
+
+# --------------------------------------------------------------------------------
+
+#' Read the FASST configuration from JSON file with
+#' the definition of files needed by function:
+#' \code{\link{health:impact()}};
+#'
+#' Constraint:
+#' \itemize{
+#'      \item configuration JSON file must have the same entries
+#'            defined in list returned by function
+#'            \code{health.impact.config};
+#' }
+#'
+#' @return
+#'   named list with input/output files;
+#'
+
+library( "rjson" )
+
+health.impact.config.json <- function( file )
+{
+    # --- read the JSON configuration file ---
+    config <- fromJSON( file = file )
+
+    # --- update the configuration read accordingly the expected configuration ---
+    config$scenarios <- as.data.frame( config$scenarios )
+
+    # --- return the configuration ---
+    config
+}
+
+# --------------------------------------------------------------------------------
+
+#' Configuration of FASST model needed
+#' by function: \code{\link{health:impact()}};
+#'
+#' Constraint:
+#' \itemize{
+#'      \item model configuration defined by this function
+#'            MUST not be modified;
+#' }
+#'
+#' @return
+#'      named list with model configuration;
+#'
+#' @examples
+health.impact.config.model <- function()
+{
+        # --- model configuration ---
+        config.definition <- list(
+
+              # available years with ssp populatation. if needed for scenarios, interpolate between those years
+              ssp_yrs = c( '2000','2010','2020','2030','2040','2050','2060','2070','2080','2090','2100' ),
+
+              # counterfactual level for SDMA8h for O3 health impact - GBD2017 uses between 29.1 and 35.7 for M3M. Malley/Turner use between 26.7 and 31.1
+              SDM8THR = 29.1,
+              # counterfactual level for ADMA8h for O3 health impact - Turner uses both 26.7 and 31.1
+              ADM8THR = 26.7,
+
+              # risk function parameters
+              rr_param_file = 'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv',
+
+              # AGE CLASSES TO CONSIDER:
+              ages = seq( from = 0, to = 100, by = 5 ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              agefrac_copd = c( 0, 100 ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              agefrac_lc   = c( 0, 100 ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              agefrac_lri  = c( 0, 100 ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              agefrac_dmt2 = c( 0, 100 ),
+
+              # AGE SPECIFIC FROM MIN TO MAX (MAX 95, BECAUSE AGE-SPECIFIC RR AVAILABLE TILL 95)
+              agefrac_ihd  = c( 25, 95 ),
+
+              # OZONE MORTALITIES - NOTE that mortality rates in GBD are expressed as number divided by total population.
+              # COPD mortalitiy rates below 25 are zero.
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              agefrac_o3   = c( 0, 100 ),
+
+              # CODs for which RR is aggregated over all age groups
+              COD1         = c( 'COPD', 'LC', 'LRI', 'DMT2' ),
+              # CODs for which RR is age group sepcific
+              COD2         = c( 'IHD', 'STROKE' ),
+
+              # DO NOT CHANGE!
+              # Generates string array of AGE GROUP NAMES (25 TO 95 IN 5 YEAR BINS) 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95
+              AGE_GRP      = as.character( seq( from = 25, to = 95, by = 5 ) )
+        )
+
+        # --- model configurationd erived from the above one ---
+        config.derived <- list(
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              C1  = ( config.definition $ ages  ==  config.definition $ agefrac_copd[ 1 ] ),
+              C2  = ( config.definition $ ages  == config.definition $ agefrac_copd[ 2 ] ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              L1  = ( config.definition $ ages  ==  config.definition $ agefrac_lc[ 1 ] ),
+              L2  = ( config.definition $ ages  ==  config.definition $ agefrac_lc[ 2 ] ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              LR1 = ( config.definition $ ages  ==  config.definition $ agefrac_lri[ 1 ] ),
+              LR2 = ( config.definition $ ages  ==  config.definition $ agefrac_lri[ 2 ] ),
+
+              # ALL AGES FROM MIN TO MAX (MAX 100)
+              DM1 = ( config.definition $ ages  ==  config.definition $ agefrac_dmt2[ 1 ] ),
+              DM2 = ( config.definition $ ages  ==  config.definition $ agefrac_dmt2[ 2 ] ),
+
+              # AGE SPECIFIC FROM MIN TO MAX (MAX 95, BECAUSE AGE-SPECIFIC RR AVAILABLE TILL 95)
+              IH1 = ( config.definition $ ages  ==  config.definition $ agefrac_ihd[ 1 ] ),
+              IH2 = ( config.definition $ ages  ==  config.definition $ agefrac_ihd[ 2 ] ),
+
+              # OZONE MORTALITIES - NOTE that mortality rates in GBD are expressed as number divided by total population.
+              O1  = ( config.definition $ ages  ==  config.definition $ agefrac_o3[ 1 ] ),
+              O2  = ( config.definition $ ages  ==  config.definition $ agefrac_o3[ 2 ] )
+        )
+
+        # --- the two configurations merged ---
+        c( config.definition, config.derived )
 }
