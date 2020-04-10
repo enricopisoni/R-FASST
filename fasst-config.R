@@ -52,17 +52,19 @@ health.impact.config.static <- function()
         in.dir.rr       <- file.path( in.dir.ancil, 'MORTALITY', 'RRs2018', 'FIT' )
         in.dir.tmpls    <- file.path( in.dir.root,  'CODE', 'TEMPLATES' )
         in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
+        in.dir.ciesin   <- file.path( in.dir.ancil, 'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
 
         list(
                 in.file.pop.country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
                 # files with base mortality rates (per 100k population)
-                in.file.copd        = file.path( in.dir.gbd, 'COPD_MORT_RATE_GBD2016.csv' ),
-                in.file.lc          = file.path( in.dir.gbd, 'LC_MORT_RATE_GBD2016.csv' ),
-                in.file.dmt2        = file.path( in.dir.gbd, 'DMT2_MORT_RATE_GBD2016.csv' ),
-                in.file.lri         = file.path( in.dir.gbd, 'LRI_MORT_RATE_GBD2016.csv' ),
-                in.file.ihd         = file.path( in.dir.gbd, 'IHD_MORT_RATE_GBD2016.csv' ),
-                in.file.stroke      = file.path( in.dir.gbd, 'STROKE_MORT_RATE_GBD2016.csv' ),
+                in.file.copd        = file.path( in.dir.gbd,    'COPD_MORT_RATE_GBD2016.csv' ),
+                in.file.lc          = file.path( in.dir.gbd,    'LC_MORT_RATE_GBD2016.csv' ),
+                in.file.dmt2        = file.path( in.dir.gbd,    'DMT2_MORT_RATE_GBD2016.csv' ),
+                in.file.lri         = file.path( in.dir.gbd,    'LRI_MORT_RATE_GBD2016.csv' ),
+                in.file.ihd         = file.path( in.dir.gbd,    'IHD_MORT_RATE_GBD2016.csv' ),
+                in.file.stroke      = file.path( in.dir.gbd,    'STROKE_MORT_RATE_GBD2016.csv' ),
+                in.file.cntrgrid    = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
 
                 # project dependent scenarios
                 scenarios           = data.frame(

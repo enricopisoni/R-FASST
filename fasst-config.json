@@ -6,6 +6,7 @@
   "in.file.lri":          "./ancillary/mortality/basemort2018/lri_mort_rate_gbd2016.csv",
   "in.file.ihd":          "./ancillary/mortality/basemort2018/ihd_mort_rate_gbd2016.csv",
   "in.file.stroke":       "./ancillary/mortality/basemort2018/stroke_mort_rate_gbd2016.csv",
+  "in.file.cntrgrid":     "./ancillary/ciesin_country_mask/ciesin_v4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
 
   "scenarios":
   {
