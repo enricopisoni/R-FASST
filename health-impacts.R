@@ -34,15 +34,33 @@ health.impact <- function(
     # set working directory
     dir.home <- getwd()
     setwd( dir.root.out )
+    print( sprintf( "Working directory is now: '%s'", getwd() ) )
 
     # internal configuration
-    dir.output  <- file.path( dir.root.out, project )
+    dir.output  <- file.path( '.', project )
     dir.tables  <- file.path( dir.output, 'tables' )
     dir.netcdf  <- file.path( dir.output, 'ncdf' )
 
 
-    #    -- line 72 - block 2
-    print( config )
+    # ----------------------------------------------------------------------
+    # ------------------------------- block 2-------------------------------
+    # load population, base mortality data and risk rate function parameters
+    # ----------------------------------------------------------------------
+
+    # note: available population totals from SSP: 2000, 2010, 2020, 2030, ..., 2100
+    # available base mortalities and fraction of pop <5yr and >30yr: 2005 2010 2015 2030 2050.
+    # If other years are needed, an additional interpolation is carried out on the latter.
+    # For years > 2040 mortality stats for 2040 are used.
+    # For years < 2005, mortality stats for 2005 are used.
+
+    # ;Population country totals
+
+    print( config$files$in.file.pop.country )                           # --remove--
+    pop <- read.csv( file = config$files$in.file.pop.country )
+    print( head( pop ) )                                                         # --remove--
+
+
+
 
 
 
