@@ -4,6 +4,8 @@
 #'
 #' @param file path to JSON file with path to ancillary files,
 #'             or NA to use internal static configuration;
+#'             see function \code{\link{health.impact.config.json()}} for
+#'             for further details about this parameter;
 #'
 #' @return
 #'      a list with following entries:
@@ -81,8 +83,10 @@ health.impact.config.static <- function()
 #' \itemize{
 #'      \item configuration JSON file must have the same entries
 #'            defined in list returned by function
-#'            \code{health.impact.config};
+#'            \code{\link{health.impact.config()}};
 #' }
+#'
+#' @param file path to JSON configuration file;
 #'
 #' @return
 #'   named list with input/output files;
