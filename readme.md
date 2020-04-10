@@ -15,5 +15,17 @@ install.packages( "<package-name>" )
 
 ## Usage from command line
 
-Run without args to show args list
+Run without args to show args list.
+
+Arguments are:
+
+ * mandatory:
+    * project name
+    * model name
+    * version
+    * path to working directory, it must be a either a full path or a relative path from current directory
+
+ * optional:
+    * configuration JSON file, either an absolute path or a relative one from the working directory
+
 
