@@ -17,10 +17,10 @@ script.args <- c(
     "project name",
     "model name",
     "version",
-    "path to output directory, it must be a either a full path or a relative path from working directory"
+    "path to output directory, it must be a either a full path or a relative path from current directory"
 )
 script.opts <- c(
-    "path to the configuration JSON file"
+    "configuration JSON file, either an absolute path or a relative one from the working directory"
 )
 
 help.banner <- function( name, arguments, optional = NULL )
@@ -46,8 +46,7 @@ args = commandArgs( trailingOnly = TRUE )
 
 if ( length( args ) >= length( script.args ) )
 {
-    config <- health.impact.config( args[ 5 ] )
-    health.impact( args[ 1 ], args[ 2 ], args[ 3 ], args[ 4 ], config )
+    health.impact( args[ 1 ], args[ 2 ], args[ 3 ], args[ 4 ], health.impact.config( args[ 5 ] ) )
 } else {
     stop( help.banner( script.name, script.args, optiona = script.opts ) )
 }
