@@ -78,6 +78,20 @@ health.impact <- function(
                         fact = 2
                         )
 
+    # files with base mortality rates (per 100k population)
+    copd    <- read.csv( file = config$files$in.file.copd )
+    lc      <- read.csv( file = config$files$in.file.lc )
+    lri     <- read.csv( file = config$files$in.file.lri )
+    ihd     <- read.csv( file = config$files$in.file.ihd )
+    stroke  <- read.csv( file = config$files$in.file.stroke )
+    dmt2    <- read.csv( file = config$files$in.file.dmt2 )
+
+
+
+
+
+
+
 
 
 
