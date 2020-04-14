@@ -70,11 +70,6 @@ health.impact <- function(
     cntrgrid <- raster( config$files$in.file.cntrgrid )
 
     # increase both the area and the resolution
-#    hrcntrcode <- raster( ncol = 1440, nrow = 720, xmn = -180, xmx = 180, ymn = -90, ymx = 90 )
-#    hrcntrcode <- merge( hrcntrcode, cntrgrid )
-#    hrcntrcode <- disaggregate( hrcntrcode, fact = 2 )
-
-
     hrcntrcode <- disaggregate(
                         merge(
                                 raster( ncol = 1440, nrow = 720, xmn = -180, xmx = 180, ymn = -90, ymx = 90 ),
@@ -83,7 +78,7 @@ health.impact <- function(
                         fact = 2
                         )
 
-    print( hrcntrcode )
+
 
 
 
