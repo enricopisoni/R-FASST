@@ -68,24 +68,35 @@ health.impact <- function(
 
     # read country identification gridmap (Ciesin GPW v4)
     cntrgrid <- raster( config$files$in.file.cntrgrid )
-    print( cntrgrid )                                                       # --remove--
-    latmin <- ymin( cntrgrid )
-    latmax <- ymax( cntrgrid )
+
+    # increase both the area and the resolution
 
     # values of: cntrgrid --> matrice di: 580 righe - 1440 colonne
-    # dati valori della matrice: cambia l'ordine delle righe (quelle in basso vanno in alto e vice versa )
+    # inverte le righe della matrice
     # CNTRCODE := matice ( 1440,720 )
-    # LATFUL   := ( ( array con valori in intervallo: 0 |-| 719 ) - 360 / 4.
+    # LATFUL   := ( ( array con valori in intervallo: 0 |-| 719 ) - 360 / 4. ==> -90 |-| 89.75
     # LONFUL  -- NOT USED!!!!!!
     # indmin   := indici di LATFUL dove i valori sono == latmin
     # indmax   := indici di LATFUL dove i valori sono == latmax
     # CNTRCODE[ 0 : 1439, indmin : indmax-1 ]  = cntrgrid
-    # HRCNTRCODE := CNTRCODE expanded/shrinked to size: 2880,1440
+    # HRCNTRCODE := CNTRCODE expanded to size: 2880,1440
 
 
     # given an empty matrix( 1440, 720 ) - all values set to 0 - where the indeces 0..719 mean -90..89.75 (steps by .25)
     # values of cntrgrid are 'overimposed' to empty matrix in order that the cntrgrid latitude, min'n'max, are correct
     # doulbes the matrix size: from 1440,720 to 2880,1440
+
+    # https://rspatial.org/raster/index.html
+
+
+    hrcntrcode <- raster( ncol = 1440, nrow = 720, xmn = -180, xmx = 180, ymn = -90, ymx = 90 )
+    hrcntrcode <- merge( hrcntrcode, cntrgrid )
+    hrcntrcode <- disaggregate( hrcntrcode, fact = 2 )
+
+
+
+
+
 
 
     # prepare output directories
