@@ -19,6 +19,9 @@
 
 library( 'raster' )
 
+source( 'fasst-write.R' )
+
+
 health.impact <- function(
                    project,
                    model,
@@ -162,8 +165,24 @@ health.impact <- function(
 
 
 
-    # prepare output directories
-    dir.create( dir.tables, recursive = TRUE, showWarnings = FALSE )
+
+    # write the output
+    fasst.write(
+             dir.tables,
+             list(
+                   project.name  = project,
+                   model.name    = model,
+                   model.version = version,
+                   sDM8THR       = config $ model $ SDM8THR,
+                   ADM8THR       = config $ model $ ADM8THR,
+                   AGEFRAC_COPD  = config $ model $ agefrac_copd,
+                   AGEFRAC_LC    = config $ model $ agefrac_lc ,
+                   AGEFRAC_LRI   = config $ model $ agefrac_lri,
+                   AGEFRAC_IHD   = config $ model $ agefrac_ihd,
+                   AGEFRAC_O3    = config $ model $ agefrac_o3
+             )
+          )
+
 
 
 
