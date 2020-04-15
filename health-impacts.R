@@ -86,9 +86,8 @@ health.impact <- function(
     stroke  <- read.csv( file = config$files$in.file.stroke )
     dmt2    <- read.csv( file = config$files$in.file.dmt2 )
 
-
-
-
+    # read the fitting parameters for the Burnett IER functions for all CODs and age classes
+    rr <- read.csv( file = config$files$in.file.rr )
 
 
 
