@@ -66,6 +66,9 @@ health.impact.config.static <- function()
                 in.file.stroke      = file.path( in.dir.gbd,    'STROKE_MORT_RATE_GBD2016.csv' ),
                 in.file.cntrgrid    = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
 
+                # risk function parameters
+                in.file.rr          = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),
+
                 # project dependent scenarios
                 scenarios           = data.frame(
                                                 "name" = c( "SSP1_26" ),
@@ -135,9 +138,6 @@ health.impact.config.model <- function()
               SDM8THR = 29.1,
               # counterfactual level for ADMA8h for O3 health impact - Turner uses both 26.7 and 31.1
               ADM8THR = 26.7,
-
-              # risk function parameters
-              rr_param_file = 'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv',
 
               # AGE CLASSES TO CONSIDER:
               ages = seq( from = 0, to = 100, by = 5 ),

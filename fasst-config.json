@@ -1,12 +1,13 @@
 {
-  "in.file.pop.country":  "./ancillary/mortality/basemort2018/pop_1990-2100_un2017_agegrp.csv",
-  "in.file.copd":         "./ancillary/mortality/basemort2018/copd_mort_rate_gbd2016.csv",
-  "in.file.lc":           "./ancillary/mortality/basemort2018/lc_mort_rate_gbd2016.csv",
-  "in.file.dmt2":         "./ancillary/mortality/basemort2018/dmt2_mort_rate_gbd2016.csv",
-  "in.file.lri":          "./ancillary/mortality/basemort2018/lri_mort_rate_gbd2016.csv",
-  "in.file.ihd":          "./ancillary/mortality/basemort2018/ihd_mort_rate_gbd2016.csv",
-  "in.file.stroke":       "./ancillary/mortality/basemort2018/stroke_mort_rate_gbd2016.csv",
-  "in.file.cntrgrid":     "./ancillary/ciesin_country_mask/ciesin_v4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+  "in.file.pop.country":  "./ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv",
+  "in.file.copd":         "./ANCILLARY/MORTALITY/BASEMORT2018/COPD_MORT_RATE_GBD2016.csv",
+  "in.file.lc":           "./ANCILLARY/MORTALITY/BASEMORT2018/LC_MORT_RATE_GBD2016.csv",
+  "in.file.dmt2":         "./ANCILLARY/MORTALITY/BASEMORT2018/DMT2_MORT_RATE_GBD2016.csv",
+  "in.file.lri":          "./ANCILLARY/MORTALITY/BASEMORT2018/LRI_MORT_RATE_GBD2016.csv",
+  "in.file.ihd":          "./ANCILLARY/MORTALITY/BASEMORT2018/IHD_MORT_RATE_GBD2016.csv",
+  "in.file.stroke":       "./ANCILLARY/MORTALITY/BASEMORT2018/STROKE_MORT_RATE_GBD2016.csv",
+  "in.file.cntrgrid":     "./ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+  "in.file.rr":           "./ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
 
   "scenarios":
   {
