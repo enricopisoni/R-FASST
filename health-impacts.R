@@ -86,11 +86,70 @@ health.impact <- function(
     stroke  <- read.csv( file = config$files$in.file.stroke )
     dmt2    <- read.csv( file = config$files$in.file.dmt2 )
 
+# --remove--  print( config$files$in.file.copd )
+# --remove--      print( head( copd   ))              # --remove--
+# --remove--  print( config$files$in.file.lc )
+# --remove--      print( head( lc     ))
+# --remove--  print( config$files$in.file.lri )
+# --remove--      print( head( lri    ))
+# --remove--  print( config$files$in.file.ihd )
+# --remove--      print( head( ihd    ))
+# --remove--  print( config$files$in.file.stroke )
+# --remove--      print( head( stroke ))
+# --remove--  print( config$files$in.file.dmt2 )
+# --remove--      print( head( dmt2   ))
+
+
     # read the fitting parameters for the Burnett IER functions for all CODs and age classes
     rr <- read.csv( file = config$files$in.file.rr )
+# --remove--print( config$files$in.file.rr )                                        # --remove--
+# --remove--    print( head( rr   ))
 
+    copd.med <- rr$MED[     ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
+    copd.lo  <- rr$X95CL_L[ ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
+    copd.hi  <- rr$X95CL_H[ ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
 
+    lri.med <- rr$MED[     ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
+    lri.lo  <- rr$X95CL_L[ ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
+    lri.hi  <- rr$X95CL_H[ ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
 
+    lc.med <- rr$MED[     ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
+    lc.lo  <- rr$X95CL_L[ ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
+    lc.hi  <- rr$X95CL_H[ ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
+
+    dt2.med <- rr$MED[     ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
+    dt2.lo  <- rr$X95CL_L[ ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
+    dt2.hi  <- rr$X95CL_H[ ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
+
+# --remove--    print( copd.med )      #--remove--
+# --remove--    print( copd.lo  )
+# --remove--    print( copd.hi  )
+# --remove--    print( lri.med  )
+# --remove--    print( lri.lo   )
+# --remove--    print( lri.hi   )
+# --remove--    print( lc.med   )
+# --remove--    print( lc.lo    )
+# --remove--    print( lc.hi    )
+# --remove--    print( dt2.med  )
+# --remove--    print( dt2.lo   )
+# --remove--    print( dt2.hi   )
+
+    # extract the appropriate RR parameters for each COD and assign to each variable - for easier tracking.
+    ihd.med <- matrix( nrow = 4, data = rr$MED[     rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
+    ihd.lo  <- matrix( nrow = 4, data = rr$X95CL_L[ rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
+    ihd.hi  <- matrix( nrow = 4, data = rr$X95CL_H[ rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
+
+# --remove--  print( ihd.med )            # --remove--
+# --remove--  print( ihd.lo )
+# --remove--  print( ihd.hi )
+
+    stroke.med <- matrix( nrow = 4, data = rr$MED[     rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
+    stroke.lo  <- matrix( nrow = 4, data = rr$X95CL_L[ rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
+    stroke.hi  <- matrix( nrow = 4, data = rr$X95CL_H[ rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
+
+# --remove--  print( stroke.med )            # --remove--
+# --remove--  print( stroke.lo )
+# --remove--  print( stroke.hi )
 
 
 
