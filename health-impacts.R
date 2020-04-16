@@ -140,16 +140,41 @@ health.impact <- function(
     mr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # lon-lat arrays
-    hr_grid_tot  <- matrix( 0, nrow = jmg, ncol = img )
-    hr_grid_tot1 <- matrix( 0, nrow = jmg, ncol = img )    # intermediate placeholders needed when interpolating
-    hr_grid_tot2 <- matrix( 0, nrow = jmg, ncol = img )    # intermediate placeholders needed when interpolating
+    hr_grid_tot  <- array( 0, c( jmg, img ) )
+    hr_grid_tot1 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
+    hr_grid_tot2 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
     scenpopmask  <- hr_grid_tot
     scenpop      <- hr_grid_tot
     iminlat      <- 273                                    # index where hr_lats eq min lat in SSP hr grid
     imaxlat      <- 1389                                   # index where hr_lats eq max lat in SSP hr grid
 
     # layers containing the AFs, depends on PM fields
+    af_copd_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+    af_lri_grid    <- array( 0, c( 3, jmg, img ) )       # ALL AGES
+    af_lc_grid     <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+    af_dmt2_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+    af_ihd_grid    <- array( 0, c( 3, 15, jmg, img ) )   # 15 AGE CLASSES >25
+    af_stroke_grid <- array( 0, c( 3, 15, jmg, img ) )   # 15 AGE CLASSES >25
 
+    # BLOCK 3 ############ START LOOP WITH SCENARIO ANALYSIS  - EACH LOOP = 1 SCENARIO #################
+    for ( scen in config $ file $ scenarios $ name )
+        for ( year in config $ file $ scenarios $ year )
+        {
+            # CHECK IF SSP POPULATION YEAR IS AVAILABLE, IF NOT:INTERPOLATE BETWEEN AVAILABLE YEARS
+            intpol <- FALSE
+            npop   <- max( as.numeric( config $ model $ ssp_yrs[ config $ model $ ssp_yrs <= year ] ) )
+            jpop   <- min( as.numeric( config $ model $ ssp_yrs[ config $ model $ ssp_yrs >= year ] ) )
+
+            if ( npop != jpop )
+            {
+                intpol <- TRUE
+                fyr    <- ( year - npop ) / ( jpop - npop )
+            }
+            else        # *** this branch is not present in the original IDL prg (bug?)
+            {
+                fyr <- npop
+            }
+        }
 
 
     # write the output
