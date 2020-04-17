@@ -123,7 +123,7 @@ health.impact <- function(
     beta_rr_copd_gbd <- c( 1.06, 1.05, 1.10 ) / 10        # new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
 
 
-    # *** ask Rita the file: country_mask_0.5x0.5_v3.sav
+    # *** file 'country_mask_0.5x0.5_v3.sav' is loaded but NOT used;
 
     # high resolution lon lat dimensions
     img     <- ncol( hrcntrcode )
@@ -174,6 +174,12 @@ health.impact <- function(
             {
                 fyr <- npop
             }
+
+            # restore HIGH RESOLUTION (HIRES) population map(s) and interpolate if needed
+
+
+
+
         }
 
 
