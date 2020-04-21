@@ -162,8 +162,8 @@ health.impact <- function(
         {
             # CHECK IF SSP POPULATION YEAR IS AVAILABLE, IF NOT:INTERPOLATE BETWEEN AVAILABLE YEARS
             intpol <- FALSE
-            npop   <- max( as.numeric( config $ model $ ssp_yrs[ config $ model $ ssp_yrs <= year ] ) )
-            jpop   <- min( as.numeric( config $ model $ ssp_yrs[ config $ model $ ssp_yrs >= year ] ) )
+            npop   <- max( config $ model $ ssp_yrs[ config $ model $ ssp_yrs <= year ] )
+            jpop   <- min( config $ model $ ssp_yrs[ config $ model $ ssp_yrs >= year ] )
 
             if ( npop != jpop )
             {

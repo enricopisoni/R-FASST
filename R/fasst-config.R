@@ -132,7 +132,7 @@ health.impact.config.model <- function()
         config.definition <- list(
 
               # available years with ssp populatation. if needed for scenarios, interpolate between those years
-              ssp_yrs = c( '2000','2010','2020','2030','2040','2050','2060','2070','2080','2090','2100' ),
+              ssp_yrs = c( 2000, 2010, 2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100 ),
 
               # counterfactual level for SDMA8h for O3 health impact - GBD2017 uses between 29.1 and 35.7 for M3M. Malley/Turner use between 26.7 and 31.1
               SDM8THR = 29.1,
