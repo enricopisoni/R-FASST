@@ -18,6 +18,7 @@
 #'
 
 library( 'raster' )
+library( 'tidyverse' )
 
 source( 'fasst-write.R' )
 
@@ -59,18 +60,22 @@ health.impact <- function(
     # For years < 2005, mortality stats for 2005 are used.
 
     # population country totals
-    pop <- read.csv( file = config$files$in.file.pop.country )
+    pop <- read_csv( config $ files $ in.file.pop.country,
+                     skip = 1,
+                     col_types = config $ tmpls $ pop.type,
+                     col_names = config $ tmpls $ pop.name
+                     )
 
     # generate dataframe with unique country codes and names from POP file
     cntr <- unique(
                 subset(
                         x = pop,
-                        select = c( cntry_id, CNTRY_NAME, ISO )
+                        select = c( CNTR_ID, CNTR_NAME, CNTR_ISO3 )
                       )
                   )
 
     # read country identification gridmap (Ciesin GPW v4)
-    cntrgrid <- raster( config$files$in.file.cntrgrid )
+    cntrgrid <- raster( config $ files $ in.file.cntrgrid )
 
     # increase both the area and the resolution
     hrcntrcode <- disaggregate(
@@ -82,40 +87,68 @@ health.impact <- function(
                         )
 
     # files with base mortality rates (per 100k population)
-    copd    <- read.csv( file = config$files$in.file.copd )
-    lc      <- read.csv( file = config$files$in.file.lc )
-    lri     <- read.csv( file = config$files$in.file.lri )
-    ihd     <- read.csv( file = config$files$in.file.ihd )
-    stroke  <- read.csv( file = config$files$in.file.stroke )
-    dmt2    <- read.csv( file = config$files$in.file.dmt2 )
+    copd       <- read_csv( config $ files $ in.file.copd,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
+    lc         <- read_csv( config $ files $ in.file.lc,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
+    lri        <- read_csv( config $ files $ in.file.lri,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
+    ihd        <- read_csv( config $ files $ in.file.ihd,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
+    stroke     <- read_csv( config $ files $ in.file.stroke,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
+    dmt2       <- read_csv( config $ files $ in.file.dmt2,
+                            skip = 1,
+                            col_types = config $ tmpls $ mort.type,
+                            col_names = config $ tmpls $ mort.name
+                            )
 
     # read the fitting parameters for the Burnett IER functions for all CODs and age classes
-    rr <- read.csv( file = config$files$in.file.rr )
+    rr         <- read_csv( config $ files $ in.file.rr,
+                            skip = 1,
+                            col_types = config $ tmpls $ rr.type,
+                            col_names = config $ tmpls $ rr.name
+                            )
 
-    copd.med <- rr$MED[     ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
-    copd.lo  <- rr$X95CL_L[ ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
-    copd.hi  <- rr$X95CL_H[ ( rr$COD == 'COPD' ) & ( rr$AGE == 99 ) ]
+    copd.med   <- rr $ RRMED[ ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
+    copd.lo    <- rr $ RRLO[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
+    copd.hi    <- rr $ RRHI[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
 
-    lri.med <- rr$MED[     ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
-    lri.lo  <- rr$X95CL_L[ ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
-    lri.hi  <- rr$X95CL_H[ ( rr$COD == 'LRI' ) & ( rr$AGE == 99 ) ]
+    lri.med    <- rr $ RRMED[ ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri.lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri.hi     <- rr $ RRHI[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
 
-    lc.med <- rr$MED[     ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
-    lc.lo  <- rr$X95CL_L[ ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
-    lc.hi  <- rr$X95CL_H[ ( rr$COD == 'LC' ) & ( rr$AGE == 99 ) ]
+    lc.med     <- rr $ RRMED[ ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc.lo      <- rr $ RRLO[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc.hi      <- rr $ RRHI[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
 
-    dt2.med <- rr$MED[     ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
-    dt2.lo  <- rr$X95CL_L[ ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
-    dt2.hi  <- rr$X95CL_H[ ( rr$COD == 'DT2' ) & ( rr$AGE == 99 ) ]
+    dt2.med    <- rr $ RRMED[ ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2.lo     <- rr $ RRLO[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2.hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
 
     # extract the appropriate RR parameters for each COD and assign to each variable - for easier tracking.
-    ihd.med <- matrix( nrow = 4, data = rr$MED[     rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
-    ihd.lo  <- matrix( nrow = 4, data = rr$X95CL_L[ rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
-    ihd.hi  <- matrix( nrow = 4, data = rr$X95CL_H[ rr$COD == 'IHD' & rr$AGE %in% config$model$AGE_GRP ] )
+    ihd.med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd.lo     <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd.hi     <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
 
-    stroke.med <- matrix( nrow = 4, data = rr$MED[     rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
-    stroke.lo  <- matrix( nrow = 4, data = rr$X95CL_L[ rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
-    stroke.hi  <- matrix( nrow = 4, data = rr$X95CL_H[ rr$COD == 'STROKE' & rr$AGE %in% config$model$AGE_GRP ] )
+    stroke.med <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    stroke.lo  <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    stroke.hi  <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
 
 
     # Ozone RRs with log-lin ER function
@@ -126,18 +159,18 @@ health.impact <- function(
     # *** file 'country_mask_0.5x0.5_v3.sav' is loaded but NOT used;
 
     # high resolution lon lat dimensions
-    img     <- ncol( hrcntrcode )
-    jmg     <- nrow( hrcntrcode )
-    scale   <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
+    img          <- ncol( hrcntrcode )
+    jmg          <- nrow( hrcntrcode )
+    scale        <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
 # --not-used--    hr_lats <- ( ( ( 0:( ( ymax( hrcntrcode ) - ymin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + ymin( hrcntrcode ) )
 # --not-used--    hr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # med resolution lon lat dimensions
-    imed    <- 720   # img / 4 ?
-    jmed    <- 360   # jmg / 4 ?
-    scale   <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
-    mr_lats <- ( ( ( 0:( ( ymax( hrcntrcode ) - ymin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + ymin( hrcntrcode ) )
-    mr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
+    imed         <- 720   # img / 4 ?
+    jmed         <- 360   # jmg / 4 ?
+    scale        <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
+    mr_lats      <- ( ( ( 0:( ( ymax( hrcntrcode ) - ymin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + ymin( hrcntrcode ) )
+    mr_lons      <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # lon-lat arrays
     hr_grid_tot  <- array( 0, c( jmg, img ) )

@@ -10,6 +10,7 @@ The required packages are:
 
  * rjson
  * raster
+ * tidyverse
 
 To install a package use the following command in R interpreter:
 ```R

@@ -26,7 +26,8 @@ health.impact.config <- function( file = NULL )
         }
         list(
                 model = health.impact.config.model(),
-                files = files
+                files = files,
+                tmpls = health.impact.config.templates()
         )
 }
 
@@ -202,4 +203,65 @@ health.impact.config.model <- function()
 
         # --- the two configurations merged ---
         c( config.definition, config.derived )
+}
+
+# --------------------------------------------------------------------------------
+
+#' Templates for CSV files.
+#' The function defines templates with column names to use for csv file,
+#' the latter column names are used by function: \code{\link{health:impact()}};
+#'
+#' @return
+#'      named list with templates for column names;
+#'
+#' @examples
+health.impact.config.templates <- function()
+{
+        list(
+                pop.name  = c( 'CNTR_ID', 'CNTR_NAME', 'CNTR_ISO3', 'CNTR_FASST', 'VARIANT', 'YEAR', 'AGE_GRP', 'AGE_POP' ),
+                pop.type  = cols(
+                                CNTR_ID    = col_integer(),
+                                CNTR_NAME  = col_character(),
+                                CNTR_ISO3  = col_character(),
+                                CNTR_FASST = col_character(),
+                                VARIANT    = col_character(),
+                                YEAR       = col_integer(),
+                                AGE_GRP    = col_integer(),
+                                AGE_POP    = col_double()
+                            ),
+
+                rr.name   = c( 'COD', 'PARAM', 'AGE', 'RRMED', 'RRLO', 'RRHI' ),
+                rr.type   = cols(
+                                COD   = col_character(),
+                                PARAM = col_character(),
+                                AGE   = col_integer(),
+                                RRMED = col_double(),
+                                RRLO  = col_double(),
+                                RRHI  = col_double()
+                            ),
+
+                mort.name = c( 'FASSTREG', 'POP', 'MEASURE', 'CNTR_ID', 'CNTR_NAME', 'SEX_ID', 'SEX_NAME',
+                               'AGE_ID', 'AGE_NAME', 'CAUSE_ID', 'CAUSE_NAME', 'METRIC_ID', 'METRIC_NAME',
+                               'YEAR', 'VAL', 'HI', 'LO', 'RATIO' ),
+                mort.type = cols(
+                                FASSTREG    = col_character(),
+                                POP         = col_double(),
+                                MEASURE     = col_character(),
+                                CNTR_ID     = col_integer(),
+                                CNTR_NAME   = col_character(),
+                                SEX_ID      = col_integer(),
+                                SEX_NAME    = col_character(),
+                                AGE_ID      = col_integer(),
+                                AGE_NAME    = col_character(),
+                                CAUSE_ID    = col_integer(),
+                                CAUSE_NAME  = col_character(),
+                                METRIC_ID   = col_integer(),
+                                METRIC_NAME = col_character(),
+                                YEAR        = col_integer(),
+                                VAL         = col_double(),
+                                HI          = col_double(),
+                                LO          = col_double(),
+                                RATIO       = col_double()
+                            )
+        )
 }
