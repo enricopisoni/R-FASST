@@ -14,6 +14,8 @@
 #'                      {the static model cofiguration;}
 #'              \item{files}
 #'                      {paths to files;}
+#'              \item{tmpls}
+#'                      {for CSV file: column names and types;}
 #'      }
 #'
 health.impact.config <- function( file = NULL )
