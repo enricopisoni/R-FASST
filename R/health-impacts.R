@@ -203,8 +203,10 @@ health.impact <- function(
                                         raster( ncol = img, nrow = jmg, xmn = -180, xmx = 180, ymn = -90, ymx = 90 ),
                                         population.map
                               )
+            hr_grid_tot[ is.na( hr_grid_tot[] ) ] <- 0
 
-
+            # identify grids with valid population data
+            hr_grid_mask <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
 
 
         }
@@ -333,6 +335,9 @@ get.population.map <- function(
                 # interpolate years
                 r <- r_n + fyr * ( r_j - r_n )
 # ---                grid <- grid_n + fyr * ( grid_j - grid_n )
+
+                # don't lose the no-data value
+                r @ file @ nodatavalue = r_n @ file @ nodatavalue
         }
         return ( r )
 }
