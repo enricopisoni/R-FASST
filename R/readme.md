@@ -11,6 +11,7 @@ The required packages are:
  * rjson
  * raster
  * tidyverse
+ * ncdf4
 
 To install a package use the following command in R interpreter:
 ```R

@@ -1,5 +1,11 @@
 # -*- mode: R -*-
 
+library( 'raster' )
+library( 'tidyverse' )
+
+source( 'fasst-write.R' )
+
+
 #' Health impacts from high resolution FASST grid maps;
 #'
 #' Function constraints:
@@ -16,12 +22,6 @@
 #'                      the list should define fields listed
 #'                      in file: fasst-config.R;
 #'
-
-library( 'raster' )
-library( 'tidyverse' )
-
-source( 'fasst-write.R' )
-
 
 health.impact <- function(
                    project,
@@ -75,7 +75,7 @@ health.impact <- function(
                   )
 
     # read country identification gridmap (Ciesin GPW v4)
-    cntrgrid <- raster( config $ files $ in.file.cntrgrid )
+    cntrgrid <- raster( config $ files $ in.file.cntrgrid )                 # here we don't flip rows!
 
     # increase both the area and the resolution
     hrcntrcode <- disaggregate(
@@ -173,13 +173,11 @@ health.impact <- function(
     mr_lons      <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # lon-lat arrays
-    hr_grid_tot  <- array( 0, c( jmg, img ) )
-    hr_grid_tot1 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
-    hr_grid_tot2 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
-    scenpopmask  <- hr_grid_tot
-    scenpop      <- hr_grid_tot
-    iminlat      <- 273                                    # index where hr_lats eq min lat in SSP hr grid
-    imaxlat      <- 1389                                   # index where hr_lats eq max lat in SSP hr grid
+# --not-used-remove--    hr_grid_tot  <- array( 0, c( jmg, img ) )
+# --not-used-remove--    hr_grid_tot1 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
+# --not-used-remove--    hr_grid_tot2 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
+# --not-used-remove--    scenpopmask  <- hr_grid_tot
+# --not-used-remove--    scenpop      <- hr_grid_tot
 
     # layers containing the AFs, depends on PM fields
     af_copd_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
@@ -193,22 +191,18 @@ health.impact <- function(
     for ( scen in config $ file $ scenarios $ name )
         for ( year in config $ file $ scenarios $ year )
         {
-            # CHECK IF SSP POPULATION YEAR IS AVAILABLE, IF NOT:INTERPOLATE BETWEEN AVAILABLE YEARS
-            intpol <- FALSE
-            npop   <- max( config $ model $ ssp_yrs[ config $ model $ ssp_yrs <= year ] )
-            jpop   <- min( config $ model $ ssp_yrs[ config $ model $ ssp_yrs >= year ] )
-
-            if ( npop != jpop )
-            {
-                intpol <- TRUE
-                fyr    <- ( year - npop ) / ( jpop - npop )
-            }
-            else        # *** this branch is not present in the original IDL prg (bug?)
-            {
-                fyr <- npop
-            }
-
             # restore HIGH RESOLUTION (HIRES) population map(s) and interpolate if needed
+            population.map <- get.population.map(
+                                        scen,
+                                        year,
+                                        config $ model $ ssp_yrs,
+                                        config $ file  $ in.tmpl.pop.map
+                              )
+
+            hr_grid_tot    <- merge(
+                                        raster( ncol = img, nrow = jmg, xmn = -180, xmx = 180, ymn = -90, ymx = 90 ),
+                                        population.map
+                              )
 
 
 
@@ -241,3 +235,114 @@ health.impact <- function(
 }
 
 # ------------------------------------------------------------
+
+#' The function gets from NetCDF file the population map(s);
+#' if needed, formal parameter \code{interpolation} set at TRUE,
+#' an interpolation is carried out to create the map;
+#'
+#' Constraints:
+#'      NetCDF files must define the following variables:
+#'      \description{
+#'          \item{2000total}
+#'                      {for files with values about year 2000;}
+#'          \item{<scenario>_<year>}
+#'                      {for all other files;}
+#'      }
+#'
+#' @param scenario         the scenario to use;
+#' @param year             the year we are working on;
+#' @param ssp_yrs          the available years;
+#' @param netcdf.template  path template to NetCDF files;
+#'                         path can be either absolute or relative the
+#'                         working directory;
+#'                         path template can contain the placeholders:
+#'                         \describe{
+#'                              {scenario} {the scenario name;}
+#'                              {year}     {the year;}
+#'                         }
+#'
+get.population.map <- function(
+                                scenario,
+                                year,
+                                ssp_yrs,
+                                netcdf.template
+                      )
+{
+        # CHECK IF SSP POPULATION YEAR IS AVAILABLE, IF NOT:INTERPOLATE BETWEEN AVAILABLE YEARS
+        intpol <- FALSE
+        npop   <- max( ssp_yrs[ ssp_yrs <= year ] )
+        jpop   <- min( ssp_yrs[ ssp_yrs >= year ] )
+
+        if ( npop != jpop )
+        {
+            intpol <- TRUE
+            fyr    <- ( year - npop ) / ( jpop - npop )
+        }
+        else
+        {
+            # *** this branch is not present in the original IDL prg
+            fyr    <- 1
+        }
+
+        if ( ! intpol )
+        {
+                if ( year == 2000 )
+                {
+                        varname <- '2000total'
+                } else {
+                        varname <- paste( str_to_lower( scenario ), year, sep = '_' )
+                }
+                totfil <- get.file.name.population( netcdf.template, scenario, year )
+
+                r      <- raster( totfil, varname = varname )
+# ---                grid <- array(
+# ---                                getValues( r ),                 # here we don't flip by rows!
+# ---                                c( nrow( r ), ncol( r ) )
+# ---                        )
+
+        } else {
+
+                if ( year == 2000 )
+                {
+                        varname <- '2000total'
+                } else {
+                        varname <- paste( str_to_lower( scenario ), npop, sep = '_' )
+                }
+                totfil <- get.file.name.population( netcdf.template, scenario, npop )
+
+                r_n    <- raster( totfil, varname = varname )
+# ---                grid_n <- array(
+# ---                                getValues( r_n ),                 # here we don't flip by rows!
+# ---                                c( nrow( r_n ), ncol( r_n ) )
+# ---                          )
+
+                if ( year == 2000 )
+                {
+                        varname <- '2000total'
+                } else {
+                        varname <- paste( str_to_lower( scenario ), jpop, sep = '_' )
+                }
+                totfil <- get.file.name.population( netcdf.template, scenario, jpop )
+
+                r_j    <- raster( totfil, varname = varname )
+# ---                grid_j <- array(
+# ---                                getValues( r_j ),                 # here we don't flip rows!
+# ---                                c( nrow( r_j ), ncol( r_j ) )
+# ---                          )
+
+                # interpolate years
+                r <- r_n + fyr * ( r_j - r_n )
+# ---                grid <- grid_n + fyr * ( grid_j - grid_n )
+        }
+        return ( r )
+}
+get.file.name.population <- function(
+                                path.remplate,
+                                scene,
+                                year
+                            )
+{
+        pattern <- c( '\\$\\{scenario\\}' = scene, '\\$\\{year\\}' = year )
+
+        str_replace_all( path.remplate, pattern )
+}

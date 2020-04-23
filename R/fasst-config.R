@@ -41,6 +41,8 @@ health.impact.config <- function( file = NULL )
 #' Notes:
 #' \itemize{
 #'      \item all files paths are relative to working directory;
+#'      \item for definition of entry \code{in.tmpl.pop.map} refer
+#'            to fucntion \code{\link{get.population.map()}};
 #' }
 #'
 #' @return
@@ -71,6 +73,9 @@ health.impact.config.static <- function()
 
                 # risk function parameters
                 in.file.rr          = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),
+
+                # population map - NetCDF files template
+                in.tmpl.pop.map     = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
 
                 # project dependent scenarios
                 scenarios           = data.frame(
