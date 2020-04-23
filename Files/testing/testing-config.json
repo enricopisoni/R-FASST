@@ -7,11 +7,14 @@
   "in.file.ihd":          "../INPUT/ANCILLARY/IHD_MORT_RATE_GBD2016.csv",
   "in.file.stroke":       "../INPUT/ANCILLARY/STROKE_MORT_RATE_GBD2016.csv",
   "in.file.cntrgrid":     "../INPUT/ANCILLARY/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+
   "in.file.rr":           "../INPUT/ANCILLARY/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
+
+  "in.tmpl.pop.map":      "../INPUT/ANCILLARY/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
 
   "scenarios":
   {
-    "name": [ "SSP1_26" ],
+    "name": [ "SSP2" ],
     "year": [ 2015 ],
     "ssp":  [ "sep1" ]
   }
