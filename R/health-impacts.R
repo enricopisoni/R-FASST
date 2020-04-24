@@ -126,9 +126,9 @@ health.impact <- function(
                             col_names = config $ tmpls $ rr.name
                             )
 
-    copd.med   <- rr $ RRMED[ ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
-    copd.lo    <- rr $ RRLO[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
-    copd.hi    <- rr $ RRHI[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
+    copd_med   <- rr $ RRMED[ ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
+    copd_lo    <- rr $ RRLO[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
+    copd_hi    <- rr $ RRHI[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
 
     lri.med    <- rr $ RRMED[ ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
     lri.lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
@@ -225,12 +225,29 @@ health.impact <- function(
 
             # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
             af_copd_grid <- brick(
-                                        1 - 1 / rrate( copd.med, sc_hires ),
-                                        1 - 1 / rrate( copd.lo, sc_hires ),
-                                        1 - 1 / rrate( copd.hi, sc_hires )
+                                        1 - 1 / rrate( copd_med, sc_hires ),
+                                        1 - 1 / rrate( copd_lo,  sc_hires ),
+                                        1 - 1 / rrate( copd_hi,  sc_hires )
                                  )
             names( af_copd_grid ) <- c( 'central', 'low', 'high' )
 
+            sig_min_af_copd <- af_copd_grid[[1]] *
+                               sqrt(
+                                        (
+                                                ( rrate( copd_med, sc_hires ) - rrate( copd_lo, sc_hires ) )
+                                                /
+                                                rrate( copd_med, sc_hires )
+                                        ) ^2
+                                    )
+
+            sig_max_af_copd <- af_copd_grid[[1]] *
+                               sqrt(
+                                        (
+                                                ( rrate( copd_med, sc_hires ) - rrate( copd_hi, sc_hires ) )
+                                                /
+                                                rrate( copd_med, sc_hires)
+                                        ) ^2
+                                   )
 
         }
 
