@@ -130,17 +130,17 @@ health.impact <- function(
     copd_lo    <- rr $ RRLO[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
     copd_hi    <- rr $ RRHI[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
 
-    lri.med    <- rr $ RRMED[ ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
-    lri.lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
-    lri.hi     <- rr $ RRHI[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri_med    <- rr $ RRMED[ ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri_lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri_hi     <- rr $ RRHI[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
 
-    lc.med     <- rr $ RRMED[ ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
-    lc.lo      <- rr $ RRLO[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
-    lc.hi      <- rr $ RRHI[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc_med     <- rr $ RRMED[ ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc_lo      <- rr $ RRLO[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc_hi      <- rr $ RRHI[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
 
-    dt2.med    <- rr $ RRMED[ ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
-    dt2.lo     <- rr $ RRLO[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
-    dt2.hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2_med    <- rr $ RRMED[ ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2_lo     <- rr $ RRLO[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2_hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
 
     # extract the appropriate RR parameters for each COD and assign to each variable - for easier tracking.
     ihd.med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
@@ -224,30 +224,33 @@ health.impact <- function(
             sc_anth_hires <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
 
             # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
-            af_copd_grid <- brick(
-                                        1 - 1 / rrate( copd_med, sc_hires ),
-                                        1 - 1 / rrate( copd_lo,  sc_hires ),
-                                        1 - 1 / rrate( copd_hi,  sc_hires )
-                                 )
-            names( af_copd_grid ) <- c( 'central', 'low', 'high' )
+            af_ac <- compute.attributable.functions(
+                                sc_hires,
+                                copd_med,
+                                copd_lo,
+                                copd_hi
+                     )
 
-            sig_min_af_copd <- af_copd_grid[[1]] *
-                               sqrt(
-                                        (
-                                                ( rrate( copd_med, sc_hires ) - rrate( copd_lo, sc_hires ) )
-                                                /
-                                                rrate( copd_med, sc_hires )
-                                        ) ^2
-                                    )
+            af_lc <- compute.attributable.functions(
+                                sc_hires,
+                                lc_med,
+                                lc_lo,
+                                lc_hi
+                     )
 
-            sig_max_af_copd <- af_copd_grid[[1]] *
-                               sqrt(
-                                        (
-                                                ( rrate( copd_med, sc_hires ) - rrate( copd_hi, sc_hires ) )
-                                                /
-                                                rrate( copd_med, sc_hires)
-                                        ) ^2
-                                   )
+            af_lri <- compute.attributable.functions(
+                                sc_hires,
+                                lri_med,
+                                lri_lo,
+                                lri_hi
+                      )
+
+            af_dmt2 <- compute.attributable.functions(
+                                sc_hires,
+                                dt2_med,
+                                dt2_lo,
+                                dt2_hi
+                       )
 
         }
 
@@ -390,4 +393,59 @@ get.file.name.population <- function(
         pattern <- c( '\\$\\{scenario\\}' = scene, '\\$\\{year\\}' = year )
 
         str_replace_all( path.remplate, pattern )
+}
+
+# ------------------------------------------------------------
+
+#' The function computes the attributable functions for
+#' central values, low and high confidence interval bound;
+#'
+#' @param sc  total pm from SC structure;
+#' @param med
+#' @param lo
+#' @param hi
+#'
+#' @return named list with fields:
+#'         \describe{
+#'              \item{grid}    {raster brick with central, low and high values;}
+#'              \item{sig_min} {standard deviation;}
+#'              \item{sig_max} {standard deviation;}
+#'         }
+#'
+
+compute.attributable.functions <- function(
+                                        sc,
+                                        med,
+                                        lo,
+                                        hi
+                                  )
+{
+        grid <- brick(
+                        1 - 1 / rrate( med, sc ),
+                        1 - 1 / rrate( lo,  sc ),
+                        1 - 1 / rrate( hi,  sc )
+                )
+        names( grid ) <- c( 'central', 'low', 'high' )
+
+        list(
+                grid    = grid,
+
+                sig_min = grid[[1]] *
+                          sqrt(
+                                (
+                                        ( rrate( med, sc ) - rrate( lo, sc ) )
+                                        /
+                                        rrate( med, sc )
+                                ) ^2
+                          ),
+
+                sig_max = grid[[1]] *
+                          sqrt(
+                                (
+                                        ( rrate( med, sc ) - rrate( hi, sc ) )
+                                        /
+                                        rrate( med, sc)
+                                ) ^2
+                          )
+        )
 }
