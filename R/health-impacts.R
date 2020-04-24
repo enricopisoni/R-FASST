@@ -4,6 +4,7 @@ library( 'raster' )
 library( 'tidyverse' )
 
 source( 'fasst-write.R' )
+source( 'rrate.R' )
 
 
 #' Health impacts from high resolution FASST grid maps;
@@ -207,6 +208,28 @@ health.impact <- function(
 
             # identify grids with valid population data
             hr_grid_mask <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
+
+            # read the scenario input file (high resolution grid map)
+            infile <- get.file.name.population(
+                                config $ file $ in.tmpl.scenario,
+                                scen,
+                                year
+                      )
+            print( sprintf( "Processing file '%s'", infile ) )
+
+            # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
+            print( sprintf( "Calculate AFs @ %s", format( Sys.time(), "%c" ) ) )
+
+            sc_hires      <- raster( infile, varname = 'TOT_PM_35' )  # extract total pm from SC structure and load into SC_HIRES variable
+            sc_anth_hires <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
+
+            # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
+            af_copd_grid <- brick(
+                                        1 - 1 / rrate( copd.med, sc_hires ),
+                                        1 - 1 / rrate( copd.lo, sc_hires ),
+                                        1 - 1 / rrate( copd.hi, sc_hires )
+                                 )
+            names( af_copd_grid ) <- c( 'central', 'low', 'high' )
 
 
         }

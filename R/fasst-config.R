@@ -58,6 +58,7 @@ health.impact.config.static <- function()
         in.dir.tmpls    <- file.path( in.dir.root,  'CODE', 'TEMPLATES' )
         in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
         in.dir.ciesin   <- file.path( in.dir.ancil, 'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
+        in.dir.ncdf     <- file.path( in.dir.root,  'NCDF_IN' )
 
         list(
                 in.file.pop.country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
@@ -76,6 +77,9 @@ health.impact.config.static <- function()
 
                 # population map - NetCDF files template
                 in.tmpl.pop.map     = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
+
+                # scenario input file - NetCDF files template
+                in.tmpl.scenario    = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
 
                 # project dependent scenarios
                 scenarios           = data.frame(

@@ -11,6 +11,7 @@
   "in.file.rr":           "./ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
 
   "in.tmpl.pop.map":      "./ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
+  "in.tmpl.scenario":     "./NCDF_IN/${scenario}/FASST_75x75_${scenario}_${year}.nc",
 
   "scenarios":
   {
