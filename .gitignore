@@ -47,6 +47,11 @@ vignettes/*.pdf
 # docs/
 # R environment files - end
 
+# remove large files
+*.sav
+*.SAV
+*.nc
+
 
 # testing output files
 Files/testing/**/
