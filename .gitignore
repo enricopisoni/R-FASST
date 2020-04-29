@@ -50,7 +50,6 @@ vignettes/*.pdf
 # remove large files
 *.sav
 *.SAV
-*.nc
 
 
 # testing output files
