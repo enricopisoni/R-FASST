@@ -7,7 +7,3 @@
 *.sh text eol=lf
 # Denote all files that are truly binary and should not be modified.
 *.zip binary
-# large files
-*.nc filter=lfs diff=lfs merge=lfs -text
-*.sav filter=lfs diff=lfs merge=lfs -text
-*.SAV filter=lfs diff=lfs merge=lfs -text

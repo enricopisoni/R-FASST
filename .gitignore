@@ -47,5 +47,8 @@ vignettes/*.pdf
 # docs/
 # R environment files - end
 
+# ignore large files
+Files/INPUT/
+
 # testing output files
 Files/testing/**/
