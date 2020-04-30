@@ -50,7 +50,7 @@ health.impact <- function(
 
 
     # ----------------------------------------------------------------------
-    # ------------------------------- block 2-------------------------------
+    # ------------------------------- block 2 ------------------------------
     # load population, base mortality data and risk rate function parameters
     # ----------------------------------------------------------------------
 
@@ -143,13 +143,13 @@ health.impact <- function(
     dt2_hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
 
     # extract the appropriate RR parameters for each COD and assign to each variable - for easier tracking.
-    ihd.med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    ihd.lo     <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    ihd.hi     <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_lo     <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_hi     <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
 
-    stroke.med <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    stroke.lo  <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    stroke.hi  <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    stroke_med <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    stroke_lo  <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    stroke_hi  <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
 
 
     # Ozone RRs with log-lin ER function
@@ -185,10 +185,14 @@ health.impact <- function(
     af_lri_grid    <- array( 0, c( 3, jmg, img ) )       # ALL AGES
     af_lc_grid     <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
     af_dmt2_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-    af_ihd_grid    <- array( 0, c( 3, 15, jmg, img ) )   # 15 AGE CLASSES >25
-    af_stroke_grid <- array( 0, c( 3, 15, jmg, img ) )   # 15 AGE CLASSES >25
+    af_ihd_grid    <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
+    af_stroke_grid <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
 
-    # BLOCK 3 ############ START LOOP WITH SCENARIO ANALYSIS  - EACH LOOP = 1 SCENARIO #################
+    # ----------------------------------------------------------------------
+    # ------------------------------- block 3 ------------------------------
+    # ---- START LOOP WITH SCENARIO ANALYSIS  - EACH LOOP = 1 SCENARIO -----
+    # ----------------------------------------------------------------------
+
     for ( scen in config $ file $ scenarios $ name )
         for ( year in config $ file $ scenarios $ year )
         {
@@ -251,6 +255,33 @@ health.impact <- function(
                                 dt2_lo,
                                 dt2_hi
                        )
+
+
+            # in the IDL source, these variables are defined and updated but never used:
+            #  - SIG_MIN_AF_IHD
+            #  - SIG_MAX_AF_IHD
+            #  - SIG_MIN_AF_STROKE
+            #  - SIG_MAX_AF_STROKE
+            # moreover, variable SIG_MAX_AF_STROKE is updated in the original loop
+            # but in the last assignement onutside the loop it is updated
+            # using variable: SIG_MIN_AF_STROKE (line: 346);
+
+            print( sprintf( "Loop on AFs (%d ages) - begin", length( config $ model $ AGE_GRP ) ) )
+            sc_hires <- sc_hires[ , , 1 ]
+            for ( iage  in  seq_along( config $ model $ AGE_GRP ) )
+            {
+                print( sprintf( 'Age %d: %d', iage, config $ model $ AGE_GRP[ iage ] ) )
+
+                af_ihd_grid    [ 1, iage, , ]  <-  1 - 1 / rrate( ihd_med[ , iage ], sc_hires )
+                af_ihd_grid    [ 2, iage, , ]  <-  1 - 1 / rrate( ihd_lo [ , iage ], sc_hires )
+                af_ihd_grid    [ 3, iage, , ]  <-  1 - 1 / rrate( ihd_hi [ , iage ], sc_hires )
+
+                af_stroke_grid [ 1, iage, , ]  <-  1 - 1 / rrate( stroke_med[ , iage ], sc_hires )
+                af_stroke_grid [ 2, iage, , ]  <-  1 - 1 / rrate( stroke_lo [ , iage ], sc_hires )
+                af_stroke_grid [ 3, iage, , ]  <-  1 - 1 / rrate( stroke_hi [ , iage ], sc_hires )
+            }
+            print( sprintf( "Loop on AFs (%d ages) - end", length( config $ model $ AGE_GRP ) ) )
+
 
         }
 
