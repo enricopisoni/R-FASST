@@ -18,6 +18,17 @@ To install a package use the following command in R interpreter:
 install.packages( "<package-name>" )
 ```
 
+
+### Linux environment ###
+
+In Linux operating system (like Fedora) you should install the following packages:
+
+ * libcurl-devel
+ * openssl-devel
+ * libxml2-devel
+ * netcdf-devel
+
+
 ## Command line usage ##
 
 Run script without arguments to show arguments list.
