@@ -33,7 +33,7 @@ health.impact <- function(
                  )
 {
     # check input parameters
-    if ( ! file.exists( dir.root.out ) )
+    if ( ! dir.exists( dir.root.out ) )
     {
         stop( sprintf( "output directory '%s' does not exist (current working directory: '%s').", dir.root.out, getwd() ) )
     }
