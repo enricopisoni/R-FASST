@@ -3,8 +3,9 @@
 library( 'raster' )
 library( 'tidyverse' )
 
-source( 'fasst-write.R' )
+source( 'health-base-incidences.R' )
 source( 'rrate.R' )
+source( 'fasst-write.R' )
 
 
 #' Health impacts from high resolution FASST grid maps;
@@ -267,6 +268,7 @@ health.impact <- function(
             # using variable: SIG_MIN_AF_STROKE (line: 346);
 
             print( sprintf( "Loop on AFs (%d ages) - begin", length( config $ model $ AGE_GRP ) ) )
+            ptm <- proc.time()
             sc_hires <- sc_hires[ , , 1 ]
             for ( iage  in  seq_along( config $ model $ AGE_GRP ) )
             {
@@ -281,8 +283,24 @@ health.impact <- function(
                 af_stroke_grid [ 3, iage, , ]  <-  1 - 1 / rrate( stroke_hi [ , iage ], sc_hires )
             }
             print( sprintf( "Loop on AFs (%d ages) - end", length( config $ model $ AGE_GRP ) ) )
+            print( proc.time() - ptm )
 
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 3a -----------------------------------
+            # ------------------------- BASE INCIDENCES (MED,LO,UP) ---------------------------
+            # ---------------------------------------------------------------------------------
+            in.file.mr <- get.file.name.population(
+                                config $ file $ in.file.mrate,
+                                scen,
+                                year
+                          )
 
+            get.base.incidences(
+                in.file.mr,
+                year,
+                hrcntrcode,
+                cntr
+            )
         }
 
 
