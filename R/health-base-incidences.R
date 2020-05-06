@@ -110,12 +110,12 @@ print( jmg )                                            #--remove--
     {
 print( cntr.id )                                           # --remove--
        # country identification
-       imask <-  countries.grid == cntr.id
-
        # new code for Sudan since splitting South Sudan
        if ( cntr.id == 736 )
        {
-            imask <-  countries.grid == 729             # !!!!!!!!!!!!!11111
+            imask <-  countries.grid == 729
+       } else {
+            imask <-  countries.grid == cntr.id
        }
     }
 
