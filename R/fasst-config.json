@@ -9,7 +9,8 @@
   "in.file.cntrgrid":     "./ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
 
   "in.file.rr":           "./ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
-
+  "in.file.mrate":        "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_GBD_${year}.nc",
+    
   "in.tmpl.pop.map":      "./ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
   "in.tmpl.scenario":     "./NCDF_IN/${scenario}/FASST_75x75_${scenario}_${year}.nc",
 

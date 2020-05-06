@@ -4,7 +4,7 @@
 #'
 #' @param file path to JSON file with path to ancillary files,
 #'             or NA to use internal static configuration;
-#'             see function \code{\link{health.impact.config.json()}} for
+#'             see function \code{\link{health.impact.config.json()}}
 #'             for further details about this parameter;
 #'
 #' @return
@@ -53,8 +53,10 @@ health.impact.config.static <- function()
 {
         in.dir.root     <- '.'
         in.dir.ancil    <- file.path( in.dir.root,  'ANCILLARY' )
-        in.dir.gbd      <- file.path( in.dir.ancil, 'MORTALITY', 'BASEMORT2018' )
-        in.dir.rr       <- file.path( in.dir.ancil, 'MORTALITY', 'RRs2018', 'FIT' )
+        in.dir.mort     <- file.path( in.dir.ancil, 'MORTALITY' )
+        in.dir.gbd      <- file.path( in.dir.mort,  'BASEMORT2018' )
+        in.dir.bsmrt    <- file.path( in.dir.mort,  'GBD_BASEMORT_GRIDMAPS' )
+        in.dir.rr       <- file.path( in.dir.mort,  'RRs2018', 'FIT' )
         in.dir.tmpls    <- file.path( in.dir.root,  'CODE', 'TEMPLATES' )
         in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
         in.dir.ciesin   <- file.path( in.dir.ancil, 'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
@@ -74,6 +76,9 @@ health.impact.config.static <- function()
 
                 # risk function parameters
                 in.file.rr          = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),
+
+                # mortality base incidences
+                in.file.mrate       = file.path( in.dir.bsmrt,  'MRATE_GBD_${year}.nc' ),
 
                 # population map - NetCDF files template
                 in.tmpl.pop.map     = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
