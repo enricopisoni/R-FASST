@@ -187,6 +187,11 @@ health.impact.config.model <- function()
               # DO NOT CHANGE!
               # Generates string array of AGE GROUP NAMES (25 TO 95 IN 5 YEAR BINS) 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95
               AGE_GRP      = seq( from = 25, to = 95, by = 5 )
+
+# -- not- used --              # DO NOT CHANGE;  AVAILABLE YEARS OF STATS FOR MORTALITIES: 1990 - 2040.
+# -- not- used --              MORT_YEARS   = seq( from = 1990, to = 2040, by = 5 )
+# -- not- used --              # DO NOT CHANGE;  AVAILABLE YEARS OF POP AGE STRUCTURE DATA: 1990 - 2100 (UN 2017 REVISION, MEDIUM VARIANT FOR PROJECTED).
+# -- not- used --              POP_YEARS    = seq( from = 1990, to = 2100, by = 5 )
         )
 
         # --- model configurationd erived from the above one ---
