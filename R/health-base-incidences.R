@@ -90,33 +90,9 @@ compute.base.incidences <- function(
                             dmt2
                        )
 {
-print( 'countries.list' )                               #--remove--
-print( countries.list )                                 # --remove--
-print( 'copd' )                                         #--remove
-print( copd )                                         #--remove
-
 
     img           <- ncol( countries.grid )
     jmg           <- nrow( countries.grid )
-
-print( img )                                            #--remove--
-print( jmg )                                            #--remove--
-
-    MRATE_COPD0   <- array( 0, c( img, jmg ) )
-    MRATE_COPD1   <- array( 0, c( img, jmg ) )
-    MRATE_COPD2   <- array( 0, c( img, jmg ) )
-
-    MRATE_LC0     <- array( 0, c( img, jmg ) )
-    MRATE_LC1     <- array( 0, c( img, jmg ) )
-    MRATE_LC2     <- array( 0, c( img, jmg ) )
-
-    MRATE_LRI0    <- array( 0, c( img, jmg ) )
-    MRATE_LRI1    <- array( 0, c( img, jmg ) )
-    MRATE_LRI2    <- array( 0, c( img, jmg ) )
-
-    MRATE_DMT20   <- array( 0, c( img, jmg ) )
-    MRATE_DMT21   <- array( 0, c( img, jmg ) )
-    MRATE_DMT22   <- array( 0, c( img, jmg ) )
 
     MRATE_IHD0    <- array( 0, c( img, jmg ) )
     MRATE_IHD1    <- array( 0, c( img, jmg ) )
@@ -129,23 +105,6 @@ print( jmg )                                            #--remove--
     # lOOP THROUGH COUNTRIES; RETRIEVE BASE MORTALITY RATES AND MAP TO EACH OF
     # THE 3 GRID LAYERS (MED,LO,UP)
 
-    # check whether the year we are working on exists
-    theyear <- NULL
-    maxyear <- max( copd $ YEAR )
-    minyear <- min( copd $ YEAR )
-    if ( year > maxyear )
-    {
-        theyear <- maxyear
-    } else if ( year < minyear ) {
-        theyear <- minyear
-    } else {
-        if ( year %in%  copd $ YEAR )
-        {
-           theyear <- year
-        }
-    }
-print( theyear )                                        # --remove--
-
     # country names in upper case (used to match country names)
     countries   <- countries.list                                                       %>%
                    select( CNTR_ID, CNTR_NAME )                                         %>%
@@ -153,32 +112,15 @@ print( theyear )                                        # --remove--
                         CNTR_ID   = CNTR_ID,
                         CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en")
                    )
-print( countries )                                                                              # --remove--
 
     # read the values or interpolate if the requested year does not exist
-    if ( is.null( theyear ) )
-    {
-      year.lo     <-  max( copd $ YEAR[ copd $ YEAR <= year ] )
-      year.hi     <-  min( copd $ YEAR[ copd $ YEAR >= year ] )
+    copd.bycntr <- join.filter( copd, countries, year )
 
-      copd.bycntr <-  join.filter.interpolated( copd, countries, year.lo, year.hi )
+    lc.bycntr   <- join.filter( lc,   countries, year )
 
-      lc.bycntr   <-  join.filter.interpolated( lc,   countries, year.lo, year.hi )
+    lri.bycntr  <- join.filter( lri,  countries, year )
 
-      lri.bycntr  <-  join.filter.interpolated( lri,  countries, year.lo, year.hi )
-
-      dmt2.bycntr <-  join.filter.interpolated( dmt2, countries, year.lo, year.hi )
-
-    } else {
-
-      copd.bycntr <- join.filter( copd, countries, year )
-
-      lc.bycntr   <- join.filter( lc,   countries, year )
-
-      lri.bycntr  <- join.filter( lri,  countries, year )
-
-      dmt2.bycntr <- join.filter( dmt2, countries, year )
-    }
+    dmt2.bycntr <- join.filter( dmt2, countries, year )
 
 print( copd.bycntr )                                              # --remove--
 print( lc.bycntr )                                              # --remove--
@@ -206,81 +148,68 @@ join.filter <- function(
                    year
                )
 {
-   table                                                                %>%
-   select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-   filter( YEAR == year )                                               %>%
-   transmute(
-       CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
-       VAL       = VAL,
-       LO        = LO,
-       HI        = HI
-   )                                                                    %>%
-   inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
-}
+    # check whether the year we are working on exists
+    theyear <- NULL
+    maxyear <- max( table $ YEAR )
+    minyear <- min( table $ YEAR )
+    if ( year > maxyear )
+    {
+        theyear <- maxyear
+    } else if ( year < minyear ) {
+        theyear <- minyear
+    } else if ( year %in%  table $ YEAR ) {
+        theyear <- year
+    }
 
-# ------------------------------------------------------------
+    # read the values or interpolate if the requested year does not exist
+    if ( is.null( theyear ) )
+    {
+        year.lo <-  max( table $ YEAR[ table $ YEAR <= year ] )
+        year.hi <-  min( table $ YEAR[ table $ YEAR >= year ] )
+        num     <-  year - year.lo
+        den     <-  year.hi - year.lo
 
-#' Retrieve country values by interpolating values of two years
-#' then add the United Nations country identifier;
-#'
-#' @param table      the data tibble;
-#' @param countries  the countries name and identifier;
-#' @param year.lo    the lower year to filter;
-#' @param year.hi    the higher year to filter;
-#'
-#' @return  join between 'table' and 'countries' filtered
-#'          by 'year';
-#'
+        lower   <-  table                                                                %>%
+                    select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
+                    filter( YEAR == year.lo )                                            %>%
+                    transmute(
+                        CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                        VAL       = VAL,
+                        LO        = LO,
+                        HI        = HI
+                    )                                                                    %>%
+                    inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
 
-join.filter.interpolated <- function(
-                                table,
-                                countries,
-                                year.lo,
-                                year.hi
-                            )
-{
-print( 'inter' )                                                #--remove--
-    year   <-  year.lo + 2      # --remove--
-print( year )                           #--remove--
+        higher  <- table                                                                %>%
+                   select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
+                   filter( YEAR == year.hi )                                            %>%
+                   transmute(
+                       CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                       VAL       = VAL,
+                       LO        = LO,
+                       HI        = HI
+                   )                                                                    %>%
+                   inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
 
-    num    <-  year - year.lo
-    den    <-  year.hi - year.lo
-print( num )                                    # --remove--
-print( den )                                    # --remove--
-
-    lower  <-  table                                                                %>%
-               select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-               filter( YEAR == year.lo )                                            %>%
-               transmute(
-                   CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
-                   VAL       = VAL,
-                   LO        = LO,
-                   HI        = HI
-               )                                                                    %>%
-               inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
-print( 'lower' )                                                                                  #--remove--
-print( lower )                                                                                  #--remove--
-
-    higher  <- table                                                                %>%
-               select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-               filter( YEAR == year.hi )                                            %>%
-               transmute(
-                   CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
-                   VAL       = VAL,
-                   LO        = LO,
-                   HI        = HI
-               )                                                                    %>%
-               inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
-print( 'higher' )                                                                                  #--remove--
-print( higher )                                                                                  #--remove--
-
-
-    inner_join( lower, higher, by = c( "CNTR_ID" = "CNTR_ID" ), suffix = c( ".lo", ".hi" ) )    %>%
-    transmute(
-        CNTR_ID    =  CNTR_ID,
-        CNTR_NAME  =  CNTR_NAME.lo,
-        VAL        =  VAL.lo + ( VAL.hi - VAL.lo ) * num / den,
-        LO         =  LO.lo  + ( LO.hi  - LO.lo )  * num / den,
-        HI         =  HI.lo  + ( HI.hi  - HI.lo )  * num / den
-    )
+        result  <- inner_join( lower, higher, by = c( "CNTR_ID" = "CNTR_ID" ), suffix = c( ".lo", ".hi" ) )    %>%
+                   transmute(
+                       CNTR_ID    =  CNTR_ID,
+                       CNTR_NAME  =  CNTR_NAME.lo,
+                       VAL        =  VAL.lo + ( VAL.hi - VAL.lo ) * num / den,
+                       LO         =  LO.lo  + ( LO.hi  - LO.lo )  * num / den,
+                       HI         =  HI.lo  + ( HI.hi  - HI.lo )  * num / den
+                   )
+    } else {
+        result  <- table                                                                %>%
+                   select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
+                   filter( YEAR == year )                                               %>%
+                   transmute(
+                       CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                       VAL       = VAL,
+                       LO        = LO,
+                       HI        = HI
+                   )                                                                    %>%
+                   inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+    }
+    return( result )
 }
