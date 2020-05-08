@@ -299,7 +299,11 @@ health.impact <- function(
                 in.file.mr,
                 year,
                 hrcntrcode,
-                cntr
+                cntr,
+                copd,
+                lc,
+                lri,
+                dmt2
             )
         }
 

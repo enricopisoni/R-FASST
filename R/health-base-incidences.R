@@ -20,21 +20,26 @@ library( 'ncdf4' )
 #' @param year            the current year;
 #' @param countries.grid  the countries grid;
 #' @param countries.list  the list of all countries;
+#' @param copd
+#' @param lc
+#' @param lri
+#' @param dmt2
 #'
 #' @return
 #'
-
-# http://geog.uoregon.edu/GeogR/topics/netCDF-write-ncdf4.html
 
 get.base.incidences <- function(
                             in.file.mr,
                             year,
                             countries.grid,
-                            countries.list
+                            countries.list,
+                            copd,
+                            lc,
+                            lri,
+                            dmt2
                        )
 {
         # --- check if input file exists ---
-print( in.file.mr )                                             # --remove--
         if ( file.exists( in.file.mr ) )
         {
                 # --- input file exists, read it ---
@@ -46,7 +51,11 @@ print( in.file.mr )                                             # --remove--
                 compute.base.incidences(
                             year,
                             countries.grid,
-                            countries.list
+                            countries.list,
+                            copd,
+                            lc,
+                            lri,
+                            dmt2
                        )
 
 
@@ -63,7 +72,10 @@ print( in.file.mr )                                             # --remove--
 #' @param year            the current year;
 #' @param countries.grid  the countries grid;
 #' @param countries.list  the list of all countries;
-#' @param
+#' @param copd
+#' @param lc
+#' @param lri
+#' @param dmt2
 #'
 #' @return
 #'
@@ -71,9 +83,19 @@ print( in.file.mr )                                             # --remove--
 compute.base.incidences <- function(
                             year,
                             countries.grid,
-                            countries.list
+                            countries.list,
+                            copd,
+                            lc,
+                            lri,
+                            dmt2
                        )
 {
+print( 'countries.list' )                               #--remove--
+print( countries.list )                                 # --remove--
+print( 'copd' )                                         #--remove
+print( copd )                                         #--remove
+
+
     img           <- ncol( countries.grid )
     jmg           <- nrow( countries.grid )
 
@@ -106,17 +128,84 @@ print( jmg )                                            #--remove--
 
     # lOOP THROUGH COUNTRIES; RETRIEVE BASE MORTALITY RATES AND MAP TO EACH OF
     # THE 3 GRID LAYERS (MED,LO,UP)
-    for ( cntr.id in  countries.list $ CNTR_ID )
+
+    # check whether the year we are working on exists
+    theyear <- NULL
+    maxyear <- max( copd $ YEAR )
+    minyear <- min( copd $ YEAR )
+    if ( year > maxyear )
     {
-print( cntr.id )                                           # --remove--
-       # country identification
-       # new code for Sudan since splitting South Sudan
-       if ( cntr.id == 736 )
-       {
-            imask <-  countries.grid == 729
-       } else {
-            imask <-  countries.grid == cntr.id
-       }
+        theyear <- maxyear
+    } else if ( year < minyear ) {
+        theyear <- minyear
+    } else {
+        if ( year %in%  copd $ YEAR )
+        {
+           theyear <- year
+        }
     }
+print( theyear )                                        # --remove--
+
+    # country names in upper case (used to match country names)
+    countries   <- countries.list                                                       %>%
+                   select( CNTR_ID, CNTR_NAME )                                         %>%
+                   transmute(
+                        CNTR_ID   = CNTR_ID,
+                        CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en")
+                   )
+print( countries )                                                                              # --remove--
+
+    # read the values or interpolate if the requested year does not exist
+    if ( is.null( theyear ) )
+    {
+    } else {
+
+      copd.bycntr <- copd                                                                 %>%
+                     select( CNTR_NAME, VAL, LO, HI )                                     %>%
+                     transmute(
+                          CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                          VAL       = VAL,
+                          LO        = LO,
+                          HI        = HI
+                     )                                                                    %>%
+                     inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+
+      lc.bycntr   <- lc                                                                   %>%
+                     select( CNTR_NAME, VAL, LO, HI )                                     %>%
+                     transmute(
+                          CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                          VAL       = VAL,
+                          LO        = LO,
+                          HI        = HI
+                     )                                                                    %>%
+                     inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+
+      lri.bycntr  <- lri                                                                  %>%
+                     select( CNTR_NAME, VAL, LO, HI )                                     %>%
+                     transmute(
+                          CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                          VAL       = VAL,
+                          LO        = LO,
+                          HI        = HI
+                     )                                                                    %>%
+                     inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+
+      dmt2.bycntr <- dmt2                                                                 %>%
+                     select( CNTR_NAME, VAL, LO, HI )                                     %>%
+                     transmute(
+                          CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                          VAL       = VAL,
+                          LO        = LO,
+                          HI        = HI
+                     )                                                                    %>%
+                     inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+
+print( copd.bycntr )                                              # --remove--
+print( lc.bycntr )                                              # --remove--
+print( lri.bycntr )                                              # --remove--
+print( dmt2.bycntr )                                              # --remove--
+    }
+
+
 
 }
