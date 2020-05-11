@@ -17,7 +17,7 @@
   "scenarios":
   {
     "name": [ "SSP2" ],
-    "year": [ 2015 ],
+      "year": [ 2015, 2017 ],
     "ssp":  [ "sep1" ]
   }
 }
