@@ -133,13 +133,16 @@ print( dmt2.bycntr )                                              # --remove--
 
 #' Retrieve values by country and year then add the United Nations
 #' country identifier;
+#' If the year defined by formal parameter \code{year} is not
+#' available in the \code{table}, the requested values are
+#' computed by interpolation;
 #'
 #' @param table      the data tibble;
 #' @param countries  the countries name and identifier;
 #' @param year       the year to filter;
 #'
-#' @return  join between 'table' and 'countries' filtered
-#'          by 'year';
+#' @return  per each country, defined by its identifier code,
+#'          the three values: median, lower and higher;
 #'
 
 join.filter <- function(
@@ -169,47 +172,49 @@ join.filter <- function(
         num     <-  year - year.lo
         den     <-  year.hi - year.lo
 
-        lower   <-  table                                                                %>%
+        lower   <-  table                                                               %>%
+                    select( CNTR_NAME, YEAR, VAL, LO, HI )                              %>%
+                    filter( YEAR == year.lo )                                           %>%
+                    transmute(
+                        CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                        VAL       = VAL,
+                        LO        = LO,
+                        HI        = HI
+                    )                                                                   %>%
+                    inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )        %>%
+                    select( CNTR_ID, VAL, LO, HI )
+
+        higher  <-  table                                                               %>%
+                    select( CNTR_NAME, YEAR, VAL, LO, HI )                              %>%
+                    filter( YEAR == year.hi )                                           %>%
+                    transmute(
+                        CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
+                        VAL       = VAL,
+                        LO        = LO,
+                        HI        = HI
+                    )                                                                   %>%
+                    inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )        %>%
+                    select( CNTR_ID, VAL, LO, HI )
+
+        result  <-  inner_join( lower, higher, by = c( "CNTR_ID" = "CNTR_ID" ), suffix = c( ".lo", ".hi" ) )    %>%
+                    transmute(
+                        CNTR_ID    =  CNTR_ID,
+                        VAL        =  VAL.lo + ( VAL.hi - VAL.lo ) * num / den,
+                        LO         =  LO.lo  + ( LO.hi  - LO.lo )  * num / den,
+                        HI         =  HI.lo  + ( HI.hi  - HI.lo )  * num / den
+                    )
+    } else {
+        result  <-  table                                                                %>%
                     select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-                    filter( YEAR == year.lo )                                            %>%
+                    filter( YEAR == year )                                               %>%
                     transmute(
                         CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
                         VAL       = VAL,
                         LO        = LO,
                         HI        = HI
                     )                                                                    %>%
-                    inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
-
-        higher  <- table                                                                %>%
-                   select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-                   filter( YEAR == year.hi )                                            %>%
-                   transmute(
-                       CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
-                       VAL       = VAL,
-                       LO        = LO,
-                       HI        = HI
-                   )                                                                    %>%
-                   inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
-
-        result  <- inner_join( lower, higher, by = c( "CNTR_ID" = "CNTR_ID" ), suffix = c( ".lo", ".hi" ) )    %>%
-                   transmute(
-                       CNTR_ID    =  CNTR_ID,
-                       CNTR_NAME  =  CNTR_NAME.lo,
-                       VAL        =  VAL.lo + ( VAL.hi - VAL.lo ) * num / den,
-                       LO         =  LO.lo  + ( LO.hi  - LO.lo )  * num / den,
-                       HI         =  HI.lo  + ( HI.hi  - HI.lo )  * num / den
-                   )
-    } else {
-        result  <- table                                                                %>%
-                   select( CNTR_NAME, YEAR, VAL, LO, HI )                               %>%
-                   filter( YEAR == year )                                               %>%
-                   transmute(
-                       CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en"),
-                       VAL       = VAL,
-                       LO        = LO,
-                       HI        = HI
-                   )                                                                    %>%
-                   inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )
+                    inner_join( countries, by = c( "CNTR_NAME" = "CNTR_NAME" ) )         %>%
+                    select( CNTR_ID, VAL, LO, HI )
     }
     return( result )
 }
