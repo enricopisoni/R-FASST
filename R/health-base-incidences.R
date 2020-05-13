@@ -90,18 +90,6 @@ compute.base.incidences <- function(
                             dmt2
                        )
 {
-
-    img           <- ncol( countries.grid )
-    jmg           <- nrow( countries.grid )
-
-    MRATE_IHD0    <- array( 0, c( img, jmg ) )
-    MRATE_IHD1    <- array( 0, c( img, jmg ) )
-    MRATE_IHD2    <- array( 0, c( img, jmg ) )
-
-    MRATE_STROKE0 <- array( 0, c( img, jmg ) )
-    MRATE_STROKE1 <- array( 0, c( img, jmg ) )
-    MRATE_STROKE2 <- array( 0, c( img, jmg ) )
-
     # lOOP THROUGH COUNTRIES; RETRIEVE BASE MORTALITY RATES AND MAP TO EACH OF
     # THE 3 GRID LAYERS (MED,LO,UP)
 
