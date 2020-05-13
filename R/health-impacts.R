@@ -194,9 +194,11 @@ health.impact <- function(
     # ---- START LOOP WITH SCENARIO ANALYSIS  - EACH LOOP = 1 SCENARIO -----
     # ----------------------------------------------------------------------
 
-    for ( scen in config $ file $ scenarios $ name )
-        for ( year in config $ file $ scenarios $ year )
+    for ( scen  in  config $ file $ scenarios $ name )
+        for ( year  in  config $ file $ scenarios $ year )
         {
+            print( sprintf( "Scenario name: '%s' - Year: %d", scen, year ) )
+
             # restore HIGH RESOLUTION (HIRES) population map(s) and interpolate if needed
             population.map <- get.population.map(
                                         scen,
@@ -306,7 +308,6 @@ health.impact <- function(
                 dmt2
             )
         }
-
 
     # write the output
     fasst.write(
