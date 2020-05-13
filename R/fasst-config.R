@@ -87,7 +87,7 @@ health.impact.config.static <- function()
                 in.tmpl.scenario    = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
 
                 # project dependent scenarios
-                scenarios           = data.frame(
+                scenarios           = list(
                                                 "name" = c( "SSP1_26" ),
                                                 "year" = c( 2015 ),
                                                 "ssp"  = c( "sep1" )
@@ -122,7 +122,7 @@ health.impact.config.json <- function( file )
     config <- fromJSON( file = file )
 
     # --- update the configuration read accordingly the expected configuration ---
-    config$scenarios <- as.data.frame( config$scenarios )
+    config$scenarios <- as.list( config$scenarios )
 
     # --- return the configuration ---
     config
