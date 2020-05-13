@@ -138,6 +138,8 @@ print( dmt2.bycntr )                                              # --remove--
 #' computed by interpolation;
 #'
 #' @param table      the data tibble;
+#'                   constraint: country name in field \code{CNTR_NAME}
+#'                   must be in upper case;
 #' @param countries  the countries name and identifier;
 #' @param year       the year to filter;
 #'
