@@ -305,7 +305,10 @@ health.impact <- function(
                 copd,
                 lc,
                 lri,
-                dmt2
+                dmt2,
+                length( config $ model $ AGE_GRP ),
+                ihd,
+                stroke
             )
         }
 
