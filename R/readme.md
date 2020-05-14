@@ -31,6 +31,14 @@ In Linux operating system (like Fedora) you should install the following package
 
 ## Command line usage ##
 
+To run easily the script in command line, in the same directory this file is stored, run one of the following files:
+
+ * `fasst-4-sherpa.bat`
+ * `fasst-4-sherpa.sh`
+
+The first one if you are on Windows system or the second one if you are using a Linux operating system.
+
+
 Run script without arguments to show arguments list.
 
 Arguments are:
@@ -43,6 +51,21 @@ Arguments are:
 
  * optional:
     * configuration JSON file, either an absolute path or a relative one from the working directory
+
+
+## Run in IDE ##
+
+You can run the script in R IDE/Gui as well.
+
+Let suppose the directory where this file is stored is: `<src-dir>`.
+In the IDE console type the following commands (by replacing "<src-dir>" with the full path to the directory where this file is stored):
+
+ * `setwd( '<src-dir>' )`
+ * `source( 'fasst-config.R' )`
+ * `source( 'health-impacts.R' )`
+ * `health.impact( 'Project', 'Model',  '1.0',  '../Files/testing',  health.impact.config( './testing-config.json' ) )`
+
+In the last command, we run the script with testing files and arbitrary project and model name and version.
 
 
 ## Output files ##
