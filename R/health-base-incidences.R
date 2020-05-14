@@ -89,7 +89,7 @@ get.base.incidences <- function(
 #' @param ihd
 #' @param stroke
 #'
-#' @return
+#' @return list of rasters with mortality base incidence per country;
 #'
 
 compute.base.incidences <- function(
@@ -129,6 +129,34 @@ compute.base.incidences <- function(
 
     stroke.bycntr  <- join.filter.ages( stroke, countries, year, ages_grp.size )
 
+    # create raster files
+    copd.raster    <- raster.create.layers.base(
+                                        countries.grid,
+                                        copd.bycntr
+                      )
+
+    lc.raster      <- raster.create.layers.base(
+                                        countries.grid,
+                                        lc.bycntr
+                      )
+
+    lri.raster     <- raster.create.layers.base(
+                                        countries.grid,
+                                        lri.bycntr
+                      )
+
+    dmt2.raster    <- raster.create.layers.base(
+                                        countries.grid,
+                                        dmt2.bycntr
+                      )
+
+    # return the computed rasters
+    list(
+            copd.raster = copd.raster,
+            lc.raster   = lc.raster,
+            lri.raster  = lri.raster,
+            dmt2.raster = dmt2.raster
+    )
 }
 
 # ------------------------------------------------------------
@@ -378,4 +406,72 @@ list.countries.without.enough.values <- function(
         summarise( COUNT = n() )        %>%
         filter( COUNT < grp.size )      %>%
         select( CNTR_NAME )
+}
+
+# ------------------------------------------------------------
+
+#' Projects the countries values to grid.
+#' Given a grid map, where in each cell there is a country identifier,
+#' and a table with, per each country three values, the fucntion
+#' creates a three layer raster with the country values, one value
+#' per layer.
+#'
+#' @param base.map grid with countries identifiers;
+#' @param table    countries values;
+#'
+#' @return three layer raster with country values;
+#'
+
+raster.create.layers.base <- function(
+                                base.map,
+                                table
+                             )
+{
+       # prepare the three layers
+       layer.val <- raster(
+                       ncol = ncol( base.map ),
+                       nrow = nrow( base.map ),
+                       xmn  = xmin( base.map ),
+                       xmx  = xmax( base.map ),
+                       ymn  = ymin( base.map ),
+                       ymx  = ymax( base.map )
+                )
+       values( layer.val ) <- 0
+
+       layer.lo  <- raster(
+                       ncol = ncol( base.map ),
+                       nrow = nrow( base.map ),
+                       xmn  = xmin( base.map ),
+                       xmx  = xmax( base.map ),
+                       ymn  = ymin( base.map ),
+                       ymx  = ymax( base.map )
+                )
+       values( layer.lo ) <- 0
+
+       layer.hi  <- raster(
+                       ncol = ncol( base.map ),
+                       nrow = nrow( base.map ),
+                       xmn  = xmin( base.map ),
+                       xmx  = xmax( base.map ),
+                       ymn  = ymin( base.map ),
+                       ymx  = ymax( base.map )
+                )
+       values( layer.hi ) <- 0
+
+       # fill the three layer
+       for( icntr in 1:nrow( table ) )
+       {
+           country               <- base.map[]  ==  table[ icntr, ] $ CNTR_ID
+
+           layer.val[ country ]  <-  table[ icntr, ] $ VAL
+           layer.lo[  country ]  <-  table[ icntr, ] $ LO
+           layer.hi[  country ]  <-  table[ icntr, ] $ HI
+       }
+
+       # stack the three layers
+       grid           <-  stack( layer.val, layer.lo, layer.hi )
+       names( grid )  <-  c( 'VAL', 'LO', 'HI' )
+
+       # return the stacked layers
+       return( grid )
 }
