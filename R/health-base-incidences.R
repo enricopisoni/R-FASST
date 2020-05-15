@@ -459,7 +459,12 @@ raster.create.layers.base <- function(
        # fill the three layer
        for( icntr in 1:nrow( table ) )
        {
-           country               <- base.map[]  ==  table[ icntr, ] $ CNTR_ID
+           cntr.id  <-  table[ icntr, ] $ CNTR_ID
+           if ( cntr.id == 736 )
+           {
+                cntr.id <- 729
+           }
+           country               <-  base.map[]  ==  cntr.id
 
            layer.val[ country ]  <-  table[ icntr, ] $ VAL
            layer.lo[  country ]  <-  table[ icntr, ] $ LO
