@@ -54,22 +54,20 @@ get.base.incidences <- function(
         } else {
 
                 # --- input file does not exist, compute it ---
-                compute.base.incidences(
-                            year,
-                            countries.grid,
-                            countries.list,
-                            copd,
-                            lc,
-                            lri,
-                            dmt2,
-                            ages_grp.size,
-                            ihd,
-                            stroke
-                       )
-
+                incidences  <- compute.base.incidences(
+                                    year,
+                                    countries.grid,
+                                    countries.list,
+                                    copd,
+                                    lc,
+                                    lri,
+                                    dmt2,
+                                    ages_grp.size,
+                                    ihd,
+                                    stroke
+                               )
 
                 # --- input file does not exist, write it ---
-
 
         }
 }
