@@ -344,6 +344,37 @@ health.impact <- function(
             raster.lri    <- raster.create.layers.base( hrcntrcode, mrate_lri  )
             raster.dmt2   <- raster.create.layers.base( hrcntrcode, mrate_dmt2 )
 
+par( ask = TRUE )
+plot( raster.copd )
+plot( raster.lc   )
+plot( raster.lri  )
+plot( raster.dmt2 )
+
+# the next file names are not so correct, but for short we appended the .nc
+writeRaster(
+        raster.copd,
+        filename  = paste( get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ), 'nc', sep = '.' ),
+        format    = "CDF",
+        overwrite = TRUE
+        )
+writeRaster(
+        raster.lc,
+        filename  = paste( get.file.name.population( config $ file $ in.tmpl.mrate.lc,   scen, year ), 'nc', sep = '.' ),
+        format    = "CDF",
+        overwrite = TRUE
+        )
+writeRaster(
+        raster.lri,
+        filename  = paste( get.file.name.population( config $ file $ in.tmpl.mrate.lri,   scen, year ), 'nc', sep = '.' ),
+        format    = "CDF",
+        overwrite = TRUE
+        )
+writeRaster(
+        raster.dmt2,
+        filename  = paste( get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ), 'nc', sep = '.' ),
+        format    = "CDF",
+        overwrite = TRUE
+        )
 
         }
 
