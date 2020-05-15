@@ -63,35 +63,40 @@ health.impact.config.static <- function()
         in.dir.ncdf     <- file.path( in.dir.root,  'NCDF_IN' )
 
         list(
-                in.file.pop.country = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
+                in.file.pop.country   = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
                 # files with base mortality rates (per 100k population)
-                in.file.copd        = file.path( in.dir.gbd,    'COPD_MORT_RATE_GBD2016.csv' ),
-                in.file.lc          = file.path( in.dir.gbd,    'LC_MORT_RATE_GBD2016.csv' ),
-                in.file.dmt2        = file.path( in.dir.gbd,    'DMT2_MORT_RATE_GBD2016.csv' ),
-                in.file.lri         = file.path( in.dir.gbd,    'LRI_MORT_RATE_GBD2016.csv' ),
-                in.file.ihd         = file.path( in.dir.gbd,    'IHD_MORT_RATE_GBD2016.csv' ),
-                in.file.stroke      = file.path( in.dir.gbd,    'STROKE_MORT_RATE_GBD2016.csv' ),
-                in.file.cntrgrid    = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
+                in.file.copd          = file.path( in.dir.gbd,    'COPD_MORT_RATE_GBD2016.csv' ),
+                in.file.lc            = file.path( in.dir.gbd,    'LC_MORT_RATE_GBD2016.csv' ),
+                in.file.dmt2          = file.path( in.dir.gbd,    'DMT2_MORT_RATE_GBD2016.csv' ),
+                in.file.lri           = file.path( in.dir.gbd,    'LRI_MORT_RATE_GBD2016.csv' ),
+                in.file.ihd           = file.path( in.dir.gbd,    'IHD_MORT_RATE_GBD2016.csv' ),
+                in.file.stroke        = file.path( in.dir.gbd,    'STROKE_MORT_RATE_GBD2016.csv' ),
+                in.file.cntrgrid      = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
 
                 # risk function parameters
-                in.file.rr          = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),
-
-                # mortality base incidences
-                in.file.mrate       = file.path( in.dir.bsmrt,  'MRATE_GBD_${year}.nc' ),
+                in.file.rr            = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),
 
                 # population map - NetCDF files template
-                in.tmpl.pop.map     = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
+                in.tmpl.pop.map       = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
 
                 # scenario input file - NetCDF files template
-                in.tmpl.scenario    = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
+                in.tmpl.scenario      = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
+
+                # mortality base incidences - csv file templates
+                in.tmpl.mrate.copd    = file.path( in.dir.bsmrt,  'MRATE_COPD_GBD_${year}.csv' ),
+                in.tmpl.mrate.lc      = file.path( in.dir.bsmrt,  'MRATE_LC_GBD_${year}.csv' ),
+                in.tmpl.mrate.dmt2    = file.path( in.dir.bsmrt,  'MRATE_DMT2_GBD_${year}.csv' ),
+                in.tmpl.mrate.lri     = file.path( in.dir.bsmrt,  'MRATE_LRI_GBD_${year}.csv' ),
+                in.tmpl.mrate.ihd     = file.path( in.dir.bsmrt,  'MRATE_IHD_GBD_${year}.csv' ),
+                in.tmpl.mrate.stroke  = file.path( in.dir.bsmrt,  'MRATE_STROKE_GBD_${year}.csv' ),
 
                 # project dependent scenarios
-                scenarios           = list(
-                                                "name" = c( "SSP1_26" ),
-                                                "year" = c( 2015 ),
-                                                "ssp"  = c( "sep1" )
-                                      )
+                scenarios             = list(
+                                                  "name" = c( "SSP1_26" ),
+                                                  "year" = c( 2015 ),
+                                                  "ssp"  = c( "sep1" )
+                                        )
         )
 }
 

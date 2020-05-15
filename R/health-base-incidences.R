@@ -3,158 +3,176 @@
 library( 'ncdf4' )
 
 
-#' Base incidences (MED,LO,UP) will be calculated and stored if gridmap was
-#' not previously stored (for particular year). Otherwise retrieve stored
-#' files.
+#' Notes on this file usage.
 #'
-#' Calculation done for central, lower and upper boundary values,
-#' and for each of 15 age classes for IHD and STROKE.
+#' Functions \code{get.base.incidences()} and \code{get.base.incidences.by.ages()}
+#' return the countries base incidence.
+#' Function attenpt to retrievea countries base incidence from file;
+#' if file doesn't exist, given input table, functions compute the base
+#' incidence and store it in file.
 #'
-#' Method: read country mortality values from a restored ASCI table
-#' and assign the value to each grid cell of the country in the global high
-#' resolution map.
+#' Base incidences returned by \code{get.base.incidences()} and
+#' \code{get.base.incidences.by.ages()} can be used to compute
+#' raster date using function \code{raster.create.layers.base()}.
 #'
-#' @param in.file.mr      country mortality archive; input file, if it has been
-#'                        already computed in a previous run; otherwise, output
-#'                        file if it does not exist;
-#' @param year            the current year;
-#' @param countries.grid  the countries grid;
+#' Before the above function could be used, the countries table with
+#' identifier and name must be prepared via function
+#' \code{slice.countries.list()}.
+#'
+
+# ------------------------------------------------------------
+
+#' To slice the countries table to columns with: country identifier and
+#' country name, where the latter is replaced by its name in upper case;
+#' This function prepares the countries table to be used with functions defined
+#' in this file, as described in functions comments below;
+#'
 #' @param countries.list  the list of all countries;
-#' @param copd
-#' @param lc
-#' @param lri
-#' @param dmt2
-#' @param ages_grp.size   the expected size of ages group;
-#' @param ihd
-#' @param stroke
 #'
-#' @return
+#' return the input list with only the columns: CNTR_ID and CNTR_NAME
+#'        where the country name is uppercase;
 #'
 
-get.base.incidences <- function(
-                            in.file.mr,
-                            year,
-                            countries.grid,
-                            countries.list,
-                            copd,
-                            lc,
-                            lri,
-                            dmt2,
-                            ages_grp.size,
-                            ihd,
-                            stroke
-                       )
+slice.countries.list <- function(
+                            countries.list
+                        )
 {
-        # --- check if input file exists ---
-        if ( file.exists( in.file.mr ) )
-        {
-                # --- input file exists, read it ---
-
-
-        } else {
-
-                # --- input file does not exist, compute it ---
-                incidences  <- compute.base.incidences(
-                                    year,
-                                    countries.grid,
-                                    countries.list,
-                                    copd,
-                                    lc,
-                                    lri,
-                                    dmt2,
-                                    ages_grp.size,
-                                    ihd,
-                                    stroke
-                               )
-
-                # --- input file does not exist, write it ---
-
-        }
+    countries.list                                                       %>%
+    select( CNTR_ID, CNTR_NAME )                                         %>%
+    transmute(
+         CNTR_ID   = CNTR_ID,
+         CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en")
+    )
 }
 
 # ------------------------------------------------------------
 
-#' Core function to compute the mortality base incidence;
+#' Base incidences (MED, LO, UP) per country is returned;
+#' if input file is already present, it is loaded,
+#' otherwise base incidences per country are computed and
+#' stored for future retrieval;
 #'
+#' @param file            the input/oupt file with countries information;
 #' @param year            the current year;
-#' @param countries.grid  the countries grid;
 #' @param countries.list  the list of all countries;
-#' @param copd
-#' @param lc
-#' @param lri
-#' @param dmt2
-#' @param ages_grp.size   the expected size of ages group;
-#' @param ihd
-#' @param stroke
+#'                        as returned from function \code{slice.countries.list()};
+#' @param table           table with informations per country;
 #'
-#' @return list of rasters with mortality base incidence per country;
+#' @return table with: country identifier and its values;
 #'
 
-compute.base.incidences <- function(
+get.base.incidences <- function(
+                            file,
                             year,
-                            countries.grid,
                             countries.list,
-                            copd,
-                            lc,
-                            lri,
-                            dmt2,
-                            ages_grp.size,
-                            ihd,
-                            stroke
+                            table
                        )
 {
-    # lOOP THROUGH COUNTRIES; RETRIEVE BASE MORTALITY RATES AND MAP TO EACH OF
-    # THE 3 GRID LAYERS (MED,LO,UP)
 
-    # country names in upper case (used to match country names)
-    countries   <- countries.list                                                       %>%
-                   select( CNTR_ID, CNTR_NAME )                                         %>%
-                   transmute(
-                        CNTR_ID   = CNTR_ID,
-                        CNTR_NAME = str_to_upper( CNTR_NAME, locale = "en")
-                   )
+    if ( file.exists( file ) )
+    {
+        # --- input file exists, read it ---
+        table.bycntr   <- read_csv(
+                            file,
+                            col_types = cols(
+                                           CNTR_ID = col_integer(),
+                                           VAL     = col_double(),
+                                           LO      = col_double(),
+                                           HI      = col_double()
+                                        )
+                          )
 
-    # read the values or interpolate if the requested year does not exist
-    copd.bycntr    <- join.filter( copd, countries, year )
+    } else {
 
-    lc.bycntr      <- join.filter( lc,   countries, year )
+        # --- input file does not exist, compute it ---
 
-    lri.bycntr     <- join.filter( lri,  countries, year )
+        # read the values or interpolate if the requested year does not exist
+        table.bycntr   <- join.filter(
+                                    table,
+                                    countries.list,
+                                    year
+                          )
 
-    dmt2.bycntr    <- join.filter( dmt2, countries, year )
+        # --- input file does not exist, write it ---
+        dir.name  <-  dirname( file )
+        dir.create( dir.name, recursive = TRUE, showWarnings = FALSE )
+        write_csv(
+            table.bycntr,
+            file
+        )
 
-    ihd.bycntr     <- join.filter.ages( ihd,    countries, year, ages_grp.size )
+    }
 
-    stroke.bycntr  <- join.filter.ages( stroke, countries, year, ages_grp.size )
+    # --- the tables and rasters collection ---
+    return( table.bycntr )
+}
 
-    # create raster files
-    copd.raster    <- raster.create.layers.base(
-                                        countries.grid,
-                                        copd.bycntr
-                      )
+# ------------------------------------------------------------
 
-    lc.raster      <- raster.create.layers.base(
-                                        countries.grid,
-                                        lc.bycntr
-                      )
+#' Base incidences (MED, LO, UP) per country is returned;
+#' if input files are already present, they are loaded,
+#' otherwise base incidences per country are computed and
+#' stored for future retrieval;
+#'
+#' Calculation done for central, lower and upper boundary values,
+#' and for each of 15 age classes.
+#'
+#' @param file            the input/oupt file with countries information;
+#' @param year            the current year;
+#' @param countries.list  the list of all countries;
+#'                        as returned from function \code{slice.countries.list()};
+#' @param ages_grp.size   the expected size of ages group;
+#' @param table           table with informations per country;
+#'
+#' @return table with: country identifier and its values;
+#'
 
-    lri.raster     <- raster.create.layers.base(
-                                        countries.grid,
-                                        lri.bycntr
-                      )
+get.base.incidences.by.ages <- function(
+                                  file,
+                                  year,
+                                  countries.list,
+                                  ages_grp.size,
+                                  table
+                               )
+{
 
-    dmt2.raster    <- raster.create.layers.base(
-                                        countries.grid,
-                                        dmt2.bycntr
-                      )
+    if ( file.exists( file ) )
+    {
+        # --- input file exists, read it ---
+        table.bycntr   <- read_csv(
+                            file,
+                            col_types = cols(
+                                           CNTR_ID = col_integer(),
+                                           AGE_ID  = col_integer(),
+                                           VAL     = col_double(),
+                                           LO      = col_double(),
+                                           HI      = col_double()
+                                        )
+                          )
+    } else {
 
-    # return the computed rasters
-    list(
-            copd.raster = copd.raster,
-            lc.raster   = lc.raster,
-            lri.raster  = lri.raster,
-            dmt2.raster = dmt2.raster
-    )
+        # --- input file does not exist, compute it ---
+
+        # read the values or interpolate if the requested year does not exist
+        table.bycntr   <- join.filter.ages(
+                                    table,
+                                    countries.list,
+                                    year,
+                                    ages_grp.size
+                          )
+
+        # --- input file does not exist, write it ---
+        dir.name  <-  dirname( file )
+        dir.create( dir.name, recursive = TRUE, showWarnings = FALSE )
+        write_csv(
+            table.bycntr,
+            file
+        )
+
+    }
+
+    # --- the tables and rasters collection ---
+    return( table.bycntr )
 }
 
 # ------------------------------------------------------------
@@ -181,6 +199,7 @@ join.filter <- function(
                    year
                )
 {
+
     # check whether the year we are working on exists
     theyear <- NULL
     maxyear <- max( table $ YEAR )
@@ -416,6 +435,7 @@ list.countries.without.enough.values <- function(
 #'
 #' @param base.map grid with countries identifiers;
 #' @param table    countries values;
+#'                 as returned from function \code{get.base.incidences()};
 #'
 #' @return three layer raster with country values;
 #'
