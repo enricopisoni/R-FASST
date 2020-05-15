@@ -291,25 +291,60 @@ health.impact <- function(
             # ------------------------------------ block 3a -----------------------------------
             # ------------------------- BASE INCIDENCES (MED,LO,UP) ---------------------------
             # ---------------------------------------------------------------------------------
-            in.file.mr <- get.file.name.population(
-                                config $ file $ in.file.mrate,
-                                scen,
-                                year
-                          )
 
-            get.base.incidences(
-                in.file.mr,
-                year,
-                hrcntrcode,
-                cntr,
-                copd,
-                lc,
-                lri,
-                dmt2,
-                length( config $ model $ AGE_GRP ),
-                ihd,
-                stroke
-            )
+            cntr.sliced  <- slice.countries.list( cntr )
+
+            mrate_copd   <- get.base.incidences(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        copd
+                            )
+
+            mrate_lc     <- get.base.incidences(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        lc
+                            )
+
+            mrate_lri    <- get.base.incidences(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        lri
+                            )
+
+            mrate_dmt2   <- get.base.incidences(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        dmt2
+                            )
+
+            mrate_ihd    <- get.base.incidences.by.ages(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        length( config $ model $ AGE_GRP ),
+                                        ihd
+                            )
+
+            mrate_stroke <- get.base.incidences.by.ages(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                        year,
+                                        cntr.sliced,
+                                        length( config $ model $ AGE_GRP ),
+                                        stroke
+                            )
+
+            # --- create ratser images ---
+            raster.copd   <- raster.create.layers.base( hrcntrcode, mrate_copd )
+            raster.lc     <- raster.create.layers.base( hrcntrcode, mrate_lc   )
+            raster.lri    <- raster.create.layers.base( hrcntrcode, mrate_lri  )
+            raster.dmt2   <- raster.create.layers.base( hrcntrcode, mrate_dmt2 )
+
+
         }
 
     # write the output
