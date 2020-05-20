@@ -11,9 +11,16 @@ library( 'ncdf4' )
 #' if file doesn't exist, given input table, functions compute the base
 #' incidence and store it in file.
 #'
-#' Base incidences returned by \code{get.base.incidences()} and
-#' \code{get.base.incidences.by.ages()} can be used to compute
-#' raster date using function \code{raster.create.layers.base()}.
+#' Base incidences returned by \code{get.base.incidences()}
+#' can be used to create a raster via \code{raster.base.incidences()};
+#' the later function will store in file the raster computed, the same
+#' file will be used to load the raster instead to compute it.
+#'
+#' Base incidences returned by \code{get.base.incidences.by.ages()}
+#' can be used to create a 4 dimensions vector via
+#' \code{raster.base.incidences.by.ages()};
+#' also this function will store the 4 dimensions vector in a file
+#' to be used later, if it exists, to avoid the computation.
 #'
 #' Before the above function could be used, the countries table with
 #' identifier and name must be prepared via function
@@ -52,7 +59,10 @@ slice.countries.list <- function(
 #' otherwise base incidences per country are computed and
 #' stored for future retrieval;
 #'
-#' @param file            the input/oupt file with countries information;
+#' @param file            the input/output file with countries information;
+#'                        actual parameter must not have the file extansion,
+#'                        the function will append the file extension accordingly
+#'                        the file type handled;
 #' @param year            the current year;
 #' @param countries.list  the list of all countries;
 #'                        as returned from function \code{slice.countries.list()};
@@ -68,6 +78,7 @@ get.base.incidences <- function(
                             table
                        )
 {
+    file <- paste( file, 'csv', sep ='.' )
 
     if ( file.exists( file ) )
     {
@@ -117,7 +128,10 @@ get.base.incidences <- function(
 #' Calculation done for central, lower and upper boundary values,
 #' and for each of 15 age classes.
 #'
-#' @param file            the input/oupt file with countries information;
+#' @param file            the input/output file with countries information;
+#'                        actual parameter must not have the file extansion,
+#'                        the function will append the file extension accordingly
+#'                        the file type handled;
 #' @param year            the current year;
 #' @param countries.list  the list of all countries;
 #'                        as returned from function \code{slice.countries.list()};
@@ -135,6 +149,7 @@ get.base.incidences.by.ages <- function(
                                   table
                                )
 {
+    file <- paste( file, 'csv', sep ='.' )
 
     if ( file.exists( file ) )
     {
@@ -433,68 +448,95 @@ list.countries.without.enough.values <- function(
 #' creates a three layer raster with the country values, one value
 #' per layer.
 #'
+#' @param file     the input/output file with countries information;
+#'                 actual parameter must not have the file extansion,
+#'                 the function will append the file extension accordingly
+#'                 the file type handled;
 #' @param base.map grid with countries identifiers;
 #' @param table    countries values;
-#'                 as returned from function \code{get.base.incidences()};
+#'                 as returned from function \code{get.base.incidences()}
+#'                 with columns: CNTR_ID, VAL, LO, HI;
 #'
 #' @return three layer raster with country values;
 #'
 
-raster.create.layers.base <- function(
+raster.base.incidences <- function(
+                                file,
                                 base.map,
                                 table
-                             )
+                          )
 {
-       # prepare the three layers
-       layer.val <- raster(
-                       ncol = ncol( base.map ),
-                       nrow = nrow( base.map ),
-                       xmn  = xmin( base.map ),
-                       xmx  = xmax( base.map ),
-                       ymn  = ymin( base.map ),
-                       ymx  = ymax( base.map )
-                )
-       values( layer.val ) <- 0
+    file <- paste( file, 'nc', sep ='.' )
 
-       layer.lo  <- raster(
-                       ncol = ncol( base.map ),
-                       nrow = nrow( base.map ),
-                       xmn  = xmin( base.map ),
-                       xmx  = xmax( base.map ),
-                       ymn  = ymin( base.map ),
-                       ymx  = ymax( base.map )
-                )
-       values( layer.lo ) <- 0
+    if ( file.exists( file ) )
+    {
+        # --- load the raster ---
 
-       layer.hi  <- raster(
-                       ncol = ncol( base.map ),
-                       nrow = nrow( base.map ),
-                       xmn  = xmin( base.map ),
-                       xmx  = xmax( base.map ),
-                       ymn  = ymin( base.map ),
-                       ymx  = ymax( base.map )
-                )
-       values( layer.hi ) <- 0
+        grid  <-  raster( file )
 
-       # fill the three layer
-       for( icntr in 1:nrow( table ) )
-       {
-           cntr.id  <-  table[ icntr, ] $ CNTR_ID
-           if ( cntr.id == 736 )
-           {
-                cntr.id <- 729
-           }
-           country               <-  base.map[]  ==  cntr.id
+    } else {
+        # --- compute the layers matrices ---
 
-           layer.val[ country ]  <-  table[ icntr, ] $ VAL
-           layer.lo[  country ]  <-  table[ icntr, ] $ LO
-           layer.hi[  country ]  <-  table[ icntr, ] $ HI
-       }
+        # prepare the three layers
+        layer.val <- raster(
+                        ncol = ncol( base.map ),
+                        nrow = nrow( base.map ),
+                        xmn  = xmin( base.map ),
+                        xmx  = xmax( base.map ),
+                        ymn  = ymin( base.map ),
+                        ymx  = ymax( base.map )
+                 )
+        values( layer.val ) <- 0
 
-       # stack the three layers
-       grid           <-  stack( layer.val, layer.lo, layer.hi )
-       names( grid )  <-  c( 'VAL', 'LO', 'HI' )
+        layer.lo  <- raster(
+                        ncol = ncol( base.map ),
+                        nrow = nrow( base.map ),
+                        xmn  = xmin( base.map ),
+                        xmx  = xmax( base.map ),
+                        ymn  = ymin( base.map ),
+                        ymx  = ymax( base.map )
+                 )
+        values( layer.lo ) <- 0
 
-       # return the stacked layers
-       return( grid )
+        layer.hi  <- raster(
+                        ncol = ncol( base.map ),
+                        nrow = nrow( base.map ),
+                        xmn  = xmin( base.map ),
+                        xmx  = xmax( base.map ),
+                        ymn  = ymin( base.map ),
+                        ymx  = ymax( base.map )
+                 )
+        values( layer.hi ) <- 0
+
+        # fill the three layer
+        for( icntr in 1:nrow( table ) )
+        {
+            cntr.id  <-  table[ icntr, ] $ CNTR_ID
+            if ( cntr.id == 736 )
+            {
+                 cntr.id <- 729
+            }
+            country               <-  base.map[]  ==  cntr.id
+
+            layer.val[ country ]  <-  table[ icntr, ] $ VAL
+            layer.lo[  country ]  <-  table[ icntr, ] $ LO
+            layer.hi[  country ]  <-  table[ icntr, ] $ HI
+        }
+
+        # stack the three layers
+        grid           <-  stack( layer.val, layer.lo, layer.hi )
+        names( grid )  <-  c( 'VAL', 'LO', 'HI' )
+
+        # --- store the matrices ---
+        writeRaster(
+                grid,
+                filename  = file,
+                format    = "CDF",
+                overwrite = TRUE
+        )
+
+    }
+
+    # return the stacked layers
+    return( grid )
 }
