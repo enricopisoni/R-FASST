@@ -13,12 +13,12 @@
   "in.tmpl.pop.map":      "./ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
   "in.tmpl.scenario":     "./NCDF_IN/${scenario}/FASST_75x75_${scenario}_${year}.nc",
 
-  "in.tmpl.mrate.copd":    "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}.csv",
-  "in.tmpl.mrate.lc":      "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}.csv",
-  "in.tmpl.mrate.dmt2":    "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}.csv",
-  "in.tmpl.mrate.lri":     "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}.csv",
-  "in.tmpl.mrate.ihd":     "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}.csv",
-  "in.tmpl.mrate.stroke":  "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}.csv",
+  "in.tmpl.mrate.copd":    "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
+  "in.tmpl.mrate.lc":      "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
+  "in.tmpl.mrate.dmt2":    "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}",
+  "in.tmpl.mrate.lri":     "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}",
+  "in.tmpl.mrate.ihd":     "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}",
+  "in.tmpl.mrate.stroke":  "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}",
 
   "scenarios":
   {

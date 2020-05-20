@@ -84,12 +84,12 @@ health.impact.config.static <- function()
                 in.tmpl.scenario      = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
 
                 # mortality base incidences - csv file templates
-                in.tmpl.mrate.copd    = file.path( in.dir.bsmrt,  'MRATE_COPD_GBD_${year}.csv' ),
-                in.tmpl.mrate.lc      = file.path( in.dir.bsmrt,  'MRATE_LC_GBD_${year}.csv' ),
-                in.tmpl.mrate.dmt2    = file.path( in.dir.bsmrt,  'MRATE_DMT2_GBD_${year}.csv' ),
-                in.tmpl.mrate.lri     = file.path( in.dir.bsmrt,  'MRATE_LRI_GBD_${year}.csv' ),
-                in.tmpl.mrate.ihd     = file.path( in.dir.bsmrt,  'MRATE_IHD_GBD_${year}.csv' ),
-                in.tmpl.mrate.stroke  = file.path( in.dir.bsmrt,  'MRATE_STROKE_GBD_${year}.csv' ),
+                in.tmpl.mrate.copd    = file.path( in.dir.bsmrt,  'MRATE_COPD_GBD_${year}' ),
+                in.tmpl.mrate.lc      = file.path( in.dir.bsmrt,  'MRATE_LC_GBD_${year}' ),
+                in.tmpl.mrate.dmt2    = file.path( in.dir.bsmrt,  'MRATE_DMT2_GBD_${year}' ),
+                in.tmpl.mrate.lri     = file.path( in.dir.bsmrt,  'MRATE_LRI_GBD_${year}' ),
+                in.tmpl.mrate.ihd     = file.path( in.dir.bsmrt,  'MRATE_IHD_GBD_${year}' ),
+                in.tmpl.mrate.stroke  = file.path( in.dir.bsmrt,  'MRATE_STROKE_GBD_${year}' ),
 
                 # project dependent scenarios
                 scenarios             = list(
