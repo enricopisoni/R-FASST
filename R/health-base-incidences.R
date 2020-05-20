@@ -540,3 +540,76 @@ raster.base.incidences <- function(
     # return the stacked layers
     return( grid )
 }
+
+# ------------------------------------------------------------
+
+#' Projects the countries values to 4 dimensions vector.
+#' Given a grid map, where in each cell there is a country identifier,
+#' and a table with, per each country three values per age group,
+#' the fucntion a four dimensions vector: value type, age group and
+#' the grid.
+#'
+#' @param file            the input/output file with countries information;
+#'                        actual parameter must not have the file extansion,
+#'                        the function will append the file extension
+#'                        accordingly the file type handled;
+#' @param base.map        grid with countries identifiers;
+#' @param ages_grp.size   size of ages group;
+#' @param table           countries values;
+#'                        as returned from function
+#'                        \code{get.base.incidences.by.ages()}
+#'                        with columns: CNTR_ID, AGE_ID, VAL, LO, HI;
+#'
+#' @return four dimensions vector with indexes:
+#'         value type (1 = VAL, 2 = LO, 3 = HI), age id, grid;
+#'
+
+raster.base.incidences.by.ages <- function(
+                                        file,
+                                        base.map,
+                                        ages_grp.size,
+                                        table
+                          )
+{
+    file <- paste( file, 'rds', sep ='.' )
+
+    if ( file.exists( file ) )
+    {
+        # --- load the vector ---
+
+        grid  <-  readRDS( file )
+
+    } else {
+        # --- compute the vector ---
+
+        grid          <-  array( 0, c( 3, ages_grp.size, nrow( base.map ), ncol( base.map ) ) )
+
+        last.cntr.id  <-  -1
+        for( icntr in 1:nrow( table ) )
+        {
+            # --- which country and age group ---
+            cntr.id  <-  table[ icntr, ] $ CNTR_ID
+            if ( cntr.id != last.cntr.id )
+            {
+                if ( cntr.id == 736 )
+                {
+                     cntr.id <- 729
+                }
+                country       <-  base.map[]  ==  cntr.id
+                last.cntr.id  <-  cntr.id
+            }
+            age.id  <- table[ icntr, ] $ AGE_ID
+
+            # --- fill the grid ---
+            grid[ 1, age.id, country, ]  <-  table[ icntr, ] $ VAL
+            grid[ 2, age.id, country, ]  <-  table[ icntr, ] $ LO
+            grid[ 3, age.id, country, ]  <-  table[ icntr, ] $ HI
+        }
+
+        # --- store the vector ---
+        saveRDS( grid, file )
+    }
+
+    # return the vector
+    return( grid )
+}

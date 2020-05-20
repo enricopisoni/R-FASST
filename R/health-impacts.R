@@ -360,6 +360,19 @@ health.impact <- function(
                                         mrate_dmt2
                              )
 
+            raster.ihd    <- raster.base.incidences.by.ages(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                        hrcntrcode,
+                                        length( config $ model $ AGE_GRP ),
+                                        mrate_ihd
+                             )
+
+            raster.stroke <- raster.base.incidences.by.ages(
+                                        get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                        hrcntrcode,
+                                        length( config $ model $ AGE_GRP ),
+                                        mrate_stroke
+                             )
 
 
 par( ask = TRUE )
@@ -367,6 +380,10 @@ plot( raster.copd )
 plot( raster.lc   )
 plot( raster.lri  )
 plot( raster.dmt2 )
+
+print( 'raster ihd' )
+print( head( raster.ihd ) )
+plot( raster.ihd )
 
 
         }
