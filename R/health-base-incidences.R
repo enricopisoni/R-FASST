@@ -580,6 +580,9 @@ raster.base.incidences.by.ages <- function(
         grid  <-  readRDS( file )
 
     } else {
+        ptm <- proc.time()
+        print( 'Computing grid by country and age group - begin' );
+
         # --- compute the vector ---
 
         grid          <-  array( 0, c( 3, ages_grp.size, nrow( base.map ), ncol( base.map ) ) )
@@ -598,13 +601,25 @@ raster.base.incidences.by.ages <- function(
                 country       <-  base.map[]  ==  cntr.id
                 last.cntr.id  <-  cntr.id
             }
-            age.id  <- table[ icntr, ] $ AGE_ID
+            age.idx  <-  ageid.2.index( table[ icntr, ] $ AGE_ID )
 
             # --- fill the grid ---
-            grid[ 1, age.id, country, ]  <-  table[ icntr, ] $ VAL
-            grid[ 2, age.id, country, ]  <-  table[ icntr, ] $ LO
-            grid[ 3, age.id, country, ]  <-  table[ icntr, ] $ HI
+            grid.val               <-  grid[ 1, age.idx, , ]
+            grid.lo                <-  grid[ 2, age.idx, , ]
+            grid.hi                <-  grid[ 3, age.idx, , ]
+
+            grid.val[ country ]    <-  table[ icntr, ] $ VAL
+            grid.lo [ country ]    <-  table[ icntr, ] $ LO
+            grid.hi [ country ]    <-  table[ icntr, ] $ HI
+
+            grid[ 1, age.idx, , ]  <-  grid.val
+            grid[ 2, age.idx, , ]  <-  grid.lo
+            grid[ 3, age.idx, , ]  <-  grid.hi
         }
+
+        # elapsed time to build up the grid
+        elapsed <-  proc.time() - ptm
+        print( sprintf( 'Computing grid by country and age group - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] );
 
         # --- store the vector ---
         saveRDS( grid, file )
@@ -612,4 +627,20 @@ raster.base.incidences.by.ages <- function(
 
     # return the vector
     return( grid )
+}
+
+#' This small fucntion returns the age identifier index within a vector
+#' of age identifiers given the age identifier.
+#'
+#' This function supposes the age identifiers vector is the one defined
+#' in configurations as: AGE_GRP;
+#' it shall be correct to define this function in confguration module.
+#'
+#' @param id  the age identifier;
+#'
+#' @return the age identifier index;
+#'
+ageid.2.index <- function( id )
+{
+        1 + ( id - 25 ) / 5
 }

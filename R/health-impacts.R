@@ -374,18 +374,6 @@ health.impact <- function(
                                         mrate_stroke
                              )
 
-
-par( ask = TRUE )
-plot( raster.copd )
-plot( raster.lc   )
-plot( raster.lri  )
-plot( raster.dmt2 )
-
-print( 'raster ihd' )
-print( head( raster.ihd ) )
-plot( raster.ihd )
-
-
         }
 
     # write the output
