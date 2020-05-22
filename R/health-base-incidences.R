@@ -474,8 +474,12 @@ raster.base.incidences <- function(
 
         grid  <-  raster( file )
 
+        print( sprintf( "Grid by country read from file: '%s'.", file ) )
+
     } else {
         # --- compute the layers matrices ---
+        ptm <- proc.time()
+        print( 'Computing grid by country - begin' );
 
         # prepare the three layers
         layer.val <- raster(
@@ -535,6 +539,9 @@ raster.base.incidences <- function(
                 overwrite = TRUE
         )
 
+        # --- elapsed time to build up the grid ---
+        elapsed <-  proc.time() - ptm
+        print( sprintf( 'Computing grid by country - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] ) )
     }
 
     # return the stacked layers
@@ -579,6 +586,8 @@ raster.base.incidences.by.ages <- function(
 
         grid  <-  readRDS( file )
 
+        print( sprintf( "Grid by country and age group read from file: '%s'.", file ) )
+
     } else {
         ptm <- proc.time()
         print( 'Computing grid by country and age group - begin' );
@@ -617,12 +626,12 @@ raster.base.incidences.by.ages <- function(
             grid[ 3, age.idx, , ]  <-  grid.hi
         }
 
-        # elapsed time to build up the grid
-        elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid by country and age group - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] );
-
         # --- store the vector ---
         saveRDS( grid, file )
+
+        # --- elapsed time to build up the grid ---
+        elapsed <-  proc.time() - ptm
+        print( sprintf( 'Computing grid by country and age group - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] ) )
     }
 
     # return the vector
