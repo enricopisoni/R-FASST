@@ -20,6 +20,8 @@
   "in.tmpl.mrate.ihd":     "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}",
   "in.tmpl.mrate.stroke":  "./ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}",
 
+  "in.tmpl.pop_age_fr":    "./ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}",
+
   "scenarios":
   {
     "name": [ "SSP1_26" ],

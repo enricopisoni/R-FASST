@@ -91,6 +91,9 @@ health.impact.config.static <- function()
                 in.tmpl.mrate.ihd     = file.path( in.dir.bsmrt,  'MRATE_IHD_GBD_${year}' ),
                 in.tmpl.mrate.stroke  = file.path( in.dir.bsmrt,  'MRATE_STROKE_GBD_${year}' ),
 
+                # population fraction per age class for all classes
+                in.tmpl.pop_age_fr    = file.path( in.dir.mort,   'POP_AGE_CLASS_FRACTIONS_UN2017_${year}' ),
+
                 # project dependent scenarios
                 scenarios             = list(
                                                   "name" = c( "SSP1_26" ),
