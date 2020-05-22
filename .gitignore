@@ -52,3 +52,4 @@ Files/INPUT/
 
 # testing output files
 Files/testing/**/
+Files/testing/*.pdf
