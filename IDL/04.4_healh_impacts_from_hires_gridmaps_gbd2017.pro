@@ -161,7 +161,7 @@ RR_COPD_TU[1]=1.08    ;new TURNER
 RR_COPD_TU[2]=1.21    ;new TURNER
 
 RR_COPD_GBD[0]=1.06   ;new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
-RR_COPD_GBD[1]=1.05   ;new GBD
+RR_COPD_GBD[1]=1.02   ;new GBD
 RR_COPD_GBD[2]=1.10   ;new GBD
 
 ;###BETA = LN(RR)/10

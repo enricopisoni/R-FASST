@@ -154,8 +154,8 @@ health.impact <- function(
 
 
     # Ozone RRs with log-lin ER function
-    beta_rr_copd_tu  <- c( 1.14, 1.08, 1.21 ) / 10        # new TURNER!, for new exposure metric annual mean of daily 8h max!
-    beta_rr_copd_gbd <- c( 1.06, 1.05, 1.10 ) / 10        # new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
+    beta_rr_copd_tu  <- log( c( 1.14, 1.08, 1.21 ) ) / 10     # new TURNER!, for new exposure metric annual mean of daily 8h max!
+    beta_rr_copd_gbd <- log( c( 1.06, 1.02, 1.10 ) ) / 10     # new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
 
 
     # *** file 'country_mask_0.5x0.5_v3.sav' is loaded but NOT used;
