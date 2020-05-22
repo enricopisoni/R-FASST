@@ -541,7 +541,7 @@ raster.base.incidences <- function(
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid by country - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] ) )
+        print( sprintf( 'Computing grid by country - end (elapsed time: %s)', elapsed[ 'elapsed' ] ) )
     }
 
     # return the stacked layers
@@ -631,7 +631,7 @@ raster.base.incidences.by.ages <- function(
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid by country and age group - end (elapsed time: %s, system time: %s)', elapsed[ 'elapsed' ], elapsed[ 'system' ] ) )
+        print( sprintf( 'Computing grid by country and age group - end (elapsed time: %s)', elapsed[ 'elapsed' ] ) )
     }
 
     # return the vector
