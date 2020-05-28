@@ -17,7 +17,7 @@
 #'
 #' @return table with: population fraction per age class for all classes 0 to 100
 #'         (21 classes);
-#' 
+#'
 
 get.age.structure <- function(
                         file,
@@ -40,7 +40,7 @@ get.age.structure <- function(
                                         )
                           )
         print( sprintf( "Age structure per country (table) read from: '%s'.", file ) )
-        
+
     } else {
 
         # --- input file does not exist, compute it ---
@@ -126,7 +126,7 @@ join.filter.age.structure <- function(
         pop.tot.lo   <-  lower                                                                %>%
                          group_by( CNTR_ID )                                                  %>%
                          summarize( POP_SUM = sum( AGE_POP ) )
-                    
+
         higher       <-  table                                                                %>%
                          filter( YEAR == year.hi )                                            %>%
                          transmute(
@@ -188,7 +188,7 @@ join.filter.age.structure <- function(
         pop.tot      <-  result                                                               %>%
                          group_by( CNTR_ID )                                                  %>%
                          summarize( POP_SUM = sum( AGE_POP ) )
-                         
+
         result       <-  result                                                               %>%
                          inner_join( pop.tot, by = c( "CNTR_ID" = "CNTR_ID" ) )               %>%
                          transmute(
@@ -196,7 +196,106 @@ join.filter.age.structure <- function(
                              AGE_GRP   = AGE_GRP,
                              POP_FRAC  = AGE_POP / POP_SUM
                          )
-                    
+
     }
     return( result )
+}
+
+# ------------------------------------------------------------
+
+#' Projects the countries values to grid.
+#' Given a grid map, where in each cell there is a country identifier,
+#' and a table with population fraction per country and group age, the
+#' fucntion creates a set of layers with as many layers as age groups
+#' and each layer is a grid with country values for age croup.
+#'
+#' @param file     the input/output file with grid layers;
+#'                 actual parameter must not have the file extansion,
+#'                 the function will append the file extension accordingly
+#'                 the file type handled;
+#' @param base.map grid with countries identifiers;
+#' @param table    countries values;
+#'                 as returned from function \code{get.age.structure()}
+#'                 with columns: CNTR_ID, AGE_GRP, POP_FRAC.
+#'
+#' @return rasters stack;
+#'
+
+raster.age.structure <- function(
+                            file,
+                            base.map,
+                            table
+                        )
+{
+    file <- paste( file, 'nc', sep ='.' )
+
+    if ( file.exists( file ) )
+    {
+        # --- load the raster ---
+
+        grid  <-  brick( file )
+
+        print( sprintf( "Grid with age structure per country read from file: '%s'.", file ) )
+
+    } else {
+        # --- compute the grid layers ---
+        ptm <- proc.time()
+        print( 'Computing grid with age structure by country - begin' );
+
+        # --- sort the table by age group identifier ---
+        table          <- arrange( table, AGE_GRP )
+
+        # --- fill in the grids ---
+        icntr  <-  -1
+        ilayr  <-  -1
+        grid   <-  brick()
+        layer  <-  NULL
+        for( irow in 1:nrow( table ) )
+        {
+            cntr.id  <-  table[ irow, ] $ CNTR_ID
+            if ( cntr.id == 736 )
+            {
+                 cntr.id <- 729
+            }
+            if ( cntr.id != icntr )
+            {
+                icntr    <-  cntr.id
+                country  <-  base.map[]  ==  cntr.id
+            }
+            if ( ilayr  !=  table[ irow, ] $ AGE_GRP )
+            {
+                ilayr  <-  table[ irow, ] $ AGE_GRP
+
+                if ( ! is.null( layer ) )
+                {
+                    grid  <-  addLayer( grid, layer )
+                }
+                layer  <-  raster(
+                               ncol = ncol( base.map ),
+                               nrow = nrow( base.map ),
+                               xmn  = xmin( base.map ),
+                               xmx  = xmax( base.map ),
+                               ymn  = ymin( base.map ),
+                               ymx  = ymax( base.map )
+                           )
+            }
+
+            layer[ country ]  <- table[ irow, ] $ POP_FRAC
+        }
+
+        # --- store the layers ---
+        writeRaster(
+                grid,
+                filename  = file,
+                format    = "CDF",
+                overwrite = TRUE
+        )
+
+        # --- elapsed time to build up the grid ---
+        elapsed <-  proc.time() - ptm
+        print( sprintf( 'Computing grid with age structure by country - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
+    }
+
+    # return the stacked layers
+    return( grid )
 }

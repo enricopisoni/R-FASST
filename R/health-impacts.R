@@ -4,6 +4,7 @@ library( 'raster' )
 library( 'tidyverse' )
 
 source( 'health-base-incidences.R' )
+source( 'health-age-country.R' )
 source( 'rrate.R' )
 source( 'fasst-write.R' )
 
@@ -373,6 +374,24 @@ health.impact <- function(
                                         length( config $ model $ AGE_GRP ),
                                         mrate_stroke
                              )
+
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 3b -----------------------------------
+            # ------------- RETRIEVE AGE STRUCTURE PER COUNTRY FROM UN2017 REVISION -----------
+            # ---------------------------------------------------------------------------------
+
+            pop.age.tbl  <- get.age.structure(
+                                get.file.name.population( config $ file $ in.tmpl.pop_age_fr, scen, year ),
+                                year,
+                                cntr.sliced,
+                                pop
+                            )
+
+            pop_age_fr   <- raster.age.structure(
+                                get.file.name.population( config $ file $ in.tmpl.pop_age_fr, scen, year ),
+                                hrcntrcode,
+                                pop.age.tbl
+                            )
 
         }
 
