@@ -393,7 +393,49 @@ health.impact <- function(
                                 pop.age.tbl
                             )
 
-        }
+            # CALCULATE APPROPRIATE AGE FRACTIONS
+            frac_copd    <- sum.raster.age.structure(
+                                pop_age_fr,
+                                config $ model $ C1,
+                                config $ model $ C2
+                            )
+
+            frac_lc      <- sum.raster.age.structure(
+                                pop_age_fr,
+                                config $ model $ L1,
+                                config $ model $ L2
+                            )
+
+            frac_lri     <- sum.raster.age.structure(
+                                pop_age_fr,
+                                config $ model $ LR1,
+                                config $ model $ LR2
+                            )
+
+            frac_dmt2    <- sum.raster.age.structure(
+                                pop_age_fr,
+                                config $ model $ DM1,
+                                config $ model $ DM2
+                            )
+
+            frac_o3      <- sum.raster.age.structure(
+                                pop_age_fr,
+                                config $ model $ O1,
+                                config $ model $ O2
+                            )
+
+            # NUMBER OF SPECIFIC 5YR AGE CLASSES FOR IHD AND STROKE
+            ncl_ihd      <- config $ model $ IH2  -  config $ model $ IH1  + 1   # SAME FOR STROKE
+
+            # At this point we have global grid maps of AF, POP and MORTALITY RATES,
+            # both for total as for age classes
+            # LRI: <5YR, COPD AND LC:>30 YR IHD AND STROKE: AGE CLASSES FOR 25+
+            print( sprintf( "End of age fractions. CALCULATE DMORT @ %s", format( Sys.time(), "%c" ) ) )
+
+
+
+        }  # end of: for ( year  in  config $ file $ scenarios $ year )
+
 
     # write the output
     fasst.write(

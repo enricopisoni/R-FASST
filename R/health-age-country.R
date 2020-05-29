@@ -282,6 +282,10 @@ raster.age.structure <- function(
 
             layer[ country ]  <- table[ irow, ] $ POP_FRAC
         }
+        if ( ! is.null( layer ) )
+        {
+            grid  <-  addLayer( grid, layer )
+        }
 
         # --- store the layers ---
         writeRaster(
@@ -298,4 +302,44 @@ raster.age.structure <- function(
 
     # return the stacked layers
     return( grid )
+}
+
+# ------------------------------------------------------------
+
+#' Sum all layers between the lower index and the higher index.
+#'
+#' @param stack       the layers stack to sum;
+#' @param idx.lower   the lower index;
+#' @param idx.higher  the higher index;
+#'
+#' @return raster as sum of all layers selected;
+#'
+
+sum.raster.age.structure <- function(
+                                stack,
+                                idx.lower,
+                                idx.higher
+                            )
+{
+
+    # --- check bounds ---
+    if ( idx.lower < 1 )
+    {
+        idx.lower   <-  1
+    }
+    if ( idx.higher > nlayers( stack ) )
+    {
+        idx.higher  <-  nlayers( stack )
+    }
+
+    # --- sum layers ---
+    sum  <-  stack[[ idx.lower ]]
+    idx  <-  1 + idx.lower
+    while ( idx <= idx.higher )
+    {
+        sum  <-  sum + stack[[ idx ]]
+        idx  <-  idx + 1
+    }
+
+    return ( sum )
 }

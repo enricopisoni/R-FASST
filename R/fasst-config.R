@@ -206,28 +206,28 @@ health.impact.config.model <- function()
         config.derived <- list(
 
               # ALL AGES FROM MIN TO MAX (MAX 100)
-              C1  = ( config.definition $ ages  ==  config.definition $ agefrac_copd[ 1 ] ),
-              C2  = ( config.definition $ ages  == config.definition $ agefrac_copd[ 2 ] ),
+              C1  = match( config.definition $ agefrac_copd[ 1 ], config.definition $ ages ),
+              C2  = match( config.definition $ agefrac_copd[ 2 ], config.definition $ ages ),
 
               # ALL AGES FROM MIN TO MAX (MAX 100)
-              L1  = ( config.definition $ ages  ==  config.definition $ agefrac_lc[ 1 ] ),
-              L2  = ( config.definition $ ages  ==  config.definition $ agefrac_lc[ 2 ] ),
+              L1  = match( config.definition $ agefrac_lc[ 1 ], config.definition $ ages ),
+              L2  = match( config.definition $ agefrac_lc[ 2 ], config.definition $ ages ),
 
               # ALL AGES FROM MIN TO MAX (MAX 100)
-              LR1 = ( config.definition $ ages  ==  config.definition $ agefrac_lri[ 1 ] ),
-              LR2 = ( config.definition $ ages  ==  config.definition $ agefrac_lri[ 2 ] ),
+              LR1 = match( config.definition $ agefrac_lri[ 1 ], config.definition $ ages ),
+              LR2 = match( config.definition $ agefrac_lri[ 2 ], config.definition $ ages ),
 
               # ALL AGES FROM MIN TO MAX (MAX 100)
-              DM1 = ( config.definition $ ages  ==  config.definition $ agefrac_dmt2[ 1 ] ),
-              DM2 = ( config.definition $ ages  ==  config.definition $ agefrac_dmt2[ 2 ] ),
+              DM1 = match( config.definition $ agefrac_dmt2[ 1 ], config.definition $ ages ),
+              DM2 = match( config.definition $ agefrac_dmt2[ 2 ], config.definition $ ages ),
 
               # AGE SPECIFIC FROM MIN TO MAX (MAX 95, BECAUSE AGE-SPECIFIC RR AVAILABLE TILL 95)
-              IH1 = ( config.definition $ ages  ==  config.definition $ agefrac_ihd[ 1 ] ),
-              IH2 = ( config.definition $ ages  ==  config.definition $ agefrac_ihd[ 2 ] ),
+              IH1 = match( config.definition $ agefrac_ihd[ 1 ], config.definition $ ages ),
+              IH2 = match( config.definition $ agefrac_ihd[ 2 ], config.definition $ ages ),
 
               # OZONE MORTALITIES - NOTE that mortality rates in GBD are expressed as number divided by total population.
-              O1  = ( config.definition $ ages  ==  config.definition $ agefrac_o3[ 1 ] ),
-              O2  = ( config.definition $ ages  ==  config.definition $ agefrac_o3[ 2 ] )
+              O1  = match( config.definition $ agefrac_o3[ 1 ], config.definition $ ages ),
+              O2  = match( config.definition $ agefrac_o3[ 2 ], config.definition $ ages )
         )
 
         # --- the two configurations merged ---
