@@ -476,7 +476,7 @@ raster.base.incidences <- function(
     {
         # --- load the raster ---
 
-        grid  <-  raster( file )
+        grid  <-  brick( file )
 
         print( sprintf( "Grid with base incidence by country read from file: '%s'.", file ) )
 
@@ -596,11 +596,16 @@ raster.base.incidences.by.ages <- function(
         ptm <- proc.time()
         print( 'Computing grid with base incidence by country and age group - begin' );
 
+        # --- sort the table by age group identifier ---
+        table            <- arrange( table, AGE_ID )
+
         # --- compute the vector ---
 
-        grid          <-  array( 0, c( 3, ages_grp.size, nrow( base.map ), ncol( base.map ) ) )
+        grid             <-  array( 0, c( 3, ages_grp.size, nrow( base.map ), ncol( base.map ) ) )
 
-        last.cntr.id  <-  -1
+        last.cntr.id     <-  -1
+        last.age.idx     <-  -1
+        sub.grid.filled  <-  FALSE
         for( icntr in 1:nrow( table ) )
         {
             # --- which country and age group ---
@@ -614,17 +619,32 @@ raster.base.incidences.by.ages <- function(
                 country       <-  base.map[]  ==  cntr.id
                 last.cntr.id  <-  cntr.id
             }
+
             age.idx  <-  ageid.2.index( table[ icntr, ] $ AGE_ID )
+            if ( age.idx != last.age.idx )
+            {
+                if ( sub.grid.filled )
+                {
+                    grid[ 1, last.age.idx, , ]  <-  grid.val
+                    grid[ 2, last.age.idx, , ]  <-  grid.lo
+                    grid[ 3, last.age.idx, , ]  <-  grid.hi
+                }
+                grid.val         <-  grid[ 1, age.idx, , ]
+                grid.lo          <-  grid[ 2, age.idx, , ]
+                grid.hi          <-  grid[ 3, age.idx, , ]
+
+                last.age.idx     <-  age.idx
+                sub.grid.filled  <-  TRUE
+            }
 
             # --- fill the grid ---
-            grid.val               <-  grid[ 1, age.idx, , ]
-            grid.lo                <-  grid[ 2, age.idx, , ]
-            grid.hi                <-  grid[ 3, age.idx, , ]
-
             grid.val[ country ]    <-  table[ icntr, ] $ VAL
             grid.lo [ country ]    <-  table[ icntr, ] $ LO
             grid.hi [ country ]    <-  table[ icntr, ] $ HI
 
+        }
+        if ( sub.grid.filled )
+        {
             grid[ 1, age.idx, , ]  <-  grid.val
             grid[ 2, age.idx, , ]  <-  grid.lo
             grid[ 3, age.idx, , ]  <-  grid.hi
