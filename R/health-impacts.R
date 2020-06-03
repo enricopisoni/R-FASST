@@ -183,10 +183,10 @@ health.impact <- function(
 # --not-used-remove--    scenpop      <- hr_grid_tot
 
     # layers containing the AFs, depends on PM fields
-    af_copd_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-    af_lri_grid    <- array( 0, c( 3, jmg, img ) )       # ALL AGES
-    af_lc_grid     <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-    af_dmt2_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+# --remove--    af_copd_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+# --remove--    af_lri_grid    <- array( 0, c( 3, jmg, img ) )       # ALL AGES
+# --remove--    af_lc_grid     <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
+# --remove--    af_dmt2_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
     af_ihd_grid    <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
     af_stroke_grid <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
 
@@ -215,8 +215,18 @@ health.impact <- function(
             hr_grid_tot[ is.na( hr_grid_tot[] ) ] <- 0
 
             # identify grids with valid population data
-            hr_grid_mask <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
+            hr_grid_mask             <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
 
+            scenpop                  <-  raster(
+                                             ncol = ncol( hr_grid_tot ),
+                                             nrow = nrow( hr_grid_tot ),
+                                             xmn  = xmin( hr_grid_tot ),
+                                             xmx  = xmax( hr_grid_tot ),
+                                             ymn  = ymin( hr_grid_tot ),
+                                             ymx  = ymax( hr_grid_tot )
+                                         )
+            values( scenpop )        <-  0
+            scenpop[ hr_grid_mask ]  <-  hr_grid_tot[ hr_grid_mask ]
             # read the scenario input file (high resolution grid map)
             infile <- get.file.name.population(
                                 config $ file $ in.tmpl.scenario,
@@ -231,34 +241,33 @@ health.impact <- function(
             sc_hires      <- raster( infile, varname = 'TOT_PM_35' )  # extract total pm from SC structure and load into SC_HIRES variable
             sc_anth_hires <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
 
-            # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
-            af_ac <- compute.attributable.functions(
-                                sc_hires,
-                                copd_med,
-                                copd_lo,
-                                copd_hi
-                     )
+            af_copd  <- compute.attributable.functions(             # ALL AGES >25
+                             sc_hires,
+                             copd_med,
+                             copd_lo,
+                             copd_hi
+                        )
 
-            af_lc <- compute.attributable.functions(
-                                sc_hires,
-                                lc_med,
-                                lc_lo,
-                                lc_hi
-                     )
+            af_lc    <- compute.attributable.functions(             # ALL AGES >25
+                             sc_hires,
+                             lc_med,
+                             lc_lo,
+                             lc_hi
+                        )
 
-            af_lri <- compute.attributable.functions(
-                                sc_hires,
-                                lri_med,
-                                lri_lo,
-                                lri_hi
-                      )
+            af_lri   <- compute.attributable.functions(            # ALL AGES
+                             sc_hires,
+                             lri_med,
+                             lri_lo,
+                             lri_hi
+                        )
 
-            af_dmt2 <- compute.attributable.functions(
-                                sc_hires,
-                                dt2_med,
-                                dt2_lo,
-                                dt2_hi
-                       )
+            af_dmt2  <- compute.attributable.functions(           # ALL AGES >25
+                           sc_hires,
+                           dt2_med,
+                           dt2_lo,
+                           dt2_hi
+                        )
 
 
             # in the IDL source, these variables are defined and updated but never used:
@@ -432,6 +441,34 @@ health.impact <- function(
             # LRI: <5YR, COPD AND LC:>30 YR IHD AND STROKE: AGE CLASSES FOR 25+
             print( sprintf( "End of age fractions. CALCULATE DMORT @ %s", format( Sys.time(), "%c" ) ) )
 
+
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 4 ------------------------------------
+            # ------------------ CALCULATE DMORT = AF*MRATE*POP*AGEFRAC/100K ------------------
+            # ---------------------------------------------------------------------------------
+
+            # --- calculate central values of total mortalities ---
+
+            # GBD2016: from class 15 to 75-79  GBD2017: all age
+            dmort_copd  <-  ( af_copd $ grid )[[ 1 ]]  *  raster.copd[[ 1 ]]  *  frac_copd  *  scenpop  /  1.e5
+
+            # GBD2016: from class 15-19 to 75-79  GBD2017: all age
+            dmort_lc    <-  ( af_lc $ grid )[[ 1 ]]    *  raster.lc[[ 1 ]]    *  frac_lc    *  scenpop  /  1.e5
+
+            # GBD2016: from class 0-4 to 75-79  GBD2017: all age
+            dmort_lri   <-  ( af_lri $ grid )[[ 1 ]]   *  raster.lri[[ 1 ]]   *  frac_lri   *  scenpop  /  1.E5
+
+            # GBD2016: from class 15-19 to 75-79  GBD2017: all age
+            dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  raster.dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
+
+            # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
+            for ( icl in c( 1:ncl_ihd ) )
+            {
+            }
+
+
+            # error propagation at grid cell level from uncertainty on AF and mrate:
+            # sig_dmort / mort = sqrt( ( sig_AF / AF )^2 + ( sig_mrate / mrate )^2 )
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
