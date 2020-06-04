@@ -227,6 +227,7 @@ health.impact <- function(
                                          )
             values( scenpop )        <-  0
             scenpop[ hr_grid_mask ]  <-  hr_grid_tot[ hr_grid_mask ]
+
             # read the scenario input file (high resolution grid map)
             infile <- get.file.name.population(
                                 config $ file $ in.tmpl.scenario,
@@ -279,7 +280,7 @@ health.impact <- function(
             # but in the last assignement onutside the loop it is updated
             # using variable: SIG_MIN_AF_STROKE (line: 346);
 
-            print( sprintf( "Loop on AFs (%d ages) - begin", length( config $ model $ AGE_GRP ) ) )
+            print( sprintf( "Loop on AFs (%d age classes) - begin", length( config $ model $ AGE_GRP ) ) )
             ptm <- proc.time()
             sc_hires <- sc_hires[ , , 1 ]
             for ( iage  in  seq_along( config $ model $ AGE_GRP ) )
@@ -294,7 +295,7 @@ health.impact <- function(
                 af_stroke_grid [ 2, iage, , ]  <-  1 - 1 / rrate( stroke_lo [ , iage ], sc_hires )
                 af_stroke_grid [ 3, iage, , ]  <-  1 - 1 / rrate( stroke_hi [ , iage ], sc_hires )
             }
-            print( sprintf( "Loop on AFs (%d ages) - end", length( config $ model $ AGE_GRP ) ) )
+            print( sprintf( "Loop on AFs (%d age classes) - end", length( config $ model $ AGE_GRP ) ) )
             print( proc.time() - ptm )
 
             # ---------------------------------------------------------------------------------
@@ -302,87 +303,90 @@ health.impact <- function(
             # ------------------------- BASE INCIDENCES (MED,LO,UP) ---------------------------
             # ---------------------------------------------------------------------------------
 
-            cntr.sliced  <- slice.countries.list( cntr )
+            cntr.sliced        <- slice.countries.list( cntr )
 
-            mrate_copd   <- get.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        copd
-                            )
+            mrate_copd.table   <- get.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              copd
+                                  )
 
-            mrate_lc     <- get.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        lc
-                            )
+            mrate_lc.table     <- get.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              lc
+                                  )
 
-            mrate_lri    <- get.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        lri
-                            )
+            mrate_lri.table    <- get.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              lri
+                                  )
 
-            mrate_dmt2   <- get.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        dmt2
-                            )
+            mrate_dmt2.table   <- get.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              dmt2
+                                  )
 
-            mrate_ihd    <- get.base.incidences.by.ages(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        length( config $ model $ AGE_GRP ),
-                                        ihd
-                            )
+            mrate_ihd.table    <- get.base.incidences.by.ages(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              length( config $ model $ AGE_GRP ),
+                                              ihd
+                                  )
 
-            mrate_stroke <- get.base.incidences.by.ages(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
-                                        year,
-                                        cntr.sliced,
-                                        length( config $ model $ AGE_GRP ),
-                                        stroke
-                            )
+            mrate_stroke.table <- get.base.incidences.by.ages(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                              year,
+                                              cntr.sliced,
+                                              length( config $ model $ AGE_GRP ),
+                                              stroke
+                                  )
 
             # --- create raster images ---
-            raster.copd   <- raster.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
-                                        hrcntrcode,
-                                        mrate_copd
-                             )
-            raster.lc     <- raster.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
-                                        hrcntrcode,
-                                        mrate_lc
-                             )
-            raster.lri    <- raster.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
-                                        hrcntrcode,
-                                        mrate_lri
-                             )
-            raster.dmt2   <- raster.base.incidences(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
-                                        hrcntrcode,
-                                        mrate_dmt2
-                             )
+            mrate_copd         <- raster.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
+                                              hrcntrcode,
+                                              mrate_copd.table
+                                  )
 
-            raster.ihd    <- raster.base.incidences.by.ages(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
-                                        hrcntrcode,
-                                        length( config $ model $ AGE_GRP ),
-                                        mrate_ihd
-                             )
+            mrate_lc           <- raster.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
+                                              hrcntrcode,
+                                              mrate_lc.table
+                                  )
 
-            raster.stroke <- raster.base.incidences.by.ages(
-                                        get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
-                                        hrcntrcode,
-                                        length( config $ model $ AGE_GRP ),
-                                        mrate_stroke
-                             )
+            mrate_lri          <- raster.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
+                                              hrcntrcode,
+                                              mrate_lri.table
+                                  )
+
+            mrate_dmt2         <- raster.base.incidences(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
+                                              hrcntrcode,
+                                              mrate_dmt2.table
+                                  )
+
+            mrate_ihd          <- raster.base.incidences.by.ages(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                              hrcntrcode,
+                                              length( config $ model $ AGE_GRP ),
+                                              mrate_ihd.table
+                                  )
+
+            mrate_stroke       <- raster.base.incidences.by.ages(
+                                              get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                              hrcntrcode,
+                                              length( config $ model $ AGE_GRP ),
+                                              mrate_stroke.table
+                                  )
 
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 3b -----------------------------------
@@ -447,28 +451,53 @@ health.impact <- function(
             # ------------------ CALCULATE DMORT = AF*MRATE*POP*AGEFRAC/100K ------------------
             # ---------------------------------------------------------------------------------
 
+            dmort_ihd    <- array( 0, c( 3, length( config $ model $ AGE_GRP ), nrow( hrcntrcode ), ncol( hrcntrcode ) ) )
+            dmort_stroke <- array( 0, c( 3, length( config $ model $ AGE_GRP ), nrow( hrcntrcode ), ncol( hrcntrcode ) ) )
+
             # --- calculate central values of total mortalities ---
 
             # GBD2016: from class 15 to 75-79  GBD2017: all age
-            dmort_copd  <-  ( af_copd $ grid )[[ 1 ]]  *  raster.copd[[ 1 ]]  *  frac_copd  *  scenpop  /  1.e5
+            dmort_copd  <-  ( af_copd $ grid )[[ 1 ]]  *  mrate_copd[[ 1 ]]  *  frac_copd  *  scenpop  /  1.e5
 
             # GBD2016: from class 15-19 to 75-79  GBD2017: all age
-            dmort_lc    <-  ( af_lc $ grid )[[ 1 ]]    *  raster.lc[[ 1 ]]    *  frac_lc    *  scenpop  /  1.e5
+            dmort_lc    <-  ( af_lc $ grid )[[ 1 ]]    *  mrate_lc[[ 1 ]]    *  frac_lc    *  scenpop  /  1.e5
 
             # GBD2016: from class 0-4 to 75-79  GBD2017: all age
-            dmort_lri   <-  ( af_lri $ grid )[[ 1 ]]   *  raster.lri[[ 1 ]]   *  frac_lri   *  scenpop  /  1.E5
+            dmort_lri   <-  ( af_lri $ grid )[[ 1 ]]   *  mrate_lri[[ 1 ]]   *  frac_lri   *  scenpop  /  1.E5
 
             # GBD2016: from class 15-19 to 75-79  GBD2017: all age
-            dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  raster.dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
+            dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  mrate_dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
 
             # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
             for ( icl in c( 1:ncl_ihd ) )
             {
-            }
+                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
+                dmort_ihd[ 1, icl, , ]     <-  af_ihd_grid[ 1, icl, , ]              *
+                                               mrate_ihd[ 1, icl, , ]                *
+                                               scenpop[ , , 1 ]                      *
+                                               ( pop_age_fr[[ icl + 5 ]] )[ , , 1 ]  /
+                                               1.e5
 
+                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
+                dmort_stroke[ 1, icl, , ]  <-  af_stroke_grid[ 1, icl, , ]           *
+                                               mrate_stroke[ 1, icl, , ]             *
+                                               scenpop[ , , 1 ]                      *
+                                               ( pop_age_fr[[ icl + 5 ]] )[ , , 1 ]  /
+                                               1.e5
+            }
 
             # error propagation at grid cell level from uncertainty on AF and mrate:
             # sig_dmort / mort = sqrt( ( sig_AF / AF )^2 + ( sig_mrate / mrate )^2 )
+            sig_min_copd  <-  dmort_copd  *
+                              sqrt(
+                                     ( af_copd $ sig_min )^2  +
+                                     ( ( mrate_copd[[ 1 ]] - mrate_copd[[ 2 ]] ) / mrate_copd[[ 1 ]] )^2
+                              )
+            sig_max_copd  <-  dmort_copd  *
+                              sqrt(
+                                     ( af_copd $ sig_max )^2  +
+                                     ( ( mrate_copd[[ 3 ]] - mrate_copd[[ 1 ]] ) / mrate_copd[[ 1 ]] )^2
+                              )
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
