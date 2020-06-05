@@ -7,7 +7,7 @@ library( 'ncdf4' )
 #'
 #' Functions \code{get.base.incidences()} and \code{get.base.incidences.by.ages()}
 #' return the countries base incidence.
-#' Function attenpt to retrievea countries base incidence from file;
+#' Function attenpts to retrieve countries base incidence from file;
 #' if file doesn't exist, given input table, functions compute the base
 #' incidence and store it in file.
 #'
@@ -17,10 +17,15 @@ library( 'ncdf4' )
 #' file will be used to load the raster instead to compute it.
 #'
 #' Base incidences returned by \code{get.base.incidences.by.ages()}
-#' can be used to create a 4 dimensions vector via
+#' can be used to create a rasters stack via
 #' \code{raster.base.incidences.by.ages()};
-#' also this function will store the 4 dimensions vector in a file
+#' also this function will store the rasters stack in a file
 #' to be used later, if it exists, to avoid the computation.
+#'
+#' The fucntions: \code{index.by.agr_grp.type()} and
+#' \code{index.by.agr_id.type()}, can be used to get raster layer,
+#' from the raster stack returned by \code{raster.base.incidences.by.ages()},
+#' given the age class and the value type.
 #'
 #' Before the above function could be used, the countries table with
 #' identifier and name must be prepared via function
@@ -140,7 +145,12 @@ get.base.incidences <- function(
 #' @param ages_grp.size   the expected size of ages group;
 #' @param table           table with informations per country;
 #'
-#' @return table with: country identifier and its values;
+#' @return table with columns:
+#'           - CNTR_ID = country identifier;
+#'           - AGE_ID  = age class identifier (values: 25, 30, 35, ...);
+#'           - VAL     = value type: median;
+#'           - LO      = value type: lower;
+#'           - HI      = value type: upper;
 #'
 
 get.base.incidences.by.ages <- function(
@@ -592,9 +602,12 @@ raster.base.incidences <- function(
 #'                        as returned from function
 #'                        \code{get.base.incidences.by.ages()}
 #'                        with columns: CNTR_ID, AGE_ID, VAL, LO, HI;
+#'                        where: AGE_ID is the age class identifier,
+#'                        with values: 25, 30, 35, ...
 #'
-#' @return four dimensions vector with indexes:
-#'         value type (1 = VAL, 2 = LO, 3 = HI), age id, grid;
+#' @return rasters stack, where each layer index is defined by:
+#'         3 * ( AGE_ID - 25 ) / 5 + <value type>
+#'         and <value type> defines: 1 = VAL, 2 = LO, 3 = HI;
 #'
 
 raster.base.incidences.by.ages <- function(
@@ -602,15 +615,15 @@ raster.base.incidences.by.ages <- function(
                                         base.map,
                                         ages_grp.size,
                                         table
-                          )
+                                  )
 {
-    file <- paste( file, 'rds', sep ='.' )
+    file <- paste( file, 'nc', sep ='.' )
 
     if ( file.exists( file ) )
     {
         # --- load the vector ---
 
-        grid  <-  readRDS( file )
+        grid  <-  brick( file )
 
         print( sprintf( "Grid with base incidence by country and age group read from file: '%s'.", file ) )
 
@@ -650,7 +663,7 @@ raster.base.incidences.by.ages <- function(
 
         # --- compute the vector ---
 
-        grid             <-  array( 0, c( 3, ages_grp.size, nrow( base.map ), ncol( base.map ) ) )
+        grid             <-  brick()
 
         last.cntr.id     <-  -1
         last.age.idx     <-  -1
@@ -665,18 +678,45 @@ raster.base.incidences.by.ages <- function(
                 last.cntr.id  <-  cntr.id
             }
 
-            age.idx  <-  ageid.2.index( table[ icntr, ] $ AGE_ID )
+            age.idx  <-  table[ icntr, ] $ AGE_ID
             if ( age.idx != last.age.idx )
             {
                 if ( sub.grid.filled )
                 {
-                    grid[ 1, last.age.idx, , ]  <-  grid.val
-                    grid[ 2, last.age.idx, , ]  <-  grid.lo
-                    grid[ 3, last.age.idx, , ]  <-  grid.hi
+                    grid  <-  addLayer( grid, grid.val )
+                    grid  <-  addLayer( grid, grid.lo  )
+                    grid  <-  addLayer( grid, grid.hi  )
                 }
-                grid.val         <-  grid[ 1, age.idx, , ]
-                grid.lo          <-  grid[ 2, age.idx, , ]
-                grid.hi          <-  grid[ 3, age.idx, , ]
+                grid.val  <-  raster(
+                                  ncol = ncol( base.map ),
+                                  nrow = nrow( base.map ),
+                                  xmn  = xmin( base.map ),
+                                  xmx  = xmax( base.map ),
+                                  ymn  = ymin( base.map ),
+                                  ymx  = ymax( base.map )
+                              )
+                values( grid.val ) <- 0
+
+                grid.lo   <-  raster(
+                                  ncol = ncol( base.map ),
+                                  nrow = nrow( base.map ),
+                                  xmn  = xmin( base.map ),
+                                  xmx  = xmax( base.map ),
+                                  ymn  = ymin( base.map ),
+                                  ymx  = ymax( base.map )
+                              )
+                values( grid.lo ) <- 0
+
+                grid.hi   <-  raster(
+                                  ncol = ncol( base.map ),
+                                  nrow = nrow( base.map ),
+                                  xmn  = xmin( base.map ),
+                                  xmx  = xmax( base.map ),
+                                  ymn  = ymin( base.map ),
+                                  ymx  = ymax( base.map )
+                              )
+                values( grid.hi ) <- 0
+
 
                 last.age.idx     <-  age.idx
                 sub.grid.filled  <-  TRUE
@@ -690,13 +730,21 @@ raster.base.incidences.by.ages <- function(
         }
         if ( sub.grid.filled )
         {
-            grid[ 1, age.idx, , ]  <-  grid.val
-            grid[ 2, age.idx, , ]  <-  grid.lo
-            grid[ 3, age.idx, , ]  <-  grid.hi
+            grid  <-  addLayer( grid, grid.val )
+            grid  <-  addLayer( grid, grid.lo  )
+            grid  <-  addLayer( grid, grid.hi  )
         }
 
         # --- store the vector ---
-        saveRDS( grid, file )
+        writeRaster(
+                grid,
+                filename  = file,
+                format    = "CDF",
+                zname     = "layer index by age class identifier and value type",
+                zunit     = "layer_index",
+                overwrite = TRUE
+        )
+        set.global.attributes( file )
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
@@ -706,19 +754,69 @@ raster.base.incidences.by.ages <- function(
     # return the vector
     return( grid )
 }
-
-#' This small fucntion returns the age identifier index within a vector
-#' of age identifiers given the age identifier.
-#'
-#' This function supposes the age identifiers vector is the one defined
-#' in configurations as: AGE_GRP;
-#' it shall be correct to define this function in confguration module.
-#'
-#' @param id  the age identifier;
-#'
-#' @return the age identifier index;
-#'
-ageid.2.index <- function( id )
+set.global.attributes <- function( file )
 {
-        1 + ( id - 25 ) / 5
+    # open the netCDF
+    nc  <-  nc_open( file, write = T )
+
+    # add global attributes
+    ncatt_put(
+        nc,
+        0,
+        "description",
+        "Given an age group class as: 25, 30, 25, .. and a value type: median: 1, lower: 2, upper: 3; to get the layer needed apply the function: 3 *( <age group class> - 25 ) / 5 + <value type>, to get the index layer."
+    )
+
+    # close the file, writing data to disk
+    nc_close( nc )
+}
+
+# ------------------------------------------------------------
+
+#' Given an age class and a value type,
+#' this function returns the index to get the layer from
+#' the stack returned by function
+#' \code{raster.base.incidences.by.ages()}.
+#'
+#' @param age_grp age class,
+#'                belongig to set: 25, 30, 35, ...
+#' @param type    value type,
+#'                belonging the set:
+#'                    1 = median
+#'                    2 = lower
+#'                    3 = upper
+#'
+#' @return the layer index;
+#'
+index.by.agr_grp.type <- function(
+                             age_grp,
+                             type
+                         )
+{
+    3 * agr_grp / 5  + type  - 15
+}
+
+# ------------------------------------------------------------
+
+#' Given an age class identifier and a value type,
+#' this function returns the index to get the layer from
+#' the stack returned by function
+#' \code{raster.base.incidences.by.ages()}.
+#'
+#' @param age_id  age class identifier,
+#'                belongig to set: 1, 2, 3, ...
+#' @param type    value type,
+#'                belonging the set:
+#'                    1 = median
+#'                    2 = lower
+#'                    3 = upper
+#'
+#' @return the layer index;
+#'
+index.by.agr_id.type <- function(
+                             age_id,
+                             type
+                         )
+{
+    3 * ( agr_id - 1 )  +  type
 }
