@@ -182,13 +182,6 @@ health.impact <- function(
 # --not-used-remove--    scenpopmask  <- hr_grid_tot
 # --not-used-remove--    scenpop      <- hr_grid_tot
 
-    # layers containing the AFs, depends on PM fields
-# --remove--    af_copd_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-# --remove--    af_lri_grid    <- array( 0, c( 3, jmg, img ) )       # ALL AGES
-# --remove--    af_lc_grid     <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-# --remove--    af_dmt2_grid   <- array( 0, c( 3, jmg, img ) )       # ALL AGES >25
-    af_ihd_grid    <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
-    af_stroke_grid <- array( 0, c( 3, length( config $ model $ AGE_GRP ), jmg, img ) )   # 15 AGE CLASSES >25
 
     # ----------------------------------------------------------------------
     # ------------------------------- block 3 ------------------------------
@@ -280,23 +273,32 @@ health.impact <- function(
             # but in the last assignement onutside the loop it is updated
             # using variable: SIG_MIN_AF_STROKE (line: 346);
 
+            # layers containing the AFs, depends on PM fields
             print( sprintf( "Loop on AFs (%d age classes) - begin", length( config $ model $ AGE_GRP ) ) )
             ptm <- proc.time()
-            sc_hires <- sc_hires[ , , 1 ]
+            af_ihd_grid     <-  brick()
+            af_stroke_grid  <-  brick()
             for ( iage  in  seq_along( config $ model $ AGE_GRP ) )
             {
                 print( sprintf( 'Age %d: %d', iage, config $ model $ AGE_GRP[ iage ] ) )
 
-                af_ihd_grid    [ 1, iage, , ]  <-  1 - 1 / rrate( ihd_med[ , iage ], sc_hires )
-                af_ihd_grid    [ 2, iage, , ]  <-  1 - 1 / rrate( ihd_lo [ , iage ], sc_hires )
-                af_ihd_grid    [ 3, iage, , ]  <-  1 - 1 / rrate( ihd_hi [ , iage ], sc_hires )
+                # --- IHD block ---
+                af_ihd_grid     <-  addLayer( af_ihd_grid,    1 - 1 / rrate( ihd_med[ , iage ], sc_hires ) )
+                af_ihd_grid     <-  addLayer( af_ihd_grid,    1 - 1 / rrate( ihd_lo [ , iage ], sc_hires ) )
+                af_ihd_grid     <-  addLayer( af_ihd_grid,    1 - 1 / rrate( ihd_hi [ , iage ], sc_hires ) )
 
-                af_stroke_grid [ 1, iage, , ]  <-  1 - 1 / rrate( stroke_med[ , iage ], sc_hires )
-                af_stroke_grid [ 2, iage, , ]  <-  1 - 1 / rrate( stroke_lo [ , iage ], sc_hires )
-                af_stroke_grid [ 3, iage, , ]  <-  1 - 1 / rrate( stroke_hi [ , iage ], sc_hires )
+                # --- STROKE block ---
+                af_stroke_grid  <-  addLayer( af_stroke_grid, 1 - 1 / rrate( stroke_med[ , iage ], sc_hires ) )
+                af_stroke_grid  <-  addLayer( af_stroke_grid, 1 - 1 / rrate( stroke_lo [ , iage ], sc_hires ) )
+                af_stroke_grid  <-  addLayer( af_stroke_grid, 1 - 1 / rrate( stroke_hi [ , iage ], sc_hires ) )
             }
-            print( sprintf( "Loop on AFs (%d age classes) - end", length( config $ model $ AGE_GRP ) ) )
-            print( proc.time() - ptm )
+            print(
+                sprintf(
+                    "Loop on AFs (%d age classes) - end (elapsed time: %s)",
+                    length( config $ model $ AGE_GRP ),
+                    ( proc.time() - ptm )[ 'elapsed' ]
+                )
+            )
 
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 3a -----------------------------------
@@ -451,9 +453,6 @@ health.impact <- function(
             # ------------------ CALCULATE DMORT = AF*MRATE*POP*AGEFRAC/100K ------------------
             # ---------------------------------------------------------------------------------
 
-            dmort_ihd    <- array( 0, c( 3, length( config $ model $ AGE_GRP ), nrow( hrcntrcode ), ncol( hrcntrcode ) ) )
-            dmort_stroke <- array( 0, c( 3, length( config $ model $ AGE_GRP ), nrow( hrcntrcode ), ncol( hrcntrcode ) ) )
-
             # --- calculate central values of total mortalities ---
 
             # GBD2016: from class 15 to 75-79  GBD2017: all age
@@ -469,35 +468,6 @@ health.impact <- function(
             dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  mrate_dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
 
             # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
-            for ( icl in c( 1:ncl_ihd ) )
-            {
-                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
-                dmort_ihd[ 1, icl, , ]     <-  af_ihd_grid[ 1, icl, , ]              *
-                                               mrate_ihd[ 1, icl, , ]                *
-                                               scenpop[ , , 1 ]                      *
-                                               ( pop_age_fr[[ icl + 5 ]] )[ , , 1 ]  /
-                                               1.e5
-
-                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
-                dmort_stroke[ 1, icl, , ]  <-  af_stroke_grid[ 1, icl, , ]           *
-                                               mrate_stroke[ 1, icl, , ]             *
-                                               scenpop[ , , 1 ]                      *
-                                               ( pop_age_fr[[ icl + 5 ]] )[ , , 1 ]  /
-                                               1.e5
-            }
-
-            # error propagation at grid cell level from uncertainty on AF and mrate:
-            # sig_dmort / mort = sqrt( ( sig_AF / AF )^2 + ( sig_mrate / mrate )^2 )
-            sig_min_copd  <-  dmort_copd  *
-                              sqrt(
-                                     ( af_copd $ sig_min )^2  +
-                                     ( ( mrate_copd[[ 1 ]] - mrate_copd[[ 2 ]] ) / mrate_copd[[ 1 ]] )^2
-                              )
-            sig_max_copd  <-  dmort_copd  *
-                              sqrt(
-                                     ( af_copd $ sig_max )^2  +
-                                     ( ( mrate_copd[[ 3 ]] - mrate_copd[[ 1 ]] ) / mrate_copd[[ 1 ]] )^2
-                              )
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
