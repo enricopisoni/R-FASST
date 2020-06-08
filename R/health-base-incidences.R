@@ -26,6 +26,13 @@ library( 'ncdf4' )
 #' \code{index.by.agr_id.type()}, can be used to get raster layer,
 #' from the raster stack returned by \code{raster.base.incidences.by.ages()},
 #' given the age class and the value type.
+#' These two functions can be used to get layer from any ratsers stack,
+#' the layers must be stacked in the following order;
+#'       age class 1, type 1
+#'       age class 1, type 2
+#'       age class 1, type 3
+#'       age class 2, type 1
+#'       ...
 #'
 #' Before the above function could be used, the countries table with
 #' identifier and name must be prepared via function
