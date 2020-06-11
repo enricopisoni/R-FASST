@@ -239,11 +239,24 @@ raster.age.structure <- function(
 
     } else {
         # --- compute the grid layers ---
-        ptm <- proc.time()
         print( 'Computing grid with age structure by country - begin' );
+        ptm <- proc.time()
 
-        # --- sort the table by age group identifier ---
-        table          <- arrange( table, AGE_GRP )
+        # replace country id for Sud Sudan (736 --> 729)
+        sudan          <- table                                 %>%
+                          filter( CNTR_ID == 736 )              %>%
+                          transmute(
+                                CNTR_ID   = 729,
+                                AGE_GRP   = AGE_GRP,
+                                POP_FRAC  = POP_FRAC
+                          )
+
+        # append tables and sort by age group identifier
+        table          <- table                                 %>%
+                          filter( CNTR_ID != 736 )              %>%
+                          bind_rows( sudan )                    %>%
+                          arrange( AGE_GRP )
+
 
         # --- fill in the grids ---
         icntr  <-  -1
@@ -253,10 +266,6 @@ raster.age.structure <- function(
         for( irow in 1:nrow( table ) )
         {
             cntr.id  <-  table[ irow, ] $ CNTR_ID
-            if ( cntr.id == 736 )
-            {
-                 cntr.id <- 729
-            }
             if ( cntr.id != icntr )
             {
                 icntr    <-  cntr.id

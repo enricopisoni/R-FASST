@@ -482,8 +482,34 @@ raster.base.incidences <- function(
 
     } else {
         # --- compute the layers matrices ---
-        ptm <- proc.time()
         print( 'Computing grid with base incidence by country - begin' );
+        ptm <- proc.time()
+
+        # replace country id for Sud Sudan (736 --> 729)
+        sudan          <- table                                 %>%
+                          filter( CNTR_ID == 736 )              %>%
+                          transmute(
+                                CNTR_ID = 729,
+                                VAL     = VAL,
+                                LO      = LO,
+                                HI      = HI
+                          )
+
+        # use Morocco country id (504) for West Sahara (732)
+        west.sahara    <- table                                 %>%
+                          filter( CNTR_ID == 504 )              %>%
+                          transmute(
+                                CNTR_ID = 732,
+                                VAL     = VAL,
+                                LO      = LO,
+                                HI      = HI
+                          )
+
+        # remove unwanted country id and append the above tables
+        table          <- table                                 %>%
+                          filter( CNTR_ID != 736 )              %>%
+                          bind_rows( sudan )                    %>%
+                          bind_rows( west.sahara )
 
         # prepare the three layers
         layer.val <- raster(
@@ -519,11 +545,7 @@ raster.base.incidences <- function(
         # fill the three layer
         for( icntr in 1:nrow( table ) )
         {
-            cntr.id  <-  table[ icntr, ] $ CNTR_ID
-            if ( cntr.id == 736 )
-            {
-                 cntr.id <- 729
-            }
+            cntr.id               <-  table[ icntr, ] $ CNTR_ID
             country               <-  base.map[]  ==  cntr.id
 
             layer.val[ country ]  <-  table[ icntr, ] $ VAL
@@ -593,11 +615,38 @@ raster.base.incidences.by.ages <- function(
         print( sprintf( "Grid with base incidence by country and age group read from file: '%s'.", file ) )
 
     } else {
-        ptm <- proc.time()
         print( 'Computing grid with base incidence by country and age group - begin' );
+        ptm <- proc.time()
 
-        # --- sort the table by age group identifier ---
-        table            <- arrange( table, AGE_ID )
+        # replace country id for Sud Sudan (736 --> 729)
+        sudan          <- table                                 %>%
+                          filter( CNTR_ID == 736 )              %>%
+                          transmute(
+                                CNTR_ID = 729,
+                                AGE_ID  = AGE_ID,
+                                VAL     = VAL,
+                                LO      = LO,
+                                HI      = HI
+                          )
+
+        # use Morocco country id (504) for West Sahara (732)
+        west.sahara    <- table                                 %>%
+                          filter( CNTR_ID == 504 )              %>%
+                          transmute(
+                                CNTR_ID = 732,
+                                AGE_ID  = AGE_ID,
+                                VAL     = VAL,
+                                LO      = LO,
+                                HI      = HI
+                          )
+
+        # append tables and sort by age group identifier
+        table          <- table                                 %>%
+                          filter( CNTR_ID != 736 )              %>%
+                          bind_rows( sudan )                    %>%
+                          bind_rows( west.sahara )              %>%
+                          arrange( AGE_ID )
+
 
         # --- compute the vector ---
 
@@ -612,10 +661,6 @@ raster.base.incidences.by.ages <- function(
             cntr.id  <-  table[ icntr, ] $ CNTR_ID
             if ( cntr.id != last.cntr.id )
             {
-                if ( cntr.id == 736 )
-                {
-                     cntr.id <- 729
-                }
                 country       <-  base.map[]  ==  cntr.id
                 last.cntr.id  <-  cntr.id
             }
