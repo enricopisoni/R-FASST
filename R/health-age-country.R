@@ -309,7 +309,14 @@ raster.age.structure <- function(
         print( sprintf( 'Computing grid with age structure by country - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
     }
 
-    # return the stacked layers
+    # --- set layers name ---
+    names( grid ) <- sprintf(
+                         'Age.Class.%d',
+                         seq( from = 0, to = 5 * ( nlayers( grid ) - 1 ), by = 5 )
+                     )
+
+
+    # --- return the stacked layers ---
     return( grid )
 }
 

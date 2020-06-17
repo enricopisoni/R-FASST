@@ -572,7 +572,6 @@ raster.base.incidences <- function(
 
         # stack the three layers
         grid           <-  stack( layer.val, layer.lo, layer.hi )
-        names( grid )  <-  c( 'VAL', 'LO', 'HI' )
 
         # --- store the matrices ---
         writeRaster(
@@ -587,7 +586,11 @@ raster.base.incidences <- function(
         print( sprintf( 'Computing grid with base incidence by country - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
     }
 
-    # return the stacked layers
+    # --- set layers name ---
+    names( grid )  <-  c( 'VAL', 'LO', 'HI' )
+
+
+    # --- return the stacked layers ---
     return( grid )
 }
 
@@ -758,7 +761,20 @@ raster.base.incidences.by.ages <- function(
         print( sprintf( 'Computing grid with base incidence by country and age group - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
     }
 
-    # return the vector
+    # --- set layers name ---
+    types.seq <-  c( 'VAL', 'LO', 'HI' )
+    age.last  <-  nlayers( grid ) / 3
+    age.seq   <-  seq( from = 25, to = 25 + 5 * ( age.last - 1 ), by = 5 )
+    names     <-  c()
+    for( age.class in age.seq )
+        for( type in types.seq )
+        {
+            names <- c( names, sprintf( 'Age.Class.%d_Type.%s', age.class, type ) )
+        }
+    names( grid )  <-  names
+
+
+    # --- return the stacked layers ---
     return( grid )
 }
 set.global.attributes <- function( file )
@@ -800,7 +816,7 @@ index.by.agr_grp.type <- function(
                              type
                          )
 {
-    3 * agr_grp / 5  + type  - 15
+    3 * age_grp / 5  + type  - 15
 }
 
 # ------------------------------------------------------------
@@ -825,5 +841,5 @@ index.by.agr_id.type <- function(
                              type
                          )
 {
-    3 * ( agr_id - 1 )  +  type
+    3 * ( age_id - 1 )  +  type
 }
