@@ -39,7 +39,12 @@ get.age.structure <- function(
                                            POP_FRAC = col_double()
                                         )
                           )
-        print( sprintf( "Age structure per country (table) read from: '%s'.", file ) )
+        print(
+            sprintf(
+                "Age structure per country (table) read from: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     } else {
 
@@ -59,7 +64,12 @@ get.age.structure <- function(
             table.bycntr,
             file
         )
-        print( sprintf( "Age structure per country (table) wrote to: '%s'.", file ) )
+        print(
+            sprintf(
+                "Age structure per country (table) wrote to: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     }
 
@@ -235,7 +245,12 @@ raster.age.structure <- function(
 
         grid  <-  brick( file )
 
-        print( sprintf( "Grid with age structure per country read from file: '%s'.", file ) )
+        print(
+            sprintf(
+                "Grid with age structure per country read from file: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     } else {
         # --- compute the grid layers ---
@@ -306,7 +321,13 @@ raster.age.structure <- function(
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid with age structure by country - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
+        print(
+            sprintf(
+                'Computing grid with age structure by country - end (elapsed time: %s; file: %s)',
+                elapsed[ 'elapsed' ],
+                normalizePath( file )
+            )
+        )
     }
 
     # --- set layers name ---

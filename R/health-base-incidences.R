@@ -104,7 +104,12 @@ get.base.incidences <- function(
                                            HI      = col_double()
                                         )
                           )
-        print( sprintf( "Base incidence per country (table) read from: '%s'.", file ) )
+        print(
+            sprintf(
+                "Base incidence per country (table) read from: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     } else {
 
@@ -124,7 +129,12 @@ get.base.incidences <- function(
             table.bycntr,
             file
         )
-        print( sprintf( "Base incidence per country (table) wrote to: '%s'.", file ) )
+        print(
+            sprintf(
+                "Base incidence per country (table) wrote to: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     }
 
@@ -183,7 +193,12 @@ get.base.incidences.by.ages <- function(
                                            HI      = col_double()
                                         )
                           )
-        print( sprintf( "Base incidence per country and age group (table) read from: '%s'.", file ) )
+        print(
+            sprintf(
+                "Base incidence per country and age group (table) read from: '%s'.",
+                normalizePath( file )
+            )
+        )
     } else {
 
         # --- input file does not exist, compute it ---
@@ -203,7 +218,12 @@ get.base.incidences.by.ages <- function(
             table.bycntr,
             file
         )
-        print( sprintf( "Base incidence per country and age group (table) wrote to: '%s'.", file ) )
+        print(
+            sprintf(
+                "Base incidence per country and age group (table) wrote to: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     }
 
@@ -495,7 +515,12 @@ raster.base.incidences <- function(
 
         grid  <-  brick( file )
 
-        print( sprintf( "Grid with base incidence by country read from file: '%s'.", file ) )
+        print(
+            sprintf(
+                "Grid with base incidence by country read from file: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     } else {
         # --- compute the layers matrices ---
@@ -583,7 +608,13 @@ raster.base.incidences <- function(
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid with base incidence by country - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
+        print(
+            sprintf(
+                'Computing grid with base incidence by country - end (elapsed time: %s; file: %s)',
+                elapsed[ 'elapsed' ],
+                normalizePath( file )
+            )
+        )
     }
 
     # --- set layers name ---
@@ -635,7 +666,12 @@ raster.base.incidences.by.ages <- function(
 
         grid  <-  brick( file )
 
-        print( sprintf( "Grid with base incidence by country and age group read from file: '%s'.", file ) )
+        print(
+            sprintf(
+                "Grid with base incidence by country and age group read from file: '%s'.",
+                normalizePath( file )
+            )
+        )
 
     } else {
         print( 'Computing grid with base incidence by country and age group - begin' );
@@ -758,7 +794,13 @@ raster.base.incidences.by.ages <- function(
 
         # --- elapsed time to build up the grid ---
         elapsed <-  proc.time() - ptm
-        print( sprintf( 'Computing grid with base incidence by country and age group - end (elapsed time: %s; file: %s)', elapsed[ 'elapsed' ], file ) )
+        print(
+            sprintf(
+                'Computing grid with base incidence by country and age group - end (elapsed time: %s; file: %s)',
+                elapsed[ 'elapsed' ],
+                normalizePath( file )
+            )
+        )
     }
 
     # --- set layers name ---
