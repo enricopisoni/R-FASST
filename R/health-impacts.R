@@ -5,6 +5,7 @@ library( 'tidyverse' )
 
 source( 'health-base-incidences.R' )
 source( 'health-age-country.R' )
+source( 'health-error-propagation.R' )
 source( 'rrate.R' )
 source( 'fasst-write.R' )
 
@@ -468,6 +469,7 @@ health.impact <- function(
             # GBD2016: from class 15-19 to 75-79  GBD2017: all age
             dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  mrate_dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
 
+
             # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
             dmort_ihd    <- brick()           # stack of only median values - 15 layers
             dmort_stroke <- brick()           # stack of only median values - 15 layers
@@ -496,6 +498,58 @@ health.impact <- function(
                                   )
             }
 
+            # error propagation at grid cell level from uncertainty on AF and mrate:
+            # sig_dmort / mort = sqrt( ( sig_AF / AF )^2 + ( sig_mrate / mrate )^2 )
+            sig_copd    <-  get.af.mrate.error.propagation(
+                                dmort_copd,
+                                af_copd,
+                                mrate_copd
+                            )
+
+            sig_lc      <-  get.af.mrate.error.propagation(
+                                dmort_lc,
+                                af_lc,
+                                mrate_lc
+                            )
+
+            sig_lri     <-  get.af.mrate.error.propagation(
+                                dmort_lri,
+                                af_lri,
+                                mrate_lri
+                            )
+
+            sig_dmt2    <-  get.af.mrate.error.propagation(
+                                dmort_dmt2,
+                                af_dmt2,
+                                mrate_dmt2
+                            )
+
+            sig_ihd     <-  get.af.mrate.error.propagation.by.age(
+                                dmort_ihd,
+                                af_ihd_grid,
+                                mrate_ihd
+                            )
+
+            sig_stroke  <-  get.af.mrate.error.propagation.by.age(
+                                dmort_stroke,
+                                af_stroke_grid,
+                                mrate_stroke
+                            )
+
+            sig_all     <-  list(
+                                sig_min  =  sig_copd   $ sig_min  +
+                                            sig_lc     $ sig_min  +
+                                            sig_lri    $ sig_min  +
+                                            sig_dmt2   $ sig_min  +
+                                            sig_ihd    $ sig_min  +
+                                            sig_stroke $ sig_min,
+                                sig_max  =  sig_copd   $ sig_max  +
+                                            sig_lc     $ sig_max  +
+                                            sig_lri    $ sig_max  +
+                                            sig_dmt2   $ sig_max  +
+                                            sig_ihd    $ sig_max  +
+                                            sig_stroke $ sig_max
+                            )
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
