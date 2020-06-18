@@ -551,6 +551,17 @@ health.impact <- function(
                                             sig_stroke $ sig_max
                             )
 
+            # --- sum mortality values ---
+            dmort_ihd_all     <-  calc( dmort_ihd,    sum )
+            dmort_stroke_all  <-  calc( dmort_stroke, sum )
+
+            all_mort          <-  dmort_lc            +
+                                  dmort_lri           +
+                                  dmort_copd          +
+                                  dmort_dmt2          +
+                                  dmort_ihd_all       +
+                                  dmort_stroke_all
+
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
 
