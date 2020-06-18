@@ -390,6 +390,7 @@ health.impact <- function(
                                               mrate_stroke.table
                                   )
 
+
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 3b -----------------------------------
             # ------------- RETRIEVE AGE STRUCTURE PER COUNTRY FROM UN2017 REVISION -----------
@@ -468,6 +469,32 @@ health.impact <- function(
             dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  mrate_dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
 
             # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
+            dmort_ihd    <- brick()           # stack of only median values - 15 layers
+            dmort_stroke <- brick()           # stack of only median values - 15 layers
+            for ( icl in c( 1:ncl_ihd ) )
+            {
+                idx           <-  index.by.agr_id.type( 1, icl )
+
+                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
+                dmort_ihd     <-  addLayer(
+                                      dmort_ihd,
+                                      af_ihd_grid[[ idx ]]      *
+                                      mrate_ihd[[   idx ]]      *
+                                      scenpop                   *
+                                      pop_age_fr[[ icl + 5 ]]   /
+                                      1.e5
+                                  )
+
+                # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
+                dmort_stroke  <-  addLayer(
+                                      dmort_stroke,
+                                      af_stroke_grid[[ idx ]]   *
+                                      mrate_stroke[[   idx ]]   *
+                                      scenpop                   *
+                                      pop_age_fr[[ icl + 5 ]]   /
+                                      1.e5
+                                  )
+            }
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
