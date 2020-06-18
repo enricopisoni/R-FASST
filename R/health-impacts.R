@@ -562,6 +562,39 @@ health.impact <- function(
                                   dmort_ihd_all       +
                                   dmort_stroke_all
 
+            # CONSTRUCT LAYERS WITH LOWER AND UPPER BOUNDARIES
+            dmort_copd        <-  stack(
+                                      dmort_copd,
+                                      dmort_copd - sig_copd $ sig_min,
+                                      dmort_copd + sig_copd $ sig_max
+                                  )
+            dmort_lc          <-  stack(
+                                      dmort_lc,
+                                      dmort_lc   - sig_lc   $ sig_min,
+                                      dmort_lc   + sig_lc   $ sig_max
+                                  )
+            dmort_lri         <-  stack(
+                                      dmort_lri,
+                                      dmort_lri  - sig_lri  $ sig_min,
+                                      dmort_lri  + sig_lri  $ sig_max
+                                  )
+            dmort_dmt2        <-  stack(
+                                      dmort_dmt2,
+                                      dmort_dmt2 - sig_dmt2 $ sig_min,
+                                      dmort_dmt2 + sig_dmt2 $ sig_max
+                                  )
+
+            dmort_ihd_all     <-  stack(
+                                      dmort_ihd_all,
+                                      dmort_ihd_all     -  sig_ihd    $ sig_min,
+                                      dmort_ihd_all     +  sig_ihd    $ sig_max
+                                  )
+            dmort_stroke_all  <-  stack(
+                                      dmort_stroke_all,
+                                      dmort_stroke_all  -  sig_stroke $ sig_min,
+                                      dmort_stroke_all  +  sig_stroke $ sig_max
+                                  )
+
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
 
