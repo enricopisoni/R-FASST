@@ -27,17 +27,23 @@ get.af.mrate.error.propagation <- function(
                                       mrate
                                   )
 {
+    sig_min  <-  dmort  *
+                 sqrt(
+                        ( af $ sig_min )^2  +
+                        ( ( mrate[[ 1 ]] - mrate[[ 2 ]] ) / mrate[[ 1 ]] )^2
+                 )
+    sig_max  <-  dmort  *
+                 sqrt(
+                        ( af $ sig_max )^2  +
+                        ( ( mrate[[ 3 ]] - mrate[[ 1 ]] ) / mrate[[ 1 ]] )^2
+                 )
+
+    sig_min[ ! is.finite( sig_min ) ]  <- 0
+    sig_max[ ! is.finite( sig_max ) ]  <- 0
+
     list(
-        sig_min =  dmort  *
-                   sqrt(
-                          ( af $ sig_min )^2  +
-                          ( ( mrate[[ 1 ]] - mrate[[ 2 ]] ) / mrate[[ 1 ]] )^2
-                   ),
-        sig_max =  dmort  *
-                   sqrt(
-                          ( af $ sig_max )^2  +
-                          ( ( mrate[[ 3 ]] - mrate[[ 1 ]] ) / mrate[[ 1 ]] )^2
-                   )
+        sig_min  =  sig_min,
+        sig_max  =  sig_max
     )
 }
 
@@ -98,9 +104,16 @@ get.af.mrate.error.propagation.by.age <- function(
     }
 
     # --- error on sum of age classes (for each grid cell) ---
+    sig_min                            <-  sqrt( sig_min )
+    sig_min[ ! is.finite( sig_min ) ]  <- 0
+
+    sig_max                            <-  sqrt( sig_max )
+    sig_max[ ! is.finite( sig_max ) ]  <- 0
+
+
     list(
-        sig_min  =  sqrt( sig_min ),
-        sig_max  =  sqrt( sig_max )
+        sig_min  =  sig_min,
+        sig_max  =  sig_max
     )
 }
 error.propagation <- function(
