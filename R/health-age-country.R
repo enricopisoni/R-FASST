@@ -302,6 +302,7 @@ raster.age.structure <- function(
                                ymn  = ymin( base.map ),
                                ymx  = ymax( base.map )
                            )
+                values( layer ) <- 0
             }
 
             layer[ country ]  <- table[ irow, ] $ POP_FRAC

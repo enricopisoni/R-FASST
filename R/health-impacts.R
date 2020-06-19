@@ -89,6 +89,7 @@ health.impact <- function(
                                 ),
                         fact = 2
                         )
+    hrcntrcode[ ! is.finite( hrcntrcode ) ]  <-  0
 
     # files with base mortality rates (per 100k population)
     copd       <- read_csv( config $ files $ in.file.copd,
