@@ -42,7 +42,7 @@ get.age.structure <- function(
         print(
             sprintf(
                 "Age structure per country (table) read from: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -67,7 +67,7 @@ get.age.structure <- function(
         print(
             sprintf(
                 "Age structure per country (table) wrote to: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -248,7 +248,7 @@ raster.age.structure <- function(
         print(
             sprintf(
                 "Grid with age structure per country read from file: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -326,7 +326,7 @@ raster.age.structure <- function(
             sprintf(
                 'Computing grid with age structure by country - end (elapsed time: %s; file: %s)',
                 elapsed[ 'elapsed' ],
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
     }

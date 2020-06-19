@@ -107,7 +107,7 @@ get.base.incidences <- function(
         print(
             sprintf(
                 "Base incidence per country (table) read from: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -132,7 +132,7 @@ get.base.incidences <- function(
         print(
             sprintf(
                 "Base incidence per country (table) wrote to: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -196,7 +196,7 @@ get.base.incidences.by.ages <- function(
         print(
             sprintf(
                 "Base incidence per country and age group (table) read from: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
     } else {
@@ -221,7 +221,7 @@ get.base.incidences.by.ages <- function(
         print(
             sprintf(
                 "Base incidence per country and age group (table) wrote to: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -518,7 +518,7 @@ raster.base.incidences <- function(
         print(
             sprintf(
                 "Grid with base incidence by country read from file: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -612,7 +612,7 @@ raster.base.incidences <- function(
             sprintf(
                 'Computing grid with base incidence by country - end (elapsed time: %s; file: %s)',
                 elapsed[ 'elapsed' ],
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
     }
@@ -669,7 +669,7 @@ raster.base.incidences.by.ages <- function(
         print(
             sprintf(
                 "Grid with base incidence by country and age group read from file: '%s'.",
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
 
@@ -798,7 +798,7 @@ raster.base.incidences.by.ages <- function(
             sprintf(
                 'Computing grid with base incidence by country and age group - end (elapsed time: %s; file: %s)',
                 elapsed[ 'elapsed' ],
-                normalizePath( file )
+                normalizePath( file, winslash = '/' )
             )
         )
     }

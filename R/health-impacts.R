@@ -229,7 +229,7 @@ health.impact <- function(
                                 scen,
                                 year
                       )
-            print( sprintf( "Processing file '%s'", normalizePath( infile ) ) )
+            print( sprintf( "Processing file '%s'", normalizePath( infile, winslash = '/' ) ) )
 
             # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
             print( sprintf( "Calculate AFs @ %s", format( Sys.time(), "%c" ) ) )
