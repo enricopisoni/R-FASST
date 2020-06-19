@@ -596,6 +596,17 @@ health.impact <- function(
                                       dmort_stroke_all  +  sig_stroke $ sig_max
                                   )
 
+
+            print( 'TOTAL MORTALITIES AMBIENT PM PER COD:' )
+            print( fasst.print.row.mortalities( 'COPD',    dmort_copd ) )
+            print( fasst.print.row.mortalities( 'LC',      dmort_lc ) )
+            print( fasst.print.row.mortalities( 'LRI',     dmort_lri ) )
+            print( fasst.print.row.mortalities( 'DMT2',    dmort_dmt2 ) )
+            print( fasst.print.row.mortalities( 'IHD',     dmort_ihd_all ) )
+            print( fasst.print.row.mortalities( 'STROKE',  dmort_stroke_all ) )
+
+
+
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
 

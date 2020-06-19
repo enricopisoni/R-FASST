@@ -57,12 +57,34 @@ fasst.write <- function(
     writeLines( paste( 'IHD + STROKE:', paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ), sep = ' ' ), file ) 
     writeLines( paste( 'COPD O3:',      paste( parameters $ AGEFRAC_O3,   collapse = ', ' ), sep = ' ' ), file )  
 
-
-
-
-
-
-
-
     close( file )
+}
+
+# ------------------------------------------------------------
+
+#' Given a three layers stack, it prints one summary row
+#' with three values, each one as sum of all cells of a layer;
+#'
+#' @param item   text string describing the values;
+#' @param layers three layers stack to print;
+#'
+#' @return single line text with:
+#'           description, sum of all cells for each layer;
+#'
+fasst.print.row.mortalities <- function(
+                                   item,
+                                   layers
+                               )
+{
+    l.1 <-  layers[[ 1 ]]
+    l.2 <-  layers[[ 2 ]]
+    l.3 <-  layers[[ 3 ]]
+
+    sprintf(
+        "%15s: %10.2f (%10.2f, %10.2f)",
+        item,
+        sum( l.1[] ),
+        sum( l.2[] ),
+        sum( l.3[] )
+    )
 }
