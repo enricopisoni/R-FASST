@@ -157,8 +157,8 @@ health.impact <- function(
 
 
     # Ozone RRs with log-lin ER function
-    beta_rr_copd_tu  <- log( c( 1.14, 1.08, 1.21 ) ) / 10     # new TURNER!, for new exposure metric annual mean of daily 8h max!
-    beta_rr_copd_gbd <- log( c( 1.06, 1.02, 1.10 ) ) / 10     # new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
+    beta_copd_tu  <- log( c( 1.14, 1.08, 1.21 ) ) / 10     # new TURNER!, for new exposure metric annual mean of daily 8h max!
+    beta_copd_gbd <- log( c( 1.06, 1.02, 1.10 ) ) / 10     # new GBD2017!, for new exposure metric 6-month mean of daily 8h max!
 
 
     # *** file 'country_mask_0.5x0.5_v3.sav' is loaded but NOT used;
@@ -181,8 +181,6 @@ health.impact <- function(
 # --not-used-remove--    hr_grid_tot  <- array( 0, c( jmg, img ) )
 # --not-used-remove--    hr_grid_tot1 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
 # --not-used-remove--    hr_grid_tot2 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
-# --not-used-remove--    scenpopmask  <- hr_grid_tot
-# --not-used-remove--    scenpop      <- hr_grid_tot
 
 
     # ----------------------------------------------------------------------
@@ -210,18 +208,29 @@ health.impact <- function(
             hr_grid_tot[ is.na( hr_grid_tot[] ) ] <- 0
 
             # identify grids with valid population data
-            hr_grid_mask             <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
+            hr_grid_mask                 <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
 
-            scenpop                  <-  raster(
-                                             ncol = ncol( hr_grid_tot ),
-                                             nrow = nrow( hr_grid_tot ),
-                                             xmn  = xmin( hr_grid_tot ),
-                                             xmx  = xmax( hr_grid_tot ),
-                                             ymn  = ymin( hr_grid_tot ),
-                                             ymx  = ymax( hr_grid_tot )
-                                         )
-            values( scenpop )        <-  0
-            scenpop[ hr_grid_mask ]  <-  hr_grid_tot[ hr_grid_mask ]
+            scenpop                      <-  raster(
+                                                 ncol = ncol( hr_grid_tot ),
+                                                 nrow = nrow( hr_grid_tot ),
+                                                 xmn  = xmin( hr_grid_tot ),
+                                                 xmx  = xmax( hr_grid_tot ),
+                                                 ymn  = ymin( hr_grid_tot ),
+                                                 ymx  = ymax( hr_grid_tot )
+                                             )
+            values( scenpop )            <-  0
+            scenpop[ hr_grid_mask ]      <-  hr_grid_tot[ hr_grid_mask ]
+
+            scenpopmask                  <-  raster(
+                                                 ncol = ncol( hr_grid_tot ),
+                                                 nrow = nrow( hr_grid_tot ),
+                                                 xmn  = xmin( hr_grid_tot ),
+                                                 xmx  = xmax( hr_grid_tot ),
+                                                 ymn  = ymin( hr_grid_tot ),
+                                                 ymx  = ymax( hr_grid_tot )
+                                             )
+            values( scenpopmask )        <-  0
+            scenpopmask[ hr_grid_mask ]  <-  1
 
             # read the scenario input file (high resolution grid map)
             infile <- get.file.name.population(
@@ -236,6 +245,8 @@ health.impact <- function(
 
             sc_hires      <- raster( infile, varname = 'TOT_PM_35' )  # extract total pm from SC structure and load into SC_HIRES variable
             sc_anth_hires <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
+            sc_adm8h      <- raster( infile, varname = 'ADM8h' )
+            sc_sdm8h      <- raster( infile, varname = 'SDM8h' )
 
             af_copd  <- compute.attributable.functions(             # ALL AGES >25
                              sc_hires,
@@ -604,6 +615,89 @@ health.impact <- function(
             print( fasst.print.row.mortalities( 'DMT2',    dmort_dmt2 ) )
             print( fasst.print.row.mortalities( 'IHD',     dmort_ihd_all ) )
             print( fasst.print.row.mortalities( 'STROKE',  dmort_stroke_all ) )
+
+
+            adm8h_adm8thr_threshold  <-  ( ( sc_adm8h - config $ model $ ADM8THR ) > 0 )
+
+            dmort_o3_tu     <- mrate_copd[[ 1 ]]  *
+                               frac_o3            *
+                               scenpop            *
+                               scenpopmask        *
+                               (
+                                   1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
+                               )                  /
+                               1.e5
+
+            dmort_o3_gbd    <- mrate_copd[[ 1 ]]  *
+                               frac_o3            *
+                               scenpop            *
+                               scenpopmask        *
+                               (
+                                   1 - exp( -beta_copd_gbd[ 1 ] * ( ( sc_sdm8h - config $ model $ SDM8THR ) > 0 ) )
+                               )                  /
+                               1.e5
+
+
+            sig_copd_min    <-  ( mrate_copd[[ 1 ]] - mrate_copd[[ 2 ]] ) / mrate_copd[[ 1 ]]
+            sig_copd_max    <-  ( mrate_copd[[ 3 ]] - mrate_copd[[ 1 ]] ) / mrate_copd[[ 1 ]]
+
+            sig_af_tu_min   <-  (
+                                  ( 1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold ) ) -
+                                  ( 1 - exp( -beta_copd_tu[ 2 ] * adm8h_adm8thr_threshold ) )
+                                )                                                               /
+                                (
+                                  1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
+                                )
+            sig_af_tu_max   <-  (
+                                  ( 1 - exp( -beta_copd_tu[ 3 ] * adm8h_adm8thr_threshold ) ) -
+                                  ( 1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold ) )
+                                )                                                               /
+                                (
+                                  1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
+                                )
+
+            sig_af_gbd_min  <-  (
+                                  ( 1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold ) ) -
+                                  ( 1 - exp( -beta_copd_gbd[ 2 ] * adm8h_adm8thr_threshold ) )
+                                )                                                                /
+                                (
+                                  1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold )
+                                )
+            sig_af_gbd_max  <-  (
+                                  ( 1 - exp( -beta_copd_gbd[ 3 ] * adm8h_adm8thr_threshold ) ) -
+                                  ( 1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold ) )
+                                )                                                                /
+                                (
+                                  1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold )
+                                )
+
+
+            sig_o3_tu_min   <-  dmort_o3_tu * sqrt( sig_copd_min ^ 2  +  sig_af_tu_min ^ 2 )
+            sig_o3_tu_min[ ! is.finite( sig_o3_tu_min ) ]  <- 0
+
+            sig_o3_tu_max   <-  dmort_o3_tu * sqrt( sig_copd_max ^ 2  +  sig_af_tu_max ^ 2 )
+            sig_o3_tu_max[ ! is.finite( sig_o3_tu_max ) ]  <- 0
+
+            sig_o3_gbd_min  <-  dmort_o3_gbd * sqrt( sig_copd_min ^ 2  +  sig_af_gbd_min ^ 2 )
+            sig_o3_gbd_min[ ! is.finite( sig_o3_gbd_min ) ]  <- 0
+
+            sig_o3_gbd_max  <-  dmort_o3_gbd * sqrt( sig_copd_max ^ 2  +  sig_af_gbd_max ^ 2 )
+            sig_o3_gbd_max[ ! is.finite( sig_o3_gbd_max ) ]  <- 0
+
+
+            dmort_o3_gbd    <-  brick( dmort_o3_gbd )
+            dmort_o3_gbd    <-  addLayer( dmort_o3_gbd, dmort_o3_gbd[[ 1 ]]  - sig_o3_gbd_min )
+            dmort_o3_gbd    <-  addLayer( dmort_o3_gbd, dmort_o3_gbd[[ 1 ]]  + sig_o3_gbd_max )
+
+            dmort_o3_tu     <-  brick( dmort_o3_tu )
+            dmort_o3_tu     <-  addLayer( dmort_o3_tu, dmort_o3_tu[[ 1 ]]  - sig_o3_tu_min )
+            dmort_o3_tu     <-  addLayer( dmort_o3_tu, dmort_o3_tu[[ 1 ]]  + sig_o3_tu_max )
+
+
+            print( 'TOTAL MORTALITIES O3:' )
+            print( fasst.print.row.mortalities( 'COPD GBD', dmort_o3_gbd ) )
+            print( fasst.print.row.mortalities( 'COPD TUR', dmort_o3_tu ) )
+
 
 
 
