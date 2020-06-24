@@ -517,7 +517,7 @@ raster.base.incidences <- function(
 
         print(
             sprintf(
-                "Grid with base incidence by country read from file: '%s'.",
+                "Grid with base incidence by country read from: '%s'.",
                 normalizePath( file, winslash = '/' )
             )
         )
@@ -668,7 +668,7 @@ raster.base.incidences.by.ages <- function(
 
         print(
             sprintf(
-                "Grid with base incidence by country and age group read from file: '%s'.",
+                "Grid with base incidence by country and age group read from: '%s'.",
                 normalizePath( file, winslash = '/' )
             )
         )

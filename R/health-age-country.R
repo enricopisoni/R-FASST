@@ -247,7 +247,7 @@ raster.age.structure <- function(
 
         print(
             sprintf(
-                "Grid with age structure per country read from file: '%s'.",
+                "Grid with age structure per country read from: '%s'.",
                 normalizePath( file, winslash = '/' )
             )
         )
