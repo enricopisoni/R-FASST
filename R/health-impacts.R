@@ -575,33 +575,33 @@ health.impact <- function(
                                   dmort_stroke_all
 
             # CONSTRUCT LAYERS WITH LOWER AND UPPER BOUNDARIES
-            dmort_copd        <-  stack(
+            dmort_copd        <-  brick(
                                       dmort_copd,
                                       dmort_copd - sig_copd $ sig_min,
                                       dmort_copd + sig_copd $ sig_max
                                   )
-            dmort_lc          <-  stack(
+            dmort_lc          <-  brick(
                                       dmort_lc,
                                       dmort_lc   - sig_lc   $ sig_min,
                                       dmort_lc   + sig_lc   $ sig_max
                                   )
-            dmort_lri         <-  stack(
+            dmort_lri         <-  brick(
                                       dmort_lri,
                                       dmort_lri  - sig_lri  $ sig_min,
                                       dmort_lri  + sig_lri  $ sig_max
                                   )
-            dmort_dmt2        <-  stack(
+            dmort_dmt2        <-  brick(
                                       dmort_dmt2,
                                       dmort_dmt2 - sig_dmt2 $ sig_min,
                                       dmort_dmt2 + sig_dmt2 $ sig_max
                                   )
 
-            dmort_ihd_all     <-  stack(
+            dmort_ihd_all     <-  brick(
                                       dmort_ihd_all,
                                       dmort_ihd_all     -  sig_ihd    $ sig_min,
                                       dmort_ihd_all     +  sig_ihd    $ sig_max
                                   )
-            dmort_stroke_all  <-  stack(
+            dmort_stroke_all  <-  brick(
                                       dmort_stroke_all,
                                       dmort_stroke_all  -  sig_stroke $ sig_min,
                                       dmort_stroke_all  +  sig_stroke $ sig_max
@@ -720,7 +720,7 @@ health.impact <- function(
             mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     4L, max )
 
 
-            mort_sc                <-  stack()
+            mort_sc                <-  brick()
             mort_sc                <-  addLayer(
                                            mort_sc,
                                            mres_dmort_copd   [[ 1 ]]  +
@@ -982,7 +982,7 @@ resolution.reduce  <- function(
                           how
                       )
 {
-    reduced  <- stack()
+    reduced  <- brick()
     for( ilayer in 1:nlayers( stack ) )
     {
         reduced  <- addLayer(
