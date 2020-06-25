@@ -244,7 +244,7 @@ health.impact <- function(
             print( sprintf( "Calculate AFs @ %s", format( Sys.time(), "%c" ) ) )
 
             sc_hires      <- raster( infile, varname = 'TOT_PM_35' )  # extract total pm from SC structure and load into SC_HIRES variable
-            sc_anth_hires <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
+            sc_ant_hires  <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
             sc_adm8h      <- raster( infile, varname = 'ADM8h' )
             sc_sdm8h      <- raster( infile, varname = 'SDM8h' )
 
@@ -759,6 +759,22 @@ health.impact <- function(
             print( fasst.print.row.mortalities( 'TOTAL 0.5x0.5 GRID MORTALITIES O3',  mort_sc           ) )
             print( fasst.print.row.mortalities( 'COPD GBD',                           mres_dmort_o3_gbd ) )
             print( fasst.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
+
+            # --- 0.5x0.5deg resolution of pollutants ---
+            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = 4 )
+            med_pmtot_35      <-  aggregate( sc_hires,     fact = 4 )
+            med_adma8         <-  aggregate( sc_adm8h,     fact = 4 )
+            med_sdma8         <-  aggregate( sc_sdm8h,     fact = 4 )
+
+            med_pmnat_dry     <-  aggregate(
+                                      raster( infile, varname = 'NAT_PM_dry' ),
+                                      fact = 4
+                                  )
+            med_nat_h2o35     <-  aggregate(
+                                      raster( infile, varname = 'H2O35_SS' ),
+                                      fact = 4
+                                  )
+
 
 
 
