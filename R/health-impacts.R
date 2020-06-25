@@ -699,6 +699,67 @@ health.impact <- function(
             print( fasst.print.row.mortalities( 'COPD TUR', dmort_o3_tu ) )
 
 
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 5 ------------------------------------
+            # ----------------- Pass to 0.5x0.5deg resolution for aggregation -----------------
+            # ---------------------------------------------------------------------------------
+
+            # --- make sum of 4x4 subgrids to pass from 7.5'x7.5' (=0.125x0.125deg) ---
+            # --- to 0.5x0.5deg resolution                                          ---
+
+            # aggregate subgrid cells
+            popmed                 <-  aggregate( scenpop, fact = 4, fun = sum )
+
+            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       4L, max )
+            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         4L, max )
+            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        4L, max )
+            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       4L, max )
+            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    4L, max )
+            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, 4L, max )
+            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      4L, max )
+            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     4L, max )
+
+
+            mort_sc                <-  stack()
+            mort_sc                <-  addLayer(
+                                           mort_sc,
+                                           mres_dmort_copd   [[ 1 ]]  +
+                                           mres_dmort_lc     [[ 1 ]]  +
+                                           mres_dmort_lri    [[ 1 ]]  +
+                                           mres_dmort_dmt2   [[ 1 ]]  +
+                                           mres_dmort_ihd    [[ 1 ]]  +
+                                           mres_dmort_stroke [[ 1 ]]
+                                       )
+            mort_sc                <-  addLayer(
+                                           mort_sc,
+                                           mres_dmort_copd   [[ 2 ]]  +
+                                           mres_dmort_lc     [[ 2 ]]  +
+                                           mres_dmort_lri    [[ 2 ]]  +
+                                           mres_dmort_dmt2   [[ 2 ]]  +
+                                           mres_dmort_ihd    [[ 2 ]]  +
+                                           mres_dmort_stroke [[ 2 ]]
+                                       )
+            mort_sc                <-  addLayer(
+                                           mort_sc,
+                                           mres_dmort_copd   [[ 3 ]]  +
+                                           mres_dmort_lc     [[ 3 ]]  +
+                                           mres_dmort_lri    [[ 3 ]]  +
+                                           mres_dmort_dmt2   [[ 3 ]]  +
+                                           mres_dmort_ihd    [[ 3 ]]  +
+                                           mres_dmort_stroke [[ 3 ]]
+                                       )
+
+            print( 'TOTAL 0.5x0.5 GRID MORTALITIES AMBIENT PM PER COD:' )
+            print( fasst.print.row.mortalities( 'COPD',                               mres_dmort_copd   ) )
+            print( fasst.print.row.mortalities( 'LC',                                 mres_dmort_lc     ) )
+            print( fasst.print.row.mortalities( 'LRI',                                mres_dmort_lri    ) )
+            print( fasst.print.row.mortalities( 'DMT2',                               mres_dmort_dmt2   ) )
+            print( fasst.print.row.mortalities( 'IHD',                                mres_dmort_ihd    ) )
+            print( fasst.print.row.mortalities( 'STROKE',                             mres_dmort_stroke ) )
+            print( fasst.print.row.mortalities( 'TOTAL 0.5x0.5 GRID MORTALITIES O3',  mort_sc           ) )
+            print( fasst.print.row.mortalities( 'COPD GBD',                           mres_dmort_o3_gbd ) )
+            print( fasst.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
+
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
@@ -897,4 +958,43 @@ compute.attributable.functions <- function(
                                 ) ^2
                           )
         )
+}
+
+# ------------------------------------------------------------
+
+#' Reduces the resolution of each raster in stack by
+#' given factor using a given function;
+#'
+#' @param stack   the layers to reduce resolution;
+#' @param factor  the reducing factor;
+#'                aggregation factor expressed as number of cells in each
+#'                direction (horizontally and vertically). Or two integers
+#'                (horizontal and vertial aggregation factor). Default is 2.
+#' @param how     function used to aggregate values (default = mean);
+#'
+#' @return stack with the same layers in \code{stack}, each layer
+#'         reduced by factor \code{factor} using the function \code{how}.
+#'
+
+resolution.reduce  <- function(
+                          stack,
+                          factor,
+                          how
+                      )
+{
+    reduced  <- stack()
+    for( ilayer in 1:nlayers( stack ) )
+    {
+        reduced  <- addLayer(
+                        reduced,
+                        aggregate(
+                            stack[[ ilayer ]],
+                            fact = factor,
+                            fun  = how
+                        )
+                    )
+    }
+    names( reduced )  <-  names( stack )
+
+    reduced
 }
