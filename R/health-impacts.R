@@ -79,7 +79,7 @@ health.impact <- function(
                   )
 
     # read country identification gridmap (Ciesin GPW v4)
-    cntrgrid <- raster( config $ files $ in.file.cntrgrid )                 # here we don't flip rows!
+    cntrgrid <- raster( config $ files $ in.file.cntrgrid )
 
     # increase both the area and the resolution
     hrcntrcode <- disaggregate(
