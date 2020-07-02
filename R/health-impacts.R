@@ -708,7 +708,7 @@ health.impact <- function(
             # --- to 0.5x0.5deg resolution                                          ---
 
             # aggregate subgrid cells
-            popmed                 <-  aggregate( scenpop, fact = 4, fun = sum )
+            popmed                 <-  aggregate( scenpop, fact = 4L, fun = sum )
 
             mres_dmort_copd        <-  resolution.reduce( dmort_copd,       4L, max )
             mres_dmort_lc          <-  resolution.reduce( dmort_lc,         4L, max )
@@ -761,21 +761,111 @@ health.impact <- function(
             print( fasst.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
 
             # --- 0.5x0.5deg resolution of pollutants ---
-            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = 4 )
-            med_pmtot_35      <-  aggregate( sc_hires,     fact = 4 )
-            med_adma8         <-  aggregate( sc_adm8h,     fact = 4 )
-            med_sdma8         <-  aggregate( sc_sdm8h,     fact = 4 )
+            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = 4L )
+            med_pmtot_35      <-  aggregate( sc_hires,     fact = 4L )
+            med_adma8         <-  aggregate( sc_adm8h,     fact = 4L )
+            med_sdma8         <-  aggregate( sc_sdm8h,     fact = 4L )
 
             med_pmnat_dry     <-  aggregate(
                                       raster( infile, varname = 'NAT_PM_dry' ),
-                                      fact = 4
+                                      fact = 4L
                                   )
             med_nat_h2o35     <-  aggregate(
                                       raster( infile, varname = 'H2O35_SS' ),
-                                      fact = 4
+                                      fact = 4L
                                   )
 
 
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 6 ------------------------------------
+            # --------- aggregate individual countries' mortalities using country masks -------
+            # ---------------------- make pop-weighted mean of PM and O3 ----------------------
+            # ---------------------------------------------------------------------------------
+
+            print( sprintf( "Aggregate countries @ %s", format( Sys.time(), "%c" ) ) )
+
+            # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
+            cntrymaskmed <- aggregate( hrcntrcode,  fact = 4L,  fun = modal )
+
+            for( icntr in 1:nrow( cntr ) )
+            {
+                cntr.id               <-  cntr[ icntr, ] $ CNTR_ID
+                cmask                 <-  cntrymaskmed  ==  cntr.id
+
+                # med
+                ctot_copd_med    <-  sum( ( mres_dmort_copd  [[ 1 ]] )[ cmask ] )
+                ctot_lc_med      <-  sum( ( mres_dmort_lc    [[ 1 ]] )[ cmask ] )
+                ctot_lri_med     <-  sum( ( mres_dmort_lri   [[ 1 ]] )[ cmask ] )
+                ctot_dmt2_med    <-  sum( ( mres_dmort_dmt2  [[ 1 ]] )[ cmask ] )
+                ctot_ihd_med     <-  sum( ( mres_dmort_ihd   [[ 1 ]] )[ cmask ] )
+                ctot_stroke_med  <-  sum( ( mres_dmort_stroke[[ 1 ]] )[ cmask ] )
+
+                # low
+                ctot_copd_lo     <-  sum( ( mres_dmort_copd  [[ 2 ]] )[ cmask ] )
+                ctot_lc_lo       <-  sum( ( mres_dmort_lc    [[ 2 ]] )[ cmask ] )
+                ctot_lri_lo      <-  sum( ( mres_dmort_lri   [[ 2 ]] )[ cmask ] )
+                ctot_dmt2_lo     <-  sum( ( mres_dmort_dmt2  [[ 2 ]] )[ cmask ] )
+                ctot_ihd_lo      <-  sum( ( mres_dmort_ihd   [[ 2 ]] )[ cmask ] )
+                ctot_stroke_lo   <-  sum( ( mres_dmort_stroke[[ 2 ]] )[ cmask ] )
+
+                # high
+                ctot_copd_hi     <-  sum( ( mres_dmort_copd  [[ 3 ]] )[ cmask ] )
+                ctot_lc_hi       <-  sum( ( mres_dmort_lc    [[ 3 ]] )[ cmask ] )
+                ctot_lri_hi      <-  sum( ( mres_dmort_lri   [[ 3 ]] )[ cmask ] )
+                ctot_dmt2_hi     <-  sum( ( mres_dmort_dmt2  [[ 3 ]] )[ cmask ] )
+                ctot_ihd_hi      <-  sum( ( mres_dmort_ihd   [[ 3 ]] )[ cmask ] )
+                ctot_stroke_hi   <-  sum( ( mres_dmort_stroke[[ 3 ]] )[ cmask ] )
+
+
+                ctot_mort_med_sc <-  sum( ( mort_sc[[ 1 ]] )[ cmask ] )
+
+                ctot_mort_lo_sc  <-  ctot_mort_med_sc  -
+                                     sqrt(
+                                         ( ctot_copd_med   - ctot_copd_lo   ) ^ 2  +
+                                         ( ctot_lc_med     - ctot_lc_lo     ) ^ 2  +
+                                         ( ctot_lri_med    - ctot_lri_lo    ) ^ 2  +
+                                         ( ctot_dmt2_med   - ctot_dmt2_lo   ) ^ 2  +
+                                         ( ctot_ihd_med    - ctot_ihd_lo    ) ^ 2  +
+                                         ( ctot_stroke_med - ctot_stroke_lo ) ^ 2
+                                     )
+
+                ctot_mort_hi_sc  <-  ctot_mort_med_sc  +
+                                     sqrt(
+                                         ( ctot_copd_med   - ctot_copd_hi   ) ^ 2  +
+                                         ( ctot_lc_med     - ctot_lc_hi     ) ^ 2  +
+                                         ( ctot_lri_med    - ctot_lri_hi    ) ^ 2  +
+                                         ( ctot_dmt2_med   - ctot_dmt2_hi   ) ^ 2  +
+                                         ( ctot_ihd_med    - ctot_ihd_hi    ) ^ 2  +
+                                         ( ctot_stroke_med - ctot_stroke_hi ) ^ 2
+                                     )
+
+
+                ctot_o3mort_med_sc_tu  <-  sum( ( mres_dmort_o3_tu[[ 1 ]] )[ cmask ] )
+                ctot_o3mort_lo_sc_tu   <-  sum( ( mres_dmort_o3_tu[[ 2 ]] )[ cmask ] )
+                ctot_o3mort_hi_sc_tu   <-  sum( ( mres_dmort_o3_tu[[ 3 ]] )[ cmask ] )
+
+                ctot_o3mort_med_sc_gbd <-  sum( ( mres_dmort_o3_gbd[[ 1 ]] )[ cmask ] )
+                ctot_o3mort_lo_sc_gbd  <-  sum( ( mres_dmort_o3_gbd[[ 2 ]] )[ cmask ] )
+                ctot_o3mort_hi_sc_gbd  <-  sum( ( mres_dmort_o3_gbd[[ 3 ]] )[ cmask ] )
+
+
+                popmed.msk   <-  popmed[ cmask ]
+                popcn        <-  sum( popmed.msk )
+                pop_nat_dry  <-  sum( med_pmnat_dry   [ cmask ] * popmed.msk ) / popcn
+                pop_ss_h2o35 <-  sum( med_nat_h2o35   [ cmask ] * popmed.msk ) / popcn
+                pop_ant_35   <-  sum( med_pmtot_ant_35[ cmask ] * popmed.msk ) / popcn
+                pop_pmtot_35 <-  sum( med_pmtot_35    [ cmask ] * popmed.msk ) / popcn
+                pop_adma8h   <-  sum( med_adma8       [ cmask ] * popmed.msk ) / popcn
+                pop_sdma8h   <-  sum( med_sdma8       [ cmask ] * popmed.msk ) / popcn
+                pop_nat_35   <-  pop_nat_dry + pop_ss_h2o35
+
+                # TXT table 1 line output for current scenario, year, country
+
+
+
+          }  # end of: for( icntr in 1:nrow( cntr ) )
+
+          print( sprintf( "End countries loop @ %s", format( Sys.time(), "%c" ) ) )
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
