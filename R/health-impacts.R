@@ -188,9 +188,29 @@ health.impact <- function(
     # ---- START LOOP WITH SCENARIO ANALYSIS  - EACH LOOP = 1 SCENARIO -----
     # ----------------------------------------------------------------------
 
-    for ( scen  in  config $ file $ scenarios $ name )
+    # --- write output header ---
+    fasst.write.header(
+             dir.tables,
+             list(
+                   project.name  = project,
+                   model.name    = model,
+                   model.version = version,
+                   sDM8THR       = config $ model $ SDM8THR,
+                   ADM8THR       = config $ model $ ADM8THR,
+                   AGEFRAC_COPD  = config $ model $ agefrac_copd,
+                   AGEFRAC_LC    = config $ model $ agefrac_lc ,
+                   AGEFRAC_LRI   = config $ model $ agefrac_lri,
+                   AGEFRAC_IHD   = config $ model $ agefrac_ihd,
+                   AGEFRAC_O3    = config $ model $ agefrac_o3
+             )
+          )
+
+    # --- loop on scenarios and years ---
+    for ( iscen  in  seq_along( config $ file $ scenarios $ name ) )
         for ( year  in  config $ file $ scenarios $ year )
         {
+            scen  <-  config $ file $ scenarios $ name[ iscen ]
+
             print( sprintf( "Scenario name: '%s' - Year: %d", scen, year ) )
 
             # restore HIGH RESOLUTION (HIRES) population map(s) and interpolate if needed
@@ -787,8 +807,11 @@ health.impact <- function(
             # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
             cntrymaskmed <- aggregate( hrcntrcode,  fact = 4L,  fun = modal )
 
-            for( icntr in 1:nrow( cntr ) )
+            ccntr  <-  nrow( cntr )
+            print( sprintf( "Begin countries loop @ %s - %d countries", format( Sys.time(), "%c" ), ccntr ) )
+            for( icntr in 1:ccntr )
             {
+                print( sprintf( "%3d: %s - %s", icntr, cntr[ icntr, ] $ CNTR_ISO3, cntr[ icntr, ] $ CNTR_NAME ) )
                 cntr.id               <-  cntr[ icntr, ] $ CNTR_ID
                 cmask                 <-  cntrymaskmed  ==  cntr.id
 
@@ -860,35 +883,57 @@ health.impact <- function(
                 pop_nat_35   <-  pop_nat_dry + pop_ss_h2o35
 
                 # TXT table 1 line output for current scenario, year, country
+                fasst.write.country(
+                    dir.tables,
+                    list(
+                        project.name           = project,
+                        model.name             = model,
+                        model.version          = version,
+                        SCENLAB                = scen,
+                        SSP                    = ( config $ file $ scenarios $ ssp )[ iscen ],
+                        YEAR                   = year,
+                        CNTR_ISO               = cntr[ icntr, ] $ CNTR_ISO3,
+                        CNTR_NM                = cntr[ icntr, ] $ CNTR_NAME,
+                        POPCN                  = popcn,
+                        POP_PMTOT_35           = pop_pmtot_35,
+                        POP_NAT_35             = pop_nat_35,
+                        POP_ADMA8h             = pop_adma8h,
+                        POP_SDMA8h             = pop_sdma8h,
+                        CTOT_MORT_MED_SC       = ctot_mort_med_sc,
+                        CTOT_MORT_LO_SC        = ctot_mort_lo_sc,
+                        CTOT_MORT_HI_SC        = ctot_mort_hi_sc,
+                        CTOT_COPD_MED          = ctot_copd_med,
+                        CTOT_LC_MED            = ctot_lc_med,
+                        CTOT_LRI_MED           = ctot_lri_med,
+                        CTOT_DMT2_MED          = ctot_dmt2_med,
+                        CTOT_IHD_MED           = ctot_ihd_med,
+                        CTOT_STROKE_MED        = ctot_stroke_med,
+                        CTOT_COPD_LO           = ctot_copd_lo,
+                        CTOT_LC_LO             = ctot_lc_lo,
+                        CTOT_LRI_LO            = ctot_lri_lo,
+                        CTOT_DMT2_LO           = ctot_dmt2_lo,
+                        CTOT_IHD_LO            = ctot_ihd_lo,
+                        CTOT_STROKE_LO         = ctot_stroke_lo,
+                        CTOT_COPD_HI           = ctot_copd_hi,
+                        CTOT_LC_HI             = ctot_lc_hi,
+                        CTOT_LRI_HI            = ctot_lri_hi,
+                        CTOT_DMT2_HI           = ctot_dmt2_hi,
+                        CTOT_IHD_HI            = ctot_ihd_hi,
+                        CTOT_STROKE_HI         = ctot_stroke_hi,
+                        CTOT_O3MORT_MED_SC_GBD = ctot_o3mort_med_sc_gbd,
+                        CTOT_O3MORT_LO_SC_GBD  = ctot_o3mort_lo_sc_gbd,
+                        CTOT_O3MORT_HI_SC_GBD  = ctot_o3mort_hi_sc_gbd,
+                        CTOT_O3MORT_MED_SC_TU  = ctot_o3mort_med_sc_tu,
+                        CTOT_O3MORT_LO_SC_TU   = ctot_o3mort_lo_sc_tu,
+                        CTOT_O3MORT_HI_SC_TU   = ctot_o3mort_hi_sc_tu
+                    )
+                )
 
-
-
-          }  # end of: for( icntr in 1:nrow( cntr ) )
-
-          print( sprintf( "End countries loop @ %s", format( Sys.time(), "%c" ) ) )
+            }  # end of: for( icntr in 1:nrow( cntr ) )
+            print( sprintf( "End countries loop @ %s", format( Sys.time(), "%c" ) ) )
 
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
-
-
-    # write the output
-    fasst.write(
-             dir.tables,
-             list(
-                   project.name  = project,
-                   model.name    = model,
-                   model.version = version,
-                   sDM8THR       = config $ model $ SDM8THR,
-                   ADM8THR       = config $ model $ ADM8THR,
-                   AGEFRAC_COPD  = config $ model $ agefrac_copd,
-                   AGEFRAC_LC    = config $ model $ agefrac_lc ,
-                   AGEFRAC_LRI   = config $ model $ agefrac_lri,
-                   AGEFRAC_IHD   = config $ model $ agefrac_ihd,
-                   AGEFRAC_O3    = config $ model $ agefrac_o3
-             )
-          )
-
-
 
 
     # as last return back to home
