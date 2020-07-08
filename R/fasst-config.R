@@ -97,8 +97,8 @@ health.impact.config.static <- function()
                 # project dependent scenarios
                 scenarios             = list(
                                                   "name" = c( "SSP1_26" ),
-                                                  "year" = c( 2015 ),
-                                                  "ssp"  = c( "sep1" )
+                                                  "year" = c( 2015 ),      # Scenario years to be analyzed
+                                                  "ssp"  = c( "SEP1" )     # SSP array has same dimension as "name", each "name" corresponds to a matching SSP
                                         )
         )
 }
