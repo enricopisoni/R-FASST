@@ -8,6 +8,7 @@
 #'                      exist; file will be overwritten if it already exists;
 #' @param parameters    named list with following entries:
 #'                      \describe{
+#'                         \item{proname}         {the programme generating this file}
 #'                         \item{project.name}    {the project name}
 #'                         \item{model.name}      {the model name}
 #'                         \item{model.version}   {the model version}
@@ -39,7 +40,7 @@ health.write.header <- function(
 
     # write headers
     writeLines( 'NEW GBD2017 IER', file )
-    writeLines( 'Programme: FASST 4 SHERPA', file )
+    writeLines( paste( 'Programme:', parameters $ proname, sep = ' ' ), file )
     writeLines( paste( 'Date of run:', format( Sys.time(), "%c" ), sep = ' ' ), file )
     writeLines( paste( 'GBD 6MDMA8H threshold = ', parameters $ sDM8THR, sep = ' ' ), file )
     writeLines( paste( 'TURNER ADMA8H threshold = ', parameters $ ADM8THR, sep = ' ' ), file )

@@ -8,6 +8,7 @@ source( 'health-age-country.R' )
 source( 'health-error-propagation.R' )
 source( 'rrate.R' )
 source( 'health-write.R' )
+source( 'health-gridded.R' )
 
 
 #' Health impacts from high resolution FASST grid maps;
@@ -51,6 +52,8 @@ health.impact <- function(
     dir.tables  <- file.path( dir.output, 'tables' )
     dir.netcdf  <- file.path( dir.output, 'ncdf' )
 
+    # the name of this programme
+    programme.name  <-  'FASST 4 SHERPA'
 
     # ----------------------------------------------------------------------
     # ------------------------------- block 2 ------------------------------
@@ -192,6 +195,7 @@ health.impact <- function(
     health.write.header(
              dir.tables,
              list(
+                   proname       = programme.name,
                    project.name  = project,
                    model.name    = model,
                    model.version = version,
@@ -313,7 +317,7 @@ health.impact <- function(
             af_stroke_grid  <-  brick()
             for ( iage  in  seq_along( config $ model $ AGE_GRP ) )
             {
-                print( sprintf( 'Age %d: %d', iage, config $ model $ AGE_GRP[ iage ] ) )
+                print( sprintf( 'Age %2d: %d', iage, config $ model $ AGE_GRP[ iage ] ) )
 
                 # --- IHD block ---
                 af_ihd_grid     <-  addLayer( af_ihd_grid,    1 - 1 / rrate( ihd_med[ , iage ], sc_hires ) )
@@ -932,6 +936,38 @@ health.impact <- function(
             }  # end of: for( icntr in 1:nrow( cntr ) )
             print( sprintf( "End countries loop @ %s", format( Sys.time(), "%c" ) ) )
 
+
+            # ---------------------------------------------------------------------------------
+            # ------------------------------------ block 7 ------------------------------------
+            # -------------------- store mortalities in gridded ncdf file ---------------------
+            # ---------------------------------------------------------------------------------
+
+            # prepare output directories
+            pathnc   <-  file.path( dir.netcdf, scen )
+
+            dir.create( pathnc, recursive = TRUE, showWarnings = FALSE )
+
+            filenc2  <-  file.path(
+                             pathnc,
+                             sprintf( 'FASST_05x05_MORTALITIES_%s_%d_%s', project, year, scen )
+                         )
+
+            health.gridded.netcdf(
+                filenc2,
+                list(
+                    proname            =  programme.name,
+                    scen               =  scen,
+                    sdm8thr            =  config $ model $ SDM8THR,
+                    adm8thr            =  config $ model $ ADM8THR,
+                    londim             =  mr_lons,
+                    latdim             =  mr_lats,
+                    med_pmtot_35       =  med_pmtot_35,
+                    med_pmtot_ant_35   =  med_pmtot_ant_35,
+                    mort_sc_med        =  mort_sc[[ 1 ]],
+                    mres_dmort_o3_gbd  =  mres_dmort_o3_gbd[[ 1 ]],
+                    mres_dmort_o3_tu   =  mres_dmort_o3_tu[[ 1 ]]
+                )
+            )
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
