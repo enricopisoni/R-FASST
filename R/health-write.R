@@ -20,16 +20,16 @@
 #'                         \item{AGEFRAC_O3}      {all ages from min to max}
 #'                      }
 #'
-fasst.write.header <- function(
-                          dir.output,
-                          parameters
-                      )
+health.write.header <- function(
+                           dir.output,
+                           parameters
+                       )
 {
     # prepare output directories
     dir.create( dir.output, recursive = TRUE, showWarnings = FALSE )
 
     # prepare file name
-    file.name <- fasst.write.file.name(
+    file.name <- health.write.file.name(
                      dir.output,
                      parameters
                  )
@@ -150,13 +150,13 @@ fasst.write.header <- function(
 #'                         \item{CTOT_O3MORT_HI_SC_TU}    {}
 #'                      }
 #'
-fasst.write.country <- function(
-                           dir.output,
-                           parameters
-                       )
+health.write.country <- function(
+                            dir.output,
+                            parameters
+                        )
 {
     # prepare file name
-    file.name <- fasst.write.file.name(
+    file.name <- health.write.file.name(
                      dir.output,
                      parameters
                  )
@@ -223,10 +223,10 @@ fasst.write.country <- function(
 #'                         \item{model.version}   {the model version}
 #'                      }
 #'
-fasst.write.file.name <- function(
-                             dir.output,
-                             parameters
-                         )
+health.write.file.name <- function(
+                              dir.output,
+                              parameters
+                          )
 {
     file.path(
                dir.output,
@@ -249,10 +249,10 @@ fasst.write.file.name <- function(
 #' @return single line text with:
 #'           description, sum of all cells for each layer;
 #'
-fasst.print.row.mortalities <- function(
-                                   item,
-                                   layers
-                               )
+health.print.row.mortalities <- function(
+                                    item,
+                                    layers
+                                )
 {
     l.1 <-  layers[[ 1 ]]
     l.2 <-  layers[[ 2 ]]

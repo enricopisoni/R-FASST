@@ -7,7 +7,7 @@ source( 'health-base-incidences.R' )
 source( 'health-age-country.R' )
 source( 'health-error-propagation.R' )
 source( 'rrate.R' )
-source( 'fasst-write.R' )
+source( 'health-write.R' )
 
 
 #' Health impacts from high resolution FASST grid maps;
@@ -189,7 +189,7 @@ health.impact <- function(
     # ----------------------------------------------------------------------
 
     # --- write output header ---
-    fasst.write.header(
+    health.write.header(
              dir.tables,
              list(
                    project.name  = project,
@@ -629,12 +629,12 @@ health.impact <- function(
 
 
             print( 'TOTAL MORTALITIES AMBIENT PM PER COD:' )
-            print( fasst.print.row.mortalities( 'COPD',    dmort_copd ) )
-            print( fasst.print.row.mortalities( 'LC',      dmort_lc ) )
-            print( fasst.print.row.mortalities( 'LRI',     dmort_lri ) )
-            print( fasst.print.row.mortalities( 'DMT2',    dmort_dmt2 ) )
-            print( fasst.print.row.mortalities( 'IHD',     dmort_ihd_all ) )
-            print( fasst.print.row.mortalities( 'STROKE',  dmort_stroke_all ) )
+            print( health.print.row.mortalities( 'COPD',    dmort_copd ) )
+            print( health.print.row.mortalities( 'LC',      dmort_lc ) )
+            print( health.print.row.mortalities( 'LRI',     dmort_lri ) )
+            print( health.print.row.mortalities( 'DMT2',    dmort_dmt2 ) )
+            print( health.print.row.mortalities( 'IHD',     dmort_ihd_all ) )
+            print( health.print.row.mortalities( 'STROKE',  dmort_stroke_all ) )
 
 
             adm8h_adm8thr_threshold  <-  ( ( sc_adm8h - config $ model $ ADM8THR ) > 0 )
@@ -715,8 +715,8 @@ health.impact <- function(
 
 
             print( 'TOTAL MORTALITIES O3:' )
-            print( fasst.print.row.mortalities( 'COPD GBD', dmort_o3_gbd ) )
-            print( fasst.print.row.mortalities( 'COPD TUR', dmort_o3_tu ) )
+            print( health.print.row.mortalities( 'COPD GBD', dmort_o3_gbd ) )
+            print( health.print.row.mortalities( 'COPD TUR', dmort_o3_tu ) )
 
 
             # ---------------------------------------------------------------------------------
@@ -770,15 +770,15 @@ health.impact <- function(
                                        )
 
             print( 'TOTAL 0.5x0.5 GRID MORTALITIES AMBIENT PM PER COD:' )
-            print( fasst.print.row.mortalities( 'COPD',                               mres_dmort_copd   ) )
-            print( fasst.print.row.mortalities( 'LC',                                 mres_dmort_lc     ) )
-            print( fasst.print.row.mortalities( 'LRI',                                mres_dmort_lri    ) )
-            print( fasst.print.row.mortalities( 'DMT2',                               mres_dmort_dmt2   ) )
-            print( fasst.print.row.mortalities( 'IHD',                                mres_dmort_ihd    ) )
-            print( fasst.print.row.mortalities( 'STROKE',                             mres_dmort_stroke ) )
-            print( fasst.print.row.mortalities( 'TOTAL 0.5x0.5 GRID MORTALITIES O3',  mort_sc           ) )
-            print( fasst.print.row.mortalities( 'COPD GBD',                           mres_dmort_o3_gbd ) )
-            print( fasst.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
+            print( health.print.row.mortalities( 'COPD',                               mres_dmort_copd   ) )
+            print( health.print.row.mortalities( 'LC',                                 mres_dmort_lc     ) )
+            print( health.print.row.mortalities( 'LRI',                                mres_dmort_lri    ) )
+            print( health.print.row.mortalities( 'DMT2',                               mres_dmort_dmt2   ) )
+            print( health.print.row.mortalities( 'IHD',                                mres_dmort_ihd    ) )
+            print( health.print.row.mortalities( 'STROKE',                             mres_dmort_stroke ) )
+            print( health.print.row.mortalities( 'TOTAL 0.5x0.5 GRID MORTALITIES O3',  mort_sc           ) )
+            print( health.print.row.mortalities( 'COPD GBD',                           mres_dmort_o3_gbd ) )
+            print( health.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
 
             # --- 0.5x0.5deg resolution of pollutants ---
             med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = 4L )
@@ -883,7 +883,7 @@ health.impact <- function(
                 pop_nat_35   <-  pop_nat_dry + pop_ss_h2o35
 
                 # TXT table 1 line output for current scenario, year, country
-                fasst.write.country(
+                health.write.country(
                     dir.tables,
                     list(
                         project.name           = project,
