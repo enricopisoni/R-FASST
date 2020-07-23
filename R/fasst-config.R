@@ -63,6 +63,10 @@ health.impact.config.static <- function()
         in.dir.ncdf     <- file.path( in.dir.root,  'NCDF_IN' )
 
         list(
+                # reduction factor for medium resolution grid
+                reduction.factor      = 4L,
+
+                # population per country
                 in.file.pop.country   = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
                 # files with base mortality rates (per 100k population)

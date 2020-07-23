@@ -1,4 +1,6 @@
 {
+  "reduction.factor":     4,
+
   "in.file.pop.country":  "../INPUT/ANCILLARY/POP_1990-2100_UN2017_AGEGRP.csv",
   "in.file.copd":         "../INPUT/ANCILLARY/COPD_MORT_RATE_GBD2016.csv",
   "in.file.lc":           "../INPUT/ANCILLARY/LC_MORT_RATE_GBD2016.csv",

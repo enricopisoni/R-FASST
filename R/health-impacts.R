@@ -174,11 +174,11 @@ health.impact <- function(
 # --not-used--    hr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # med resolution lon lat dimensions
-    imed         <- 720   # img / 4 ?
-    jmed         <- 360   # jmg / 4 ?
-    scale        <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
-    mr_lats      <- ( ( ( 0:( ( ymax( hrcntrcode ) - ymin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + ymin( hrcntrcode ) )
-    mr_lons      <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
+    imed         <- img /  config $ files $ reduction.factor
+    jmed         <- jmg /  config $ files $ reduction.factor
+    scale        <- imed / 360
+    mr_lats      <- ( ( ( 0:( 180 * scale - 1 ) ) + 0.5 ) / scale - 90 )
+    mr_lons      <- ( ( ( 0:( 360 * scale - 1 ) ) + 0.5 ) / scale - 180 )
 
     # lon-lat arrays
 # --not-used-remove--    hr_grid_tot  <- array( 0, c( jmg, img ) )
@@ -732,16 +732,16 @@ health.impact <- function(
             # --- to 0.5x0.5deg resolution                                          ---
 
             # aggregate subgrid cells
-            popmed                 <-  aggregate( scenpop, fact = 4L, fun = sum )
+            popmed                 <-  aggregate( scenpop, fact = config $ files $ reduction.factor, fun = sum )
 
-            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       4L, max )
-            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         4L, max )
-            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        4L, max )
-            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       4L, max )
-            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    4L, max )
-            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, 4L, max )
-            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      4L, max )
-            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     4L, max )
+            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       config $ files $ reduction.factor, max )
+            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         config $ files $ reduction.factor, max )
+            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        config $ files $ reduction.factor, max )
+            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       config $ files $ reduction.factor, max )
+            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    config $ files $ reduction.factor, max )
+            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, config $ files $ reduction.factor, max )
+            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      config $ files $ reduction.factor, max )
+            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     config $ files $ reduction.factor, max )
 
 
             mort_sc                <-  brick()
@@ -785,18 +785,18 @@ health.impact <- function(
             print( health.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
 
             # --- 0.5x0.5deg resolution of pollutants ---
-            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = 4L )
-            med_pmtot_35      <-  aggregate( sc_hires,     fact = 4L )
-            med_adma8         <-  aggregate( sc_adm8h,     fact = 4L )
-            med_sdma8         <-  aggregate( sc_sdm8h,     fact = 4L )
+            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = config $ files $ reduction.factor )
+            med_pmtot_35      <-  aggregate( sc_hires,     fact = config $ files $ reduction.factor )
+            med_adma8         <-  aggregate( sc_adm8h,     fact = config $ files $ reduction.factor )
+            med_sdma8         <-  aggregate( sc_sdm8h,     fact = config $ files $ reduction.factor )
 
             med_pmnat_dry     <-  aggregate(
                                       raster( infile, varname = 'NAT_PM_dry' ),
-                                      fact = 4L
+                                      fact = config $ files $ reduction.factor
                                   )
             med_nat_h2o35     <-  aggregate(
                                       raster( infile, varname = 'H2O35_SS' ),
-                                      fact = 4L
+                                      fact = config $ files $ reduction.factor
                                   )
 
 
@@ -809,7 +809,11 @@ health.impact <- function(
             print( sprintf( "Aggregate countries @ %s", format( Sys.time(), "%c" ) ) )
 
             # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
-            cntrymaskmed <- aggregate( hrcntrcode,  fact = 4L,  fun = modal )
+            cntrymaskmed <- aggregate(
+                                hrcntrcode,
+                                fact = config $ files $ reduction.factor,
+                                fun  = modal
+                            )
 
             ccntr  <-  nrow( cntr )
             print( sprintf( "Begin countries loop @ %s - %d countries", format( Sys.time(), "%c" ), ccntr ) )
