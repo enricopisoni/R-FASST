@@ -46,7 +46,7 @@ health.gridded.netcdf  <-  function(
                        fillvalue,
                        longname = 'scenario total PM2.5 AT 35%RH incl dust and SS',
                        prec     = 'float',
-                       verbose  = TRUE
+                       verbose  = FALSE
                    )
     prtid2     <-  ncvar_def(
                        'ANTH_PM',
@@ -55,7 +55,7 @@ health.gridded.netcdf  <-  function(
                        fillvalue,
                        longname = 'scenario anthropogenic PM2.5 AT 35% RH',
                        prec     = 'float',
-                       verbose  = TRUE
+                       verbose  = FALSE
                    )
     mrtid1     <-  ncvar_def(
                        'GBD_PM_MORT',
@@ -64,7 +64,7 @@ health.gridded.netcdf  <-  function(
                        fillvalue,
                        longname = 'Burnett Mortalities from total anthropogenic + natural PM2.5 AT 35% RH',
                        prec     = 'float',
-                       verbose  = TRUE
+                       verbose  = FALSE
                    )
     mrtid2     <-  ncvar_def(
                        'GBD_O3_MORT',
@@ -73,7 +73,7 @@ health.gridded.netcdf  <-  function(
                        fillvalue,
                        longname = 'GBD2017 Mortalities from O3',
                        prec     = 'float',
-                       verbose  = TRUE
+                       verbose  = FALSE
                    )
     mrtid3     <-  ncvar_def(
                        'TUR_O3_MORT',
@@ -82,7 +82,7 @@ health.gridded.netcdf  <-  function(
                        fillvalue,
                        longname = 'Turner/Malley Mortalities from O3',
                        prec     = 'float',
-                       verbose  = TRUE
+                       verbose  = FALSE
                    )
 
     # create netCDF file
@@ -143,5 +143,5 @@ health.gridded.netcdf  <-  function(
     # close the file, writing data to disk
     nc_close( id )
 
-    print( sprintf( "Written: '%s'", normalizePath( name, winslash = '/', mustWork = FALSE ) ) )
+    print( sprintf( "Written: '%s'", normalizePath( name, winslash = '/', mustWork = TRUE ) ) )
 }
