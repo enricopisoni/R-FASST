@@ -93,24 +93,24 @@ health.gridded.netcdf  <-  function(
                    )
 
     # put variables
-    ncvar_put( id, prtid1, parameters $ med_pmtot_35 )
-    ncvar_put( id, prtid2, parameters $ med_pmtot_ant_35 )
-    ncvar_put( id, mrtid1, parameters $ mort_sc_med )
-    ncvar_put( id, mrtid2, parameters $ mres_dmort_o3_gbd  )
-    ncvar_put( id, mrtid3, parameters $ mres_dmort_o3_tu )
+    ncvar_put( id, prtid1, values( parameters $ med_pmtot_35 ) )
+    ncvar_put( id, prtid2, values( parameters $ med_pmtot_ant_35 ) )
+    ncvar_put( id, mrtid1, values( parameters $ mort_sc_med ) )
+    ncvar_put( id, mrtid2, values( parameters $ mres_dmort_o3_gbd  ) )
+    ncvar_put( id, mrtid3, values( parameters $ mres_dmort_o3_tu ) )
 
     # describe variables
-    ncatt_put( id, xid,    'standard_name',           'longtitude' )
-    ncatt_put( id, xid,    'long_name',               'longtitude' )
-    ncatt_put( id, xid,    'units',                   'degrees_east' )
-    ncatt_put( id, xid,    'axis',                    'X' )
-    ncatt_put( id, xid,    'bounds',                  'lon_bnds' )
+    ncatt_put( id, 'lon',  'standard_name',           'longtitude' )
+    ncatt_put( id, 'lon',  'long_name',               'longtitude' )
+    ncatt_put( id, 'lon',  'units',                   'degrees_east' )
+    ncatt_put( id, 'lon',  'axis',                    'X' )
+    ncatt_put( id, 'lon',  'bounds',                  'lon_bnds' )
 
-    ncatt_put( id, yid,    'standard_name',           'latitude' )
-    ncatt_put( id, yid,    'long_name',               'latitude' )
-    ncatt_put( id, yid,    'units',                   'degrees_north' )
-    ncatt_put( id, yid,    'axis',                    'Y' )
-    ncatt_put( id, yid,    'bounds',                  'lat_bnds' )
+    ncatt_put( id, 'lat',  'standard_name',           'latitude' )
+    ncatt_put( id, 'lat',  'long_name',               'latitude' )
+    ncatt_put( id, 'lat',  'units',                   'degrees_north' )
+    ncatt_put( id, 'lat',  'axis',                    'Y' )
+    ncatt_put( id, 'lat',  'bounds',                  'lat_bnds' )
 
     ncatt_put( id, prtid1, 'units',                   'ug/m3' )
     ncatt_put( id, prtid1, 'standard_name',           'PM' )
@@ -137,8 +137,8 @@ health.gridded.netcdf  <-  function(
     ncatt_put( id, 0,      'contact',                 'rita.van-dingenen@ec.europa.eu' )
     ncatt_put( id, 0,      'scenario',                parameters $ scen )
     ncatt_put( id, 0,      'year',                    parameters $ year )
-    ncatt_put( id, 0,      'GBD O3_threshold ppb',    as.string( parameters $ sdm8thr ) )
-    ncatt_put( id, 0,      'TURNER O3_threshold ppb', as.string( parameters $ adm8thr ) )
+    ncatt_put( id, 0,      'GBD O3_threshold ppb',    parameters $ sdm8thr )
+    ncatt_put( id, 0,      'TURNER O3_threshold ppb', parameters $ adm8thr )
 
     # close the file, writing data to disk
     nc_close( id )

@@ -961,6 +961,7 @@ health.impact <- function(
                 list(
                     proname            =  programme.name,
                     scen               =  scen,
+                    year               =  year,
                     sdm8thr            =  config $ model $ SDM8THR,
                     adm8thr            =  config $ model $ ADM8THR,
                     londim             =  mr_lons,
