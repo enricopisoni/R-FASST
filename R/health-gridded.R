@@ -93,11 +93,11 @@ health.gridded.netcdf  <-  function(
                    )
 
     # put variables
-    ncvar_put( id, prtid1, values( parameters $ med_pmtot_35 ) )
-    ncvar_put( id, prtid2, values( parameters $ med_pmtot_ant_35 ) )
-    ncvar_put( id, mrtid1, values( parameters $ mort_sc_med ) )
-    ncvar_put( id, mrtid2, values( parameters $ mres_dmort_o3_gbd  ) )
-    ncvar_put( id, mrtid3, values( parameters $ mres_dmort_o3_tu ) )
+    ncvar_put( id, prtid1, values( flip( parameters $ med_pmtot_35,      direction='y' ) ) )
+    ncvar_put( id, prtid2, values( flip( parameters $ med_pmtot_ant_35,  direction='y' ) ) )
+    ncvar_put( id, mrtid1, values( flip( parameters $ mort_sc_med,       direction='y' ) ) )
+    ncvar_put( id, mrtid2, values( flip( parameters $ mres_dmort_o3_gbd, direction='y' ) ) )
+    ncvar_put( id, mrtid3, values( flip( parameters $ mres_dmort_o3_tu,  direction='y' ) ) )
 
     # describe variables
     ncatt_put( id, 'lon',  'standard_name',           'longtitude' )
