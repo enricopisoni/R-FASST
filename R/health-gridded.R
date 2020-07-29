@@ -136,9 +136,9 @@ health.gridded.netcdf  <-  function(
     ncatt_put( id, 0,      'source',                  parameters $ proname )
     ncatt_put( id, 0,      'contact',                 'rita.van-dingenen@ec.europa.eu' )
     ncatt_put( id, 0,      'scenario',                parameters $ scen )
-    ncatt_put( id, 0,      'year',                    parameters $ year )
-    ncatt_put( id, 0,      'GBD O3_threshold ppb',    parameters $ sdm8thr )
-    ncatt_put( id, 0,      'TURNER O3_threshold ppb', parameters $ adm8thr )
+    ncatt_put( id, 0,      'year',                    sprintf( "%d", parameters $ year ) )
+    ncatt_put( id, 0,      'GBD O3_threshold ppb',    sprintf( "%f", parameters $ sdm8thr ) )
+    ncatt_put( id, 0,      'TURNER O3_threshold ppb', sprintf( "%f", parameters $ adm8thr ) )
 
     # close the file, writing data to disk
     nc_close( id )
