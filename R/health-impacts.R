@@ -329,6 +329,9 @@ health.impact <- function(
                 af_stroke_grid  <-  addLayer( af_stroke_grid, 1 - 1 / rrate( stroke_lo [ , iage ], sc_hires ) )
                 af_stroke_grid  <-  addLayer( af_stroke_grid, 1 - 1 / rrate( stroke_hi [ , iage ], sc_hires ) )
             }
+            names( af_ihd_grid )     <-  set.layers.names.by.age.type( af_ihd_grid )
+            names( af_stroke_grid )  <-  set.layers.names.by.age.type( af_stroke_grid )
+
             print(
                 sprintf(
                     "Loop on AFs (%d age classes) - end (elapsed time: %s)",

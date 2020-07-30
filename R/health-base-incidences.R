@@ -804,16 +804,7 @@ raster.base.incidences.by.ages <- function(
     }
 
     # --- set layers name ---
-    types.seq <-  c( 'VAL', 'LO', 'HI' )
-    age.last  <-  nlayers( grid ) / 3
-    age.seq   <-  seq( from = 25, to = 25 + 5 * ( age.last - 1 ), by = 5 )
-    names     <-  c()
-    for( age.class in age.seq )
-        for( type in types.seq )
-        {
-            names <- c( names, sprintf( 'Age.Class.%d_Type.%s', age.class, type ) )
-        }
-    names( grid )  <-  names
+    names( grid )  <-  set.layers.names.by.age.type( grid )
 
 
     # --- return the stacked layers ---
@@ -834,6 +825,31 @@ set.global.attributes <- function( file )
 
     # close the file, writing data to disk
     nc_close( nc )
+}
+
+# ------------------------------------------------------------
+
+#' Computes the layers names in the rasters stack where
+#' raters are by groups of three rasters;
+#'
+#' @param grid  the stack of rasters;
+#'
+#' @return an array of layer names;
+#'
+set.layers.names.by.age.type  <- function(
+                                     grid
+                                 )
+{
+    types.seq <-  c( 'VAL', 'LO', 'HI' )
+    age.last  <-  nlayers( grid ) / 3
+    age.seq   <-  seq( from = 25, to = 25 + 5 * ( age.last - 1 ), by = 5 )
+    names     <-  c()
+    for( age.class in age.seq )
+        for( type in types.seq )
+        {
+            names <- c( names, sprintf( 'Age.Class.%d_Type.%s', age.class, type ) )
+        }
+    names
 }
 
 # ------------------------------------------------------------
