@@ -40,17 +40,17 @@ health.write.header <- function(
 
     # write headers
     writeLines( 'NEW GBD2017 IER', file )
-    writeLines( paste( 'Programme:', parameters $ proname, sep = ' ' ), file )
+    writeLines( paste( 'Programme:',   parameters $ proname, sep = ' ' ), file )
     writeLines( paste( 'Date of run:', format( Sys.time(), "%c" ), sep = ' ' ), file )
-    writeLines( paste( 'GBD 6MDMA8H threshold = ', parameters $ sDM8THR, sep = ' ' ), file )
-    writeLines( paste( 'TURNER ADMA8H threshold = ', parameters $ ADM8THR, sep = ' ' ), file )
-    writeLines( paste( 'IER MODEL:', parameters $ model.name, sep = ' ' ), file )
-    writeLines( paste( 'AGE CLASSES:', sep = ' ' ), file )
-    writeLines( paste( 'COPD:',         paste( parameters $ AGEFRAC_COPD, collapse = ', ' ), sep = ' ' ), file )
-    writeLines( paste( 'LC:',           paste( parameters $ AGEFRAC_LC,   collapse = ', ' ), sep = ' ' ), file )
-    writeLines( paste( 'LRI:',          paste( parameters $ AGEFRAC_LRI,  collapse = ', ' ), sep = ' ' ), file )
-    writeLines( paste( 'IHD + STROKE:', paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ), sep = ' ' ), file )
-    writeLines( paste( 'COPD O3:',      paste( parameters $ AGEFRAC_O3,   collapse = ', ' ), sep = ' ' ), file )
+    writeLines( sprintf( '%26s %5.2f', 'GBD 6MDMA8H threshold = ', parameters $ sDM8THR ), file )
+    writeLines( sprintf( '%26s %5.2f', 'TURNER ADMA8H threshold = ', parameters $ ADM8THR ), file )
+    writeLines( sprintf( '%18s %18s',    'IER MODEL:', parameters $ model.name ), file )
+    writeLines( 'AGE CLASSES:', file )
+    writeLines( sprintf( '%18s: %18s',   'COPD',          paste( parameters $ AGEFRAC_COPD, collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'LC:',           paste( parameters $ AGEFRAC_LC,   collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'LRI:',          paste( parameters $ AGEFRAC_LRI,  collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'IHD + STROKE:', paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'COPD O3:',      paste( parameters $ AGEFRAC_O3,   collapse = ', ' ) ), file )
     writeLines(
         sprintf(
             '%15s %15s %6s %5s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s',
