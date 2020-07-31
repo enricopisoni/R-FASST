@@ -47,10 +47,10 @@ health.write.header <- function(
     writeLines( sprintf( '%18s %18s',    'IER MODEL:', parameters $ model.name ), file )
     writeLines( 'AGE CLASSES:', file )
     writeLines( sprintf( '%18s: %18s',   'COPD',          paste( parameters $ AGEFRAC_COPD, collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'LC:',           paste( parameters $ AGEFRAC_LC,   collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'LRI:',          paste( parameters $ AGEFRAC_LRI,  collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'IHD + STROKE:', paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'COPD O3:',      paste( parameters $ AGEFRAC_O3,   collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'LC',            paste( parameters $ AGEFRAC_LC,   collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'LRI',           paste( parameters $ AGEFRAC_LRI,  collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'IHD + STROKE',  paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s',   'COPD O3',       paste( parameters $ AGEFRAC_O3,   collapse = ', ' ) ), file )
     writeLines(
         sprintf(
             '%15s %15s %6s %5s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s',
