@@ -40,17 +40,17 @@ health.write.header <- function(
 
     # write headers
     writeLines( 'NEW GBD2017 IER', file )
-    writeLines( paste( 'Programme:',   parameters $ proname, sep = ' ' ), file )
-    writeLines( paste( 'Date of run:', format( Sys.time(), "%c" ), sep = ' ' ), file )
-    writeLines( sprintf( '%26s %5.2f', 'GBD 6MDMA8H threshold = ', parameters $ sDM8THR ), file )
-    writeLines( sprintf( '%26s %5.2f', 'TURNER ADMA8H threshold = ', parameters $ ADM8THR ), file )
-    writeLines( sprintf( '%18s %18s',    'IER MODEL:', parameters $ model.name ), file )
+    writeLines( paste( 'Programme:',   parameters $ proname, sep = ' ' ),                       file )
+    writeLines( paste( 'Date of run:', format( Sys.time(), "%c" ), sep = ' ' ),                 file )
+    writeLines( sprintf( '%26s %5.2f', 'GBD 6MDMA8H threshold = ',   parameters $ sDM8THR ),    file )
+    writeLines( sprintf( '%26s %5.2f', 'TURNER ADMA8H threshold = ', parameters $ ADM8THR ),    file )
+    writeLines( sprintf( '%18s %18s',  'IER MODEL:',                 parameters $ model.name ), file )
     writeLines( 'AGE CLASSES:', file )
-    writeLines( sprintf( '%18s: %18s',   'COPD',          paste( parameters $ AGEFRAC_COPD, collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'LC',            paste( parameters $ AGEFRAC_LC,   collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'LRI',           paste( parameters $ AGEFRAC_LRI,  collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'IHD + STROKE',  paste( parameters $ AGEFRAC_IHD,  collapse = ', ' ) ), file )
-    writeLines( sprintf( '%18s: %18s',   'COPD O3',       paste( parameters $ AGEFRAC_O3,   collapse = ', ' ) ), file )
+    writeLines( sprintf( '%18s: %18s %18s', 'COPD',          parameters $ AGEFRAC_COPD[1], parameters $ AGEFRAC_COPD[2] ), file )
+    writeLines( sprintf( '%18s: %18s %18s', 'LC',            parameters $ AGEFRAC_LC  [1], parameters $ AGEFRAC_LC  [2] ), file )
+    writeLines( sprintf( '%18s: %18s %18s', 'LRI',           parameters $ AGEFRAC_LRI [1], parameters $ AGEFRAC_LRI [2] ), file )
+    writeLines( sprintf( '%18s: %18s %18s', 'IHD + STROKE',  parameters $ AGEFRAC_IHD [1], parameters $ AGEFRAC_IHD [2] ), file )
+    writeLines( sprintf( '%18s: %18s %18s', 'COPD O3',       parameters $ AGEFRAC_O3  [1], parameters $ AGEFRAC_O3  [2] ), file )
     writeLines(
         sprintf(
             '%15s %15s %6s %5s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s %20s',
