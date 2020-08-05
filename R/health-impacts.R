@@ -1030,7 +1030,7 @@ get.population.map <- function(
         }
         else
         {
-            # *** this branch is not present in the original IDL prg
+            # *** this branch is not present in the original IDL prg ***
             fyr    <- 1
         }
 
@@ -1045,10 +1045,6 @@ get.population.map <- function(
                 totfil <- get.file.name.population( netcdf.template, scenario, year )
 
                 r      <- raster( totfil, varname = varname )
-# ---                grid <- array(
-# ---                                getValues( r ),                 # here we don't flip by rows!
-# ---                                c( nrow( r ), ncol( r ) )
-# ---                        )
 
         } else {
 
@@ -1061,10 +1057,6 @@ get.population.map <- function(
                 totfil <- get.file.name.population( netcdf.template, scenario, npop )
 
                 r_n    <- raster( totfil, varname = varname )
-# ---                grid_n <- array(
-# ---                                getValues( r_n ),                 # here we don't flip by rows!
-# ---                                c( nrow( r_n ), ncol( r_n ) )
-# ---                          )
 
                 if ( year == 2000 )
                 {
@@ -1075,14 +1067,9 @@ get.population.map <- function(
                 totfil <- get.file.name.population( netcdf.template, scenario, jpop )
 
                 r_j    <- raster( totfil, varname = varname )
-# ---                grid_j <- array(
-# ---                                getValues( r_j ),                 # here we don't flip rows!
-# ---                                c( nrow( r_j ), ncol( r_j ) )
-# ---                          )
 
                 # interpolate years
                 r <- r_n + fyr * ( r_j - r_n )
-# ---                grid <- grid_n + fyr * ( grid_j - grid_n )
 
                 # don't lose the no-data value
                 r @ file @ nodatavalue = r_n @ file @ nodatavalue
