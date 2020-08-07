@@ -823,8 +823,12 @@ health.impact <- function(
             for( icntr in 1:ccntr )
             {
                 print( sprintf( "%3d: %s - %s", icntr, cntr[ icntr, ] $ CNTR_ISO3, cntr[ icntr, ] $ CNTR_NAME ) )
-                cntr.id               <-  cntr[ icntr, ] $ CNTR_ID
-                cmask                 <-  cntrymaskmed  ==  cntr.id
+                cntr.id  <-  cntr[ icntr, ] $ CNTR_ID
+                if ( cntr.id == 736 )  # remember the Sudan
+                {
+                    cntr.id <- 729
+                }
+                cmask    <-  cntrymaskmed  ==  cntr.id
 
                 # med
                 ctot_copd_med    <-  sum( ( mres_dmort_copd  [[ 1 ]] )[ cmask ] )
