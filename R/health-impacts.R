@@ -812,10 +812,20 @@ health.impact <- function(
             print( sprintf( "Aggregate countries @ %s", format( Sys.time(), "%c" ) ) )
 
             # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
+            # IDL code loads this map from a .SAV file
+            aggregate.countries.cells <- function( cells, ... )
+            {
+                moda <- modal( cells, ties = 'first' )
+                if ( moda == 0 )
+                {
+                    moda <- modal( cells, ties = 'highest' )
+                }
+                moda
+            }
             cntrymaskmed <- aggregate(
                                 hrcntrcode,
                                 fact = config $ files $ reduction.factor,
-                                fun  = modal
+                                fun  = aggregate.countries.cells
                             )
 
             ccntr  <-  nrow( cntr )
