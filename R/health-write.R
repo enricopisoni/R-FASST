@@ -165,7 +165,7 @@ health.write.country <- function(
     # line output for current scenario, year, country
     write(
         sprintf(
-            '%15s %15s %6s %5s %20s %20d %20.2f %20.2f %20.2f %20.2f %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e',
+            '%15s %15s %6s %5s %20s %20f %20.2f %20.2f %20.2f %20.2f %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e %20.4e',
             parameters $ SCENLAB,
             parameters $ SSP,
             parameters $ YEAR,
