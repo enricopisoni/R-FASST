@@ -94,6 +94,10 @@ health.impact <- function(
                         )
     hrcntrcode[ ! is.finite( hrcntrcode ) ]  <-  0
 
+    rm( cntrgrid )
+    print( gc( full = TRUE ) )  # it seems that the only way to perform the garbage collection is to print it
+
+
     # files with base mortality rates (per 100k population)
     copd       <- read_csv( config $ files $ in.file.copd,
                             skip = 1,
@@ -234,6 +238,10 @@ health.impact <- function(
             # identify grids with valid population data
             hr_grid_mask                 <- ( hr_grid_tot > 0 ) & ( hr_grid_tot <  population.map @ file @ nodatavalue )
 
+            rm( population.map )
+            print( gc( full = TRUE ) )
+
+
             scenpop                      <-  raster(
                                                  ncol = ncol( hr_grid_tot ),
                                                  nrow = nrow( hr_grid_tot ),
@@ -255,6 +263,9 @@ health.impact <- function(
                                              )
             values( scenpopmask )        <-  0
             scenpopmask[ hr_grid_mask ]  <-  1
+
+            rm( hr_grid_tot, hr_grid_mask )
+            print( gc( full = TRUE ) )
 
             # read the scenario input file (high resolution grid map)
             infile <- get.file.name.population(
@@ -430,6 +441,9 @@ health.impact <- function(
                                               mrate_stroke.table
                                   )
 
+            rm( mrate_copd.table, mrate_lc.table, mrate_lri.table, mrate_dmt2.table, mrate_ihd.table, mrate_stroke.table )
+            print( gc( full = TRUE ) )
+
 
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 3b -----------------------------------
@@ -508,6 +522,9 @@ health.impact <- function(
             # GBD2016: from class 15-19 to 75-79  GBD2017: all age
             dmort_dmt2  <-  ( af_dmt2 $ grid )[[ 1 ]]  *  mrate_dmt2[[ 1 ]]  *  frac_dmt2  *  scenpop  /  1.e5
 
+            rm( frac_copd, frac_lc, frac_lri, frac_dmt2 )
+            print( gc( full = TRUE ) )
+
 
             # GBD2016: ONLY 10 CLASSES; GBD2017:15 CLASSES
             dmort_ihd    <- brick()           # stack of only median values - 15 layers
@@ -575,20 +592,25 @@ health.impact <- function(
                                 mrate_stroke
                             )
 
-            sig_all     <-  list(
-                                sig_min  =  sig_copd   $ sig_min  +
-                                            sig_lc     $ sig_min  +
-                                            sig_lri    $ sig_min  +
-                                            sig_dmt2   $ sig_min  +
-                                            sig_ihd    $ sig_min  +
-                                            sig_stroke $ sig_min,
-                                sig_max  =  sig_copd   $ sig_max  +
-                                            sig_lc     $ sig_max  +
-                                            sig_lri    $ sig_max  +
-                                            sig_dmt2   $ sig_max  +
-                                            sig_ihd    $ sig_max  +
-                                            sig_stroke $ sig_max
-                            )
+# --not-used--            sig_all     <-  list(
+# --not-used--                                sig_min  =  sig_copd   $ sig_min  +
+# --not-used--                                            sig_lc     $ sig_min  +
+# --not-used--                                            sig_lri    $ sig_min  +
+# --not-used--                                            sig_dmt2   $ sig_min  +
+# --not-used--                                            sig_ihd    $ sig_min  +
+# --not-used--                                            sig_stroke $ sig_min,
+# --not-used--                                sig_max  =  sig_copd   $ sig_max  +
+# --not-used--                                            sig_lc     $ sig_max  +
+# --not-used--                                            sig_lri    $ sig_max  +
+# --not-used--                                            sig_dmt2   $ sig_max  +
+# --not-used--                                            sig_ihd    $ sig_max  +
+# --not-used--                                            sig_stroke $ sig_max
+# --not-used--                            )
+
+            rm( af_copd, af_lc, af_lri, af_dmt2, af_ihd_grid, af_stroke_grid )
+            rm( mrate_lc, mrate_lri, mrate_dmt2, mrate_ihd, mrate_stroke )
+            print( gc( full = TRUE ) )
+
 
             # --- sum mortality values ---
             dmort_ihd_all     <-  calc( dmort_ihd,    sum )
@@ -604,23 +626,23 @@ health.impact <- function(
             # CONSTRUCT LAYERS WITH LOWER AND UPPER BOUNDARIES
             dmort_copd        <-  brick(
                                       dmort_copd,
-                                      dmort_copd - sig_copd $ sig_min,
-                                      dmort_copd + sig_copd $ sig_max
+                                      dmort_copd        - sig_copd $ sig_min,
+                                      dmort_copd        + sig_copd $ sig_max
                                   )
             dmort_lc          <-  brick(
                                       dmort_lc,
-                                      dmort_lc   - sig_lc   $ sig_min,
-                                      dmort_lc   + sig_lc   $ sig_max
+                                      dmort_lc          - sig_lc   $ sig_min,
+                                      dmort_lc          + sig_lc   $ sig_max
                                   )
             dmort_lri         <-  brick(
                                       dmort_lri,
-                                      dmort_lri  - sig_lri  $ sig_min,
-                                      dmort_lri  + sig_lri  $ sig_max
+                                      dmort_lri         - sig_lri  $ sig_min,
+                                      dmort_lri         + sig_lri  $ sig_max
                                   )
             dmort_dmt2        <-  brick(
                                       dmort_dmt2,
-                                      dmort_dmt2 - sig_dmt2 $ sig_min,
-                                      dmort_dmt2 + sig_dmt2 $ sig_max
+                                      dmort_dmt2        - sig_dmt2 $ sig_min,
+                                      dmort_dmt2        + sig_dmt2 $ sig_max
                                   )
 
             dmort_ihd_all     <-  brick(
@@ -633,6 +655,9 @@ health.impact <- function(
                                       dmort_stroke_all  -  sig_stroke $ sig_min,
                                       dmort_stroke_all  +  sig_stroke $ sig_max
                                   )
+
+            rm( sig_copd, sig_lc, sig_lri, sig_dmt2, sig_ihd, sig_stroke )
+            print( gc( full = TRUE ) )
 
 
             print( 'TOTAL MORTALITIES AMBIENT PM PER COD:' )
@@ -726,6 +751,11 @@ health.impact <- function(
             print( health.print.row.mortalities( 'COPD TUR', dmort_o3_tu ) )
 
 
+            # remove no longer needed variables
+            rm( scenpopmask, mrate_copd )
+            print( gc( full = TRUE ) )
+
+
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 5 ------------------------------------
             # ----------------- Pass to 0.5x0.5deg resolution for aggregation -----------------
@@ -745,6 +775,9 @@ health.impact <- function(
             mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, config $ files $ reduction.factor, max )
             mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      config $ files $ reduction.factor, max )
             mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     config $ files $ reduction.factor, max )
+
+            rm( dmort_copd, dmort_lc, dmort_lri, dmort_dmt2, dmort_ihd_all, dmort_stroke_all, dmort_o3_tu, dmort_o3_gbd )
+            print( gc( full = TRUE ) )
 
 
             mort_sc                <-  brick()
@@ -801,6 +834,11 @@ health.impact <- function(
                                       raster( infile, varname = 'H2O35_SS' ),
                                       fact = config $ files $ reduction.factor
                                   )
+
+
+            # remove no longer needed variables
+            rm( scenpop )
+            print( gc( full = TRUE ) )
 
 
             # ---------------------------------------------------------------------------------
@@ -954,8 +992,14 @@ health.impact <- function(
                     )
                 )
 
+                rm( popmed.msk )
+
             }  # end of: for( icntr in 1:nrow( cntr ) )
             print( sprintf( "End countries loop @ %s", format( Sys.time(), "%c" ) ) )
+
+            rm( popmed )
+            rm( mres_dmort_copd, mres_dmort_lc, mres_dmort_lri, mres_dmort_dmt2, mres_dmort_ihd, mres_dmort_stroke )
+            print( gc( full = TRUE ) )
 
 
             # ---------------------------------------------------------------------------------
@@ -990,6 +1034,9 @@ health.impact <- function(
                     mres_dmort_o3_tu   =  mres_dmort_o3_tu[[ 1 ]]
                 )
             )
+
+            rm( mort_sc, mres_dmort_o3_gbd, mres_dmort_o3_tu )
+            print( gc( full = TRUE ) )
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
 
