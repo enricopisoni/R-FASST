@@ -463,6 +463,8 @@ health.impact <- function(
                                 pop.age.tbl
                             )
 
+            rm( pop.age.tbl )
+
             # CALCULATE APPROPRIATE AGE FRACTIONS
             frac_copd    <- sum.raster.age.structure(
                                 pop_age_fr,
@@ -553,6 +555,7 @@ health.impact <- function(
                                       1.e5
                                   )
             }
+            rm( pop_age_fr )
 
             # error propagation at grid cell level from uncertainty on AF and mrate:
             # sig_dmort / mort = sqrt( ( sig_AF / AF )^2 + ( sig_mrate / mrate )^2 )
@@ -616,12 +619,12 @@ health.impact <- function(
             dmort_ihd_all     <-  calc( dmort_ihd,    sum )
             dmort_stroke_all  <-  calc( dmort_stroke, sum )
 
-            all_mort          <-  dmort_lc            +
-                                  dmort_lri           +
-                                  dmort_copd          +
-                                  dmort_dmt2          +
-                                  dmort_ihd_all       +
-                                  dmort_stroke_all
+# --not-used--            all_mort          <-  dmort_lc            +
+# --not-used--                                  dmort_lri           +
+# --not-used--                                  dmort_copd          +
+# --not-used--                                  dmort_dmt2          +
+# --not-used--                                  dmort_ihd_all       +
+# --not-used--                                  dmort_stroke_all
 
             # CONSTRUCT LAYERS WITH LOWER AND UPPER BOUNDARIES
             dmort_copd        <-  brick(
@@ -776,7 +779,8 @@ health.impact <- function(
             mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      config $ files $ reduction.factor, max )
             mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     config $ files $ reduction.factor, max )
 
-            rm( dmort_copd, dmort_lc, dmort_lri, dmort_dmt2, dmort_ihd_all, dmort_stroke_all, dmort_o3_tu, dmort_o3_gbd )
+            rm( dmort_copd, dmort_lc, dmort_lri, dmort_dmt2, dmort_ihd, dmort_stroke )
+            rm( dmort_ihd_all, dmort_stroke_all, dmort_o3_tu, dmort_o3_gbd )
             print( gc( full = TRUE ) )
 
 
@@ -999,6 +1003,7 @@ health.impact <- function(
 
             rm( popmed )
             rm( mres_dmort_copd, mres_dmort_lc, mres_dmort_lri, mres_dmort_dmt2, mres_dmort_ihd, mres_dmort_stroke )
+            rm( med_pmnat_dry )
             print( gc( full = TRUE ) )
 
 
@@ -1036,6 +1041,9 @@ health.impact <- function(
             )
 
             rm( mort_sc, mres_dmort_o3_gbd, mres_dmort_o3_tu )
+            rm( adm8h_adm8thr_threshold, cntrymaskmed, sc_hires, sc_ant_hires, sc_adm8h, sc_sdm8h )
+            rm( sig_o3_tu_min, sig_o3_tu_max, sig_o3_gbd_min, sig_o3_gbd_max )
+            rm( cntr.sliced )
             print( gc( full = TRUE ) )
 
         }  # end of: for ( year  in  config $ file $ scenarios $ year )
