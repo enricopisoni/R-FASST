@@ -768,7 +768,11 @@ health.impact <- function(
             # --- to 0.5x0.5deg resolution                                          ---
 
             # aggregate subgrid cells
-            popmed                 <-  aggregate( scenpop, fact = config $ files $ reduction.factor, fun = sum )
+            popmed                 <-  if ( config $ files $ reduction.factor  <= 1 ) {
+                                           scenpop
+                                       } else {
+                                           aggregate( scenpop, fact = config $ files $ reduction.factor, fun = sum )
+                                       }
 
             mres_dmort_copd        <-  resolution.reduce( dmort_copd,       config $ files $ reduction.factor, max )
             mres_dmort_lc          <-  resolution.reduce( dmort_lc,         config $ files $ reduction.factor, max )
@@ -825,19 +829,22 @@ health.impact <- function(
             print( health.print.row.mortalities( 'COPD TUR',                           mres_dmort_o3_tu  ) )
 
             # --- 0.5x0.5deg resolution of pollutants ---
-            med_pmtot_ant_35  <-  aggregate( sc_ant_hires, fact = config $ files $ reduction.factor )
-            med_pmtot_35      <-  aggregate( sc_hires,     fact = config $ files $ reduction.factor )
-            med_adma8         <-  aggregate( sc_adm8h,     fact = config $ files $ reduction.factor )
-            med_sdma8         <-  aggregate( sc_sdm8h,     fact = config $ files $ reduction.factor )
+            med_pmtot_ant_35  <-  sc_ant_hires
+            med_pmtot_35      <-  sc_hires
+            med_adma8         <-  sc_adm8h
+            med_sdma8         <-  sc_sdm8h
+            med_pmnat_dry     <-  raster( infile, varname = 'NAT_PM_dry' )
+            med_nat_h2o35     <-  raster( infile, varname = 'H2O35_SS' )
 
-            med_pmnat_dry     <-  aggregate(
-                                      raster( infile, varname = 'NAT_PM_dry' ),
-                                      fact = config $ files $ reduction.factor
-                                  )
-            med_nat_h2o35     <-  aggregate(
-                                      raster( infile, varname = 'H2O35_SS' ),
-                                      fact = config $ files $ reduction.factor
-                                  )
+            if ( config $ files $ reduction.factor  > 1 )
+            {
+                med_pmtot_ant_35  <-  aggregate( med_pmtot_ant_35, fact = config $ files $ reduction.factor )
+                med_pmtot_35      <-  aggregate( med_pmtot_35,     fact = config $ files $ reduction.factor )
+                med_adma8         <-  aggregate( med_adma8,        fact = config $ files $ reduction.factor )
+                med_sdma8         <-  aggregate( med_sdma8,        fact = config $ files $ reduction.factor )
+                med_pmnat_dry     <-  aggregate( med_pmnat_dry,    fact = config $ files $ reduction.factor )
+                med_nat_h2o35     <-  aggregate( med_nat_h2o35,    fact = config $ files $ reduction.factor )
+            }
 
 
             # remove no longer needed variables
@@ -855,20 +862,25 @@ health.impact <- function(
 
             # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
             # IDL code loads this map from a .SAV file
-            aggregate.countries.cells <- function( cells, ... )
+
+            cntrymaskmed <- hrcntrcode
+            if ( config $ files $ reduction.factor  > 1 )
             {
-                moda <- modal( cells, ties = 'first' )
-                if ( moda == 0 )
+                aggregate.countries.cells <- function( cells, ... )
                 {
-                    moda <- modal( cells, ties = 'highest' )
+                    moda <- modal( cells, ties = 'first' )
+                    if ( moda == 0 )
+                    {
+                        moda <- modal( cells, ties = 'highest' )
+                    }
+                    moda
                 }
-                moda
+                cntrymaskmed <- aggregate(
+                                    cntrymaskmed,
+                                    fact = config $ files $ reduction.factor,
+                                    fun  = aggregate.countries.cells
+                                )
             }
-            cntrymaskmed <- aggregate(
-                                hrcntrcode,
-                                fact = config $ files $ reduction.factor,
-                                fun  = aggregate.countries.cells
-                            )
 
             ccntr  <-  nrow( cntr )
             print( sprintf( "Begin countries loop @ %s - %d countries", format( Sys.time(), "%c" ), ccntr ) )
@@ -1233,19 +1245,23 @@ resolution.reduce  <- function(
                           how
                       )
 {
-    reduced  <- brick()
-    for( ilayer in 1:nlayers( stack ) )
+    if ( factor <= 1 )
     {
-        reduced  <- addLayer(
-                        reduced,
-                        aggregate(
-                            stack[[ ilayer ]],
-                            fact = factor,
-                            fun  = how
+        reduced  <- stack
+    } else {
+        reduced  <- brick()
+        for( ilayer in 1:nlayers( stack ) )
+        {
+            reduced  <- addLayer(
+                            reduced,
+                            aggregate(
+                                stack[[ ilayer ]],
+                                fact = factor,
+                                fun  = how
+                            )
                         )
-                    )
+        }
+        names( reduced )  <-  names( stack )
     }
-    names( reduced )  <-  names( stack )
-
     reduced
 }
