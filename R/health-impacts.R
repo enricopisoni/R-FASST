@@ -36,6 +36,9 @@ health.impact <- function(
                    config
                  )
 {
+    # the name of this programme
+    programme.name    <-  'FASST 4 SHERPA'
+
     # check input parameters
     if ( ! dir.exists( dir.root.out ) )
     {
@@ -48,12 +51,11 @@ health.impact <- function(
     print( sprintf( "Working directory is now: '%s'", getwd() ) )
 
     # internal configuration
-    dir.output  <- file.path( '.', project )
-    dir.tables  <- file.path( dir.output, 'tables' )
-    dir.netcdf  <- file.path( dir.output, 'ncdf' )
+    dir.output        <- file.path( '.', project )
+    dir.tables        <- file.path( dir.output, 'tables' )
+    dir.netcdf        <- file.path( dir.output, 'ncdf' )
 
-    # the name of this programme
-    programme.name  <-  'FASST 4 SHERPA'
+    reduction.factor  <- config $ files $ reduction.factor
 
     # ----------------------------------------------------------------------
     # ------------------------------- block 2 ------------------------------
@@ -178,8 +180,8 @@ health.impact <- function(
 # --not-used--    hr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # med resolution lon lat dimensions
-    imed         <- img /  config $ files $ reduction.factor
-    jmed         <- jmg /  config $ files $ reduction.factor
+    imed         <- img /  reduction.factor
+    jmed         <- jmg /  reduction.factor
     scale        <- imed / 360
     mr_lats      <- ( ( ( 0:( 180 * scale - 1 ) ) + 0.5 ) / scale - 90 )
     mr_lons      <- ( ( ( 0:( 360 * scale - 1 ) ) + 0.5 ) / scale - 180 )
@@ -768,20 +770,24 @@ health.impact <- function(
             # --- to 0.5x0.5deg resolution                                          ---
 
             # aggregate subgrid cells
-            popmed                 <-  if ( config $ files $ reduction.factor  <= 1 ) {
+            popmed                 <-  if ( reduction.factor  <= 1 ) {
                                            scenpop
                                        } else {
-                                           aggregate( scenpop, fact = config $ files $ reduction.factor, fun = sum )
+                                           aggregate( scenpop, fact = reduction.factor, fun = sum )
                                        }
 
-            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       config $ files $ reduction.factor, max )
-            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         config $ files $ reduction.factor, max )
-            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        config $ files $ reduction.factor, max )
-            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       config $ files $ reduction.factor, max )
-            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    config $ files $ reduction.factor, max )
-            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, config $ files $ reduction.factor, max )
-            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      config $ files $ reduction.factor, max )
-            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     config $ files $ reduction.factor, max )
+            aggregate.dmort        <-  function( cells, ... )
+            {
+                max( 0, sum( cells ) )
+            }
+            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       reduction.factor, aggregate.dmort )
+            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         reduction.factor, aggregate.dmort )
+            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        reduction.factor, aggregate.dmort )
+            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       reduction.factor, aggregate.dmort )
+            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    reduction.factor, aggregate.dmort )
+            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, reduction.factor, aggregate.dmort )
+            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      reduction.factor, aggregate.dmort )
+            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     reduction.factor, aggregate.dmort )
 
             rm( dmort_copd, dmort_lc, dmort_lri, dmort_dmt2, dmort_ihd, dmort_stroke )
             rm( dmort_ihd_all, dmort_stroke_all, dmort_o3_tu, dmort_o3_gbd )
@@ -836,14 +842,14 @@ health.impact <- function(
             med_pmnat_dry     <-  raster( infile, varname = 'NAT_PM_dry' )
             med_nat_h2o35     <-  raster( infile, varname = 'H2O35_SS' )
 
-            if ( config $ files $ reduction.factor  > 1 )
+            if ( reduction.factor  > 1 )
             {
-                med_pmtot_ant_35  <-  aggregate( med_pmtot_ant_35, fact = config $ files $ reduction.factor )
-                med_pmtot_35      <-  aggregate( med_pmtot_35,     fact = config $ files $ reduction.factor )
-                med_adma8         <-  aggregate( med_adma8,        fact = config $ files $ reduction.factor )
-                med_sdma8         <-  aggregate( med_sdma8,        fact = config $ files $ reduction.factor )
-                med_pmnat_dry     <-  aggregate( med_pmnat_dry,    fact = config $ files $ reduction.factor )
-                med_nat_h2o35     <-  aggregate( med_nat_h2o35,    fact = config $ files $ reduction.factor )
+                med_pmtot_ant_35  <-  aggregate( med_pmtot_ant_35, fact = reduction.factor )
+                med_pmtot_35      <-  aggregate( med_pmtot_35,     fact = reduction.factor )
+                med_adma8         <-  aggregate( med_adma8,        fact = reduction.factor )
+                med_sdma8         <-  aggregate( med_sdma8,        fact = reduction.factor )
+                med_pmnat_dry     <-  aggregate( med_pmnat_dry,    fact = reduction.factor )
+                med_nat_h2o35     <-  aggregate( med_nat_h2o35,    fact = reduction.factor )
             }
 
 
@@ -864,7 +870,7 @@ health.impact <- function(
             # IDL code loads this map from a .SAV file
 
             cntrymaskmed <- hrcntrcode
-            if ( config $ files $ reduction.factor  > 1 )
+            if ( reduction.factor  > 1 )
             {
                 aggregate.countries.cells <- function( cells, ... )
                 {
@@ -877,7 +883,7 @@ health.impact <- function(
                 }
                 cntrymaskmed <- aggregate(
                                     cntrymaskmed,
-                                    fact = config $ files $ reduction.factor,
+                                    fact = reduction.factor,
                                     fun  = aggregate.countries.cells
                                 )
             }
