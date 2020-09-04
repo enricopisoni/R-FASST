@@ -874,11 +874,11 @@ health.impact <- function(
             {
                 aggregate.countries.cells <- function( cells, ... )
                 {
-                    moda <- modal( cells, ties = 'first' )
-                    if ( moda == 0 )
-                    {
-                        moda <- modal( cells, ties = 'highest' )
-                    }
+                    moda <- modal(
+                                c( cells[ cells!= 0 ], 0 ),
+                                ties = 'first'
+                            )
+                    moda <- as.integer( moda )
                     moda
                 }
                 cntrymaskmed <- aggregate(
