@@ -10,6 +10,8 @@ source( 'rrate.R' )
 source( 'health-write.R' )
 source( 'health-gridded.R' )
 
+source( 'IDL.R' )
+
 
 #' Health impacts from high resolution FASST grid maps;
 #'
@@ -844,12 +846,12 @@ health.impact <- function(
 
             if ( reduction.factor  > 1 )
             {
-                med_pmtot_ant_35  <-  aggregate( med_pmtot_ant_35, fact = reduction.factor )
-                med_pmtot_35      <-  aggregate( med_pmtot_35,     fact = reduction.factor )
-                med_adma8         <-  aggregate( med_adma8,        fact = reduction.factor )
-                med_sdma8         <-  aggregate( med_sdma8,        fact = reduction.factor )
-                med_pmnat_dry     <-  aggregate( med_pmnat_dry,    fact = reduction.factor )
-                med_nat_h2o35     <-  aggregate( med_nat_h2o35,    fact = reduction.factor )
+                med_pmtot_ant_35  <-  congrid.aggregate( med_pmtot_ant_35, reduction.factor )
+                med_pmtot_35      <-  congrid.aggregate( med_pmtot_35,     reduction.factor )
+                med_adma8         <-  congrid.aggregate( med_adma8,        reduction.factor )
+                med_sdma8         <-  congrid.aggregate( med_sdma8,        reduction.factor )
+                med_pmnat_dry     <-  congrid.aggregate( med_pmnat_dry,    reduction.factor )
+                med_nat_h2o35     <-  congrid.aggregate( med_nat_h2o35,    reduction.factor )
             }
 
 

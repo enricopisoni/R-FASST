@@ -13,7 +13,7 @@
   "in.file.rr":           "../INPUT/ANCILLARY/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
 
   "in.tmpl.pop.map":      "../INPUT/ANCILLARY/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
-  "in.tmpl.scenario":     "../INPUT/NCDF_IN/FASST_75x75_CLE_BASE_2010_URBINCR_ON_eclipsev6b_proxy_V6b_2.nc",
+  "in.tmpl.scenario":     "../INPUT/NCDF_IN/FASST_75x75_SSP1_26_2015.nc",
 
   "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
   "in.tmpl.mrate.lc":     "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
