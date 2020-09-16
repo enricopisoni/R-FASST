@@ -599,20 +599,20 @@ health.impact <- function(
                                 mrate_stroke
                             )
 
-# --not-used--            sig_all     <-  list(
-# --not-used--                                sig_min  =  sig_copd   $ sig_min  +
-# --not-used--                                            sig_lc     $ sig_min  +
-# --not-used--                                            sig_lri    $ sig_min  +
-# --not-used--                                            sig_dmt2   $ sig_min  +
-# --not-used--                                            sig_ihd    $ sig_min  +
-# --not-used--                                            sig_stroke $ sig_min,
-# --not-used--                                sig_max  =  sig_copd   $ sig_max  +
-# --not-used--                                            sig_lc     $ sig_max  +
-# --not-used--                                            sig_lri    $ sig_max  +
-# --not-used--                                            sig_dmt2   $ sig_max  +
-# --not-used--                                            sig_ihd    $ sig_max  +
-# --not-used--                                            sig_stroke $ sig_max
-# --not-used--                            )
+            sig_all     <-  list(
+                                sig_min  =  sig_copd   $ sig_min  +
+                                            sig_lc     $ sig_min  +
+                                            sig_lri    $ sig_min  +
+                                            sig_dmt2   $ sig_min  +
+                                            sig_ihd    $ sig_min  +
+                                            sig_stroke $ sig_min,
+                                sig_max  =  sig_copd   $ sig_max  +
+                                            sig_lc     $ sig_max  +
+                                            sig_lri    $ sig_max  +
+                                            sig_dmt2   $ sig_max  +
+                                            sig_ihd    $ sig_max  +
+                                            sig_stroke $ sig_max
+                            )
 
             rm( af_copd, af_lc, af_lri, af_dmt2, af_ihd_grid, af_stroke_grid )
             rm( mrate_lc, mrate_lri, mrate_dmt2, mrate_ihd, mrate_stroke )
@@ -623,12 +623,12 @@ health.impact <- function(
             dmort_ihd_all     <-  calc( dmort_ihd,    sum )
             dmort_stroke_all  <-  calc( dmort_stroke, sum )
 
-# --not-used--            all_mort          <-  dmort_lc            +
-# --not-used--                                  dmort_lri           +
-# --not-used--                                  dmort_copd          +
-# --not-used--                                  dmort_dmt2          +
-# --not-used--                                  dmort_ihd_all       +
-# --not-used--                                  dmort_stroke_all
+            all_mort          <-  dmort_lc            +
+                                  dmort_lri           +
+                                  dmort_copd          +
+                                  dmort_dmt2          +
+                                  dmort_ihd_all       +
+                                  dmort_stroke_all
 
             # CONSTRUCT LAYERS WITH LOWER AND UPPER BOUNDARIES
             dmort_copd        <-  brick(
@@ -662,18 +662,24 @@ health.impact <- function(
                                       dmort_stroke_all  -  sig_stroke $ sig_min,
                                       dmort_stroke_all  +  sig_stroke $ sig_max
                                   )
+            all_mort          <-  brick(
+                                      all_mort,
+                                      all_mort          - sig_all   $ sig_min,
+                                      all_mort          + sig_all   $ sig_max
+                                  )
 
             rm( sig_copd, sig_lc, sig_lri, sig_dmt2, sig_ihd, sig_stroke )
             print( gc( full = TRUE ) )
 
 
             print( 'TOTAL MORTALITIES AMBIENT PM PER COD:' )
-            print( health.print.row.mortalities( 'COPD',    dmort_copd ) )
-            print( health.print.row.mortalities( 'LC',      dmort_lc ) )
-            print( health.print.row.mortalities( 'LRI',     dmort_lri ) )
-            print( health.print.row.mortalities( 'DMT2',    dmort_dmt2 ) )
-            print( health.print.row.mortalities( 'IHD',     dmort_ihd_all ) )
-            print( health.print.row.mortalities( 'STROKE',  dmort_stroke_all ) )
+            print( health.print.row.mortalities( 'COPD',      dmort_copd ) )
+            print( health.print.row.mortalities( 'LC',        dmort_lc ) )
+            print( health.print.row.mortalities( 'LRI',       dmort_lri ) )
+            print( health.print.row.mortalities( 'DMT2',      dmort_dmt2 ) )
+            print( health.print.row.mortalities( 'IHD',       dmort_ihd_all ) )
+            print( health.print.row.mortalities( 'STROKE',    dmort_stroke_all ) )
+            print( health.print.row.mortalities( 'TOTAL PM',  all_mort ) )
 
 
             adm8h_adm8thr_threshold  <-  ( ( sc_adm8h - config $ model $ ADM8THR ) > 0 )
