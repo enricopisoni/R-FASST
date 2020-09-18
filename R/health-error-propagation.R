@@ -73,33 +73,37 @@ get.af.mrate.error.propagation.by.age <- function(
 {
     # --- error for each age class ---
     idx      <-  index.by.agr_id.type( 1, 1 )
+    idx.min  <-  index.by.agr_id.type( 1, 2 )
+    idx.max  <-  index.by.agr_id.type( 1, 3 )
 
     sig_min  <-  error.propagation(
                      dmort[[ 1 ]],
-                     af[[ idx ]],    af[[ idx + 1 ]],
-                     mrate[[ idx ]], mrate[[ idx + 1 ]]
+                     af[[ idx ]],    af[[ idx.min ]],
+                     mrate[[ idx ]], mrate[[ idx.min ]]
                  ) ^ 2
     sig_max  <-  error.propagation(
                      dmort[[ 1 ]],
-                     af[[ idx + 2 ]],    af[[ idx ]],
-                     mrate[[ idx + 2 ]], mrate[[ idx ]]
+                     af[[ idx ]],    af[[ idx.max ]],
+                     mrate[[ idx ]], mrate[[ idx.max ]]
                  ) ^ 2
 
     for ( icl in c( 2:nlayers( dmort ) ) )
     {
         idx      <-  index.by.agr_id.type( icl, 1 )
+        idx.min  <-  index.by.agr_id.type( icl, 2 )
+        idx.max  <-  index.by.agr_id.type( icl, 3 )
 
         sig_min  <-  sig_min                                    +
                      error.propagation(
-                         dmort[[ 1 ]],
-                         af[[ idx ]],    af[[ idx + 1 ]],
-                         mrate[[ idx ]], mrate[[ idx + 1 ]]
+                         dmort[[ icl ]],
+                         af[[ idx ]],    af[[ idx.min ]],
+                         mrate[[ idx ]], mrate[[ idx.min ]]
                      ) ^ 2
         sig_max  <-  sig_max                                    +
                      error.propagation(
-                         dmort[[ 1 ]],
-                         af[[ idx + 2 ]],    af[[ idx ]],
-                         mrate[[ idx + 2 ]], mrate[[ idx ]]
+                         dmort[[ icl ]],
+                         af[[ idx ]],    af[[ idx.max ]],
+                         mrate[[ idx ]], mrate[[ idx.max ]]
                      ) ^ 2
     }
 

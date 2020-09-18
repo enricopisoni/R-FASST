@@ -537,7 +537,7 @@ health.impact <- function(
             dmort_stroke <- brick()           # stack of only median values - 15 layers
             for ( icl in c( 1:ncl_ihd ) )
             {
-                idx           <-  index.by.agr_id.type( 1, icl )
+                idx           <-  index.by.agr_id.type( icl, 1 )
 
                 # GBD2016: from class 25-29 to 75-79  GBD2017: all > 25
                 dmort_ihd     <-  addLayer(
