@@ -682,23 +682,28 @@ health.impact <- function(
             print( health.print.row.mortalities( 'TOTAL PM',  all_mort ) )
 
 
-            adm8h_adm8thr_threshold  <-  ( ( sc_adm8h - config $ model $ ADM8THR ) > 0 )
+            adm8h_adm8thr                       <-  sc_adm8h - config $ model $ ADM8THR
+            adm8h_adm8thr[ adm8h_adm8thr < 0 ]  <-  0
 
             dmort_o3_tu     <- mrate_copd[[ 1 ]]  *
                                frac_o3            *
                                scenpop            *
                                scenpopmask        *
                                (
-                                   1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
+                                   1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr )
                                )                  /
                                1.e5
+
+
+            sdm8h_sdm8thr                       <-  sc_sdm8h - config $ model $ SDM8THR
+            sdm8h_sdm8thr[ sdm8h_sdm8thr < 0 ]  <-  0
 
             dmort_o3_gbd    <- mrate_copd[[ 1 ]]  *
                                frac_o3            *
                                scenpop            *
                                scenpopmask        *
                                (
-                                   1 - exp( -beta_copd_gbd[ 1 ] * ( ( sc_sdm8h - config $ model $ SDM8THR ) > 0 ) )
+                                   1 - exp( -beta_copd_gbd[ 1 ] * sdm8h_sdm8thr )
                                )                  /
                                1.e5
 
@@ -706,35 +711,21 @@ health.impact <- function(
             sig_copd_min    <-  ( mrate_copd[[ 1 ]] - mrate_copd[[ 2 ]] ) / mrate_copd[[ 1 ]]
             sig_copd_max    <-  ( mrate_copd[[ 3 ]] - mrate_copd[[ 1 ]] ) / mrate_copd[[ 1 ]]
 
-            sig_af_tu_min   <-  (
-                                  ( 1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold ) ) -
-                                  ( 1 - exp( -beta_copd_tu[ 2 ] * adm8h_adm8thr_threshold ) )
-                                )                                                               /
-                                (
-                                  1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
-                                )
-            sig_af_tu_max   <-  (
-                                  ( 1 - exp( -beta_copd_tu[ 3 ] * adm8h_adm8thr_threshold ) ) -
-                                  ( 1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold ) )
-                                )                                                               /
-                                (
-                                  1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr_threshold )
-                                )
 
-            sig_af_gbd_min  <-  (
-                                  ( 1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold ) ) -
-                                  ( 1 - exp( -beta_copd_gbd[ 2 ] * adm8h_adm8thr_threshold ) )
-                                )                                                                /
-                                (
-                                  1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold )
-                                )
-            sig_af_gbd_max  <-  (
-                                  ( 1 - exp( -beta_copd_gbd[ 3 ] * adm8h_adm8thr_threshold ) ) -
-                                  ( 1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold ) )
-                                )                                                                /
-                                (
-                                  1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr_threshold )
-                                )
+            sig_af_tu_a     <-  ( 1 - exp( -beta_copd_tu[ 1 ] * adm8h_adm8thr ) )
+            sig_af_tu_b     <-  ( 1 - exp( -beta_copd_tu[ 2 ] * adm8h_adm8thr ) )
+            sig_af_tu_c     <-  ( 1 - exp( -beta_copd_tu[ 3 ] * adm8h_adm8thr ) )
+
+            sig_af_tu_min   <-  ( sig_af_tu_a - sig_af_tu_b ) / sig_af_tu_a
+            sig_af_tu_max   <-  ( sig_af_tu_c - sig_af_tu_a ) / sig_af_tu_a
+
+
+            sig_af_gbd_a    <-  ( 1 - exp( -beta_copd_gbd[ 1 ] * adm8h_adm8thr ) )
+            sig_af_gbd_b    <-  ( 1 - exp( -beta_copd_gbd[ 2 ] * adm8h_adm8thr ) )
+            sig_af_gbd_c    <-  ( 1 - exp( -beta_copd_gbd[ 3 ] * adm8h_adm8thr ) )
+
+            sig_af_gbd_min  <-  ( sig_af_gbd_a - sig_af_gbd_b ) / sig_af_gbd_a
+            sig_af_gbd_max  <-  ( sig_af_gbd_c - sig_af_gbd_a ) / sig_af_gbd_a
 
 
             sig_o3_tu_min   <-  dmort_o3_tu * sqrt( sig_copd_min ^ 2  +  sig_af_tu_min ^ 2 )
@@ -765,7 +756,8 @@ health.impact <- function(
 
 
             # remove no longer needed variables
-            rm( scenpopmask, mrate_copd )
+            rm( scenpopmask, mrate_copd, adm8h_adm8thr, sdm8h_sdm8thr )
+            rm( sig_af_tu_a, sig_af_tu_b, sig_af_tu_c, sig_af_gbd_a, sig_af_gbd_b, sig_af_gbd_c )
             print( gc( full = TRUE ) )
 
 
@@ -1067,7 +1059,7 @@ health.impact <- function(
             )
 
             rm( mort_sc, mres_dmort_o3_gbd, mres_dmort_o3_tu )
-            rm( adm8h_adm8thr_threshold, cntrymaskmed, sc_hires, sc_ant_hires, sc_adm8h, sc_sdm8h )
+            rm( cntrymaskmed, sc_hires, sc_ant_hires, sc_adm8h, sc_sdm8h )
             rm( sig_o3_tu_min, sig_o3_tu_max, sig_o3_gbd_min, sig_o3_gbd_max )
             rm( cntr.sliced )
             print( gc( full = TRUE ) )
