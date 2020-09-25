@@ -178,8 +178,6 @@ health.impact <- function(
     img          <- ncol( hrcntrcode )
     jmg          <- nrow( hrcntrcode )
     scale        <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
-# --not-used--    hr_lats <- ( ( ( 0:( ( ymax( hrcntrcode ) - ymin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + ymin( hrcntrcode ) )
-# --not-used--    hr_lons <- ( ( ( 0:( ( xmax( hrcntrcode ) - xmin( hrcntrcode ) ) * scale - 1 ) ) + 0.5 ) / scale + xmin( hrcntrcode ) )
 
     # med resolution lon lat dimensions
     imed         <- img /  reduction.factor
@@ -187,11 +185,6 @@ health.impact <- function(
     scale        <- imed / 360
     mr_lats      <- ( ( ( 0:( 180 * scale - 1 ) ) + 0.5 ) / scale - 90 )
     mr_lons      <- ( ( ( 0:( 360 * scale - 1 ) ) + 0.5 ) / scale - 180 )
-
-    # lon-lat arrays
-# --not-used-remove--    hr_grid_tot  <- array( 0, c( jmg, img ) )
-# --not-used-remove--    hr_grid_tot1 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
-# --not-used-remove--    hr_grid_tot2 <- array( 0, c( jmg, img ) )    # intermediate placeholders needed when interpolating
 
 
     # ----------------------------------------------------------------------
@@ -559,6 +552,7 @@ health.impact <- function(
                                       1.e5
                                   )
             }
+
             rm( pop_age_fr )
 
             # error propagation at grid cell level from uncertainty on AF and mrate:
@@ -887,6 +881,9 @@ health.impact <- function(
                                     fun  = aggregate.countries.cells
                                 )
             }
+            # --- For testing only: uncomment the line below to read the country mask
+            # --- at lower resolution, the same mask used by IDL code;
+            # --- cntrymaskmed <- raster( "../INPUT/ANCILLARY/FASST_REGION_MASK/0.5x0.5_INDIV_COUNTRY_MASK.asc" )
 
             ccntr  <-  nrow( cntr )
             print( sprintf( "Begin countries loop @ %s - %d countries", format( Sys.time(), "%c" ), ccntr ) )
