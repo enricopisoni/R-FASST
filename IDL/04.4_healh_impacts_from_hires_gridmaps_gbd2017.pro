@@ -4,28 +4,28 @@ device,decompose=0   ;for proper color handling in hiphop on-screen plots
 PRONAME='04.4_HEALTH_IMPACTS_FROM_HIRES_FASST_GRIDMAPS_GBD2017_CMIP6.PRO'
 
 ;fixed directories with data
-ROOTDIR='D:\0 MY WORK_ONGOING\0 ACTION RESEARCH\2019\FASST\FASST_IDL_PACK_v4\'
+ROOTDIR='..\Files\INPUT\'
 ANCILDIR=rootdir+'ANCILLARY\'
-GBD_DIR=ANCILDIR+'\MORTALITY\BASEMORT2018\'
-RR_DIR='D:\0 MY WORK_ONGOING\0 ACTION RESEARCH\2019\FASST\FASST_IDL_PACK_V3\ANCILLARY\MORTALITY\RRs2018\FIT\'
-IDLDIR='D:\0 MY WORK_ONGOING\0 ACTION RESEARCH\2019\FASST\FASST_IDL_PACK_V3\CODE\TEMPLATES\'
+GBD_DIR=ANCILDIR+'MORTALITY\BASEMORT2018\'
+RR_DIR=ANCILDIR+'MORTALITY\RRs2018\FIT\'
+IDLDIR=ANCILDIR+'CODE\TEMPLATES\'
 SSP_DIR=ANCILDIR+'POPULATION_SSP\NETCDF\'
 
 ;PROJECT-DEPENDENT IN/OUT FOLDERS
 PROJECT='SSP-CMIP6'    ;give name for proper file labeling.
 IERMODEL='IER2018'     ; IERs as downloaded from Aaron Cohen's links provided on 26/2/2019
 ver='TEST'
-OUTDIR=rootDIR+'FASST_OUTPUT\'+PROJECT+'\'  ;mainfolder for output
+OUTDIR=rootDIR+'..\FASST_OUTPUT\'+PROJECT+'\'  ;mainfolder for output
 indir=outdir
 tabdir=OUTDIR+'TABLES\'
 if(~file_test(tabdir)) then file_mkdir,tabdir
-ncdir=INDIR+'NCDF\'
+ncdir=ROOTDIR+'\NCDF_IN\'
 
 ;PROJECT-DEPENDENT SCENARIOS
 SCEN=['SSP1_26']
 SCENLAB=SCEN+'_'
 YEAR=  ['2015']  ; Scenario years to be analyzed
-SSP=   ['SSP1']  ;Defines population file - SSP array has same dimension as SCEN, each SCEN corresponds to a matching SSP
+SSP=   ['SSP2']  ;Defines population file - SSP array has same dimension as SCEN, each SCEN corresponds to a matching SSP
 
 nSCEN=n_elements(SCEN)
 nyr=n_elements(year)
@@ -190,7 +190,7 @@ Printf,6, format='(2(A15),A6,A5,33(A20))','SCENARIO','SSP','YEAR','ISO','COUNTRY
                                      'MORT_O3_COPD_GBD_M','MORT_O3_COPD_GBD_L','MORT_O3_COPD_GBD_H',$
                                      'MORT_O3_COPD_TUR_M','MORT_O3_COPD_TUR_L','MORT_O3_COPD_TUR_H'
 ;load FASST countries masks
-restore, ancildir+'FASST_REGION_MASK\country_mask_0.5x0.5_v3.sav'
+restore, ancildir+'FASST_REGION_MASK\0.5x0.5_INDIV_COUNTRY_MASK.SAV'
 
 ;high resolution lon lat dimensions
 img=2880
@@ -429,8 +429,10 @@ for isc=0,nSCEN-1 do begin   ; loop scenarios
                           MRATE_DMT22[imask]=DMT2.HI[idm]
 
                       endif else begin
-                        iCOPD=where(COPD.year eq year[IYR])
-                        if (icopd eq -1) then begin  ;if current year not available interpolate between available years
+;                         iCOPD=where(COPD.year eq year[IYR])
+;                         if (icopd eq -1) then begin  ;if current year not available interpolate between available years
+                        iCOPD=where(COPD.year eq year[IYR], iCOPD_count )
+                        if ( iCOPD_count eq 0 ) then begin  ;if current year not available interpolate between available years
                             ILO=MAX(WHERE(COPD.YEAR LE YEAR[IYR])) & YEARLO=COPD.YEAR[ILO]
                             IHI=MIN(WHERE(COPD.YEAR GE YEAR[IYR])) & YEARHI=COPD.YEAR[IHI]
                             iCOPD1=where((COPD.year eq yearlo)*(strupcase(COPD.cntr_NAME) eq strupcase(cntr_nm[icntr])))        ;1 VALUE FOR ALL AGES
