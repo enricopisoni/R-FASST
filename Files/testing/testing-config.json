@@ -1,19 +1,19 @@
 {
   "reduction.factor":     4,
 
-  "in.file.pop.country":  "../INPUT/ANCILLARY/POP_1990-2100_UN2017_AGEGRP.csv",
-  "in.file.copd":         "../INPUT/ANCILLARY/COPD_MORT_RATE_GBD2016.csv",
-  "in.file.lc":           "../INPUT/ANCILLARY/LC_MORT_RATE_GBD2016.csv",
-  "in.file.dmt2":         "../INPUT/ANCILLARY/DMT2_MORT_RATE_GBD2016.csv",
-  "in.file.lri":          "../INPUT/ANCILLARY/LRI_MORT_RATE_GBD2016.csv",
-  "in.file.ihd":          "../INPUT/ANCILLARY/IHD_MORT_RATE_GBD2016.csv",
-  "in.file.stroke":       "../INPUT/ANCILLARY/STROKE_MORT_RATE_GBD2016.csv",
-  "in.file.cntrgrid":     "../INPUT/ANCILLARY/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+  "in.file.pop.country":  "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv",
+  "in.file.copd":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/COPD_MORT_RATE_GBD2016.csv",
+  "in.file.lc":           "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LC_MORT_RATE_GBD2016.csv",
+  "in.file.dmt2":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/DMT2_MORT_RATE_GBD2016.csv",
+  "in.file.lri":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LRI_MORT_RATE_GBD2016.csv",
+  "in.file.ihd":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/IHD_MORT_RATE_GBD2016.csv",
+  "in.file.stroke":       "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/STROKE_MORT_RATE_GBD2016.csv",
+  "in.file.cntrgrid":     "../INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
 
-  "in.file.rr":           "../INPUT/ANCILLARY/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
+  "in.file.rr":           "../INPUT/ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
 
-  "in.tmpl.pop.map":      "../INPUT/ANCILLARY/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
-  "in.tmpl.scenario":     "../INPUT/NCDF_IN/FASST_75x75_SSP1_26_2015.nc",
+  "in.tmpl.pop.map":      "../INPUT/ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
+  "in.tmpl.scenario":     "../INPUT/NCDF_IN/SSP1_26/FASST_75x75_SSP1_26_2015.nc",
 
   "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
   "in.tmpl.mrate.lc":     "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
