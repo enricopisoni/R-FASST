@@ -70,11 +70,55 @@ In the last command, we run the script with testing files and arbitrary project 
 
 ## Output files ##
 
-Under the working directory defined as argument, the script writes the following files and directories:
+Under the working directory, defined as argument, the script reads and writes the files listed here below.
+In detail, the list shows:
 
- * `<project>/` directory, the project name defined as script argument;
-    * `tables/`
-       * `ALLCNTRIES_<project>_<model>_<version>.TXT` where: _project_, _model_ and _version_ are defined as script arguments:
-          * project name,
-          * model name, and
-          * model version
+ - the file key as defined in the configuration file;
+ - the file name used for test;
+
+### Input files by key ###
+ - `in.file.pop.country`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv`
+ - `in.file.cntrgrid`
+     - `INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc`
+ - `in.file.copd`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/COPD_MORT_RATE_GBD2016.csv`
+ - `in.file.lc`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LC_MORT_RATE_GBD2016.csv`
+ - `in.file.lri`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/DMT2_MORT_RATE_GBD2016.csv`
+ - `in.file.ihd`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LRI_MORT_RATE_GBD2016.csv`
+ - `in.file.stroke`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/IHD_MORT_RATE_GBD2016.csv`
+ - `in.file.dmt2`
+     - `INPUT/ANCILLARY/MORTALITY/BASEMORT2018/STROKE_MORT_RATE_GBD2016.csv`
+ - `in.file.rr`
+     - `INPUT/ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv`
+ - `in.tmpl.pop.map`
+     - `INPUT/ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc`
+ - `in.tmpl.scenario`
+     - `INPUT/NCDF_IN/SSP1_26/FASST_75x75_SSP1_26_2015.nc`
+
+### Intermediate files by key ###
+These files are read by script if they are present, otherwise they are created by the above files.
+The following files have both extensions: `csv` and `nc`.
+
+ - `in.tmpl.mrate.copd`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}`
+ - `in.tmpl.mrate.lc`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}`
+ - `in.tmpl.mrate.lri`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}`
+ - `in.tmpl.mrate.dmt2`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}`
+ - `in.tmpl.mrate.ihd`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}`
+ - `in.tmpl.mrate.stroke`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${yea`
+ - `in.tmpl.pop_age_fr`
+     - `INPUT/ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}`
+
+### Output files ###
+ - `<work directory> / <project name> / tables / ALLCNTRIES_<project name>_<model name>_<model version>.txt`
+ - `<work directory> / <project name> / ncdf / <scenario> / FASST_05x05_MORTALITIES_<project name>_<year>_<scenario>.nc`
