@@ -6,4 +6,4 @@
 # in the latter directory the script will use the configuration
 # file './testing-config.json'.
 # 
-./fasst-4-sherpa.sh  Project  Model  1.0  ../Files/testing  ./testing-config.json
+./fasst-4-sherpa.sh  Project  FASST  1.0  ../Files/testing  ./fasst-config.json
