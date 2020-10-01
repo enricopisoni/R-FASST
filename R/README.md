@@ -97,11 +97,20 @@ In detail, the list shows:
      - `INPUT/ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv`
  - `in.tmpl.pop.map`
      - `INPUT/ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc`
- - `in.tmpl.scenario`
-     - `INPUT/NCDF_IN/SSP1_26/FASST_75x75_SSP1_26_2015.nc`
+ - `in.tmpl.scenario` defines file and variables to read
+     - `filename`
+         - `INPUT/NCDF_IN/${scenario}/FASST_75x75_${scenario}_${year}.nc`
+     - `total_pm`
+         - `TOT_PM_35`
+     - `anthropogenic_pm`
+         - `ANT_PM_35`
+     - `annual_mean_of_daily_mean`
+         - `ADM8h`
+     - `seasonal_mean_of_daily_mean`
+         - `SDM8h`
 
 ### Intermediate files by key ###
-These files are read by script if they are present, otherwise they are created by the above files.
+These files are read by script if they are present, otherwise they are created using the above files as input.
 The following files have both extensions: `csv` and `nc`.
 
  - `in.tmpl.mrate.copd`

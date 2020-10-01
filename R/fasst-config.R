@@ -88,7 +88,13 @@ health.impact.config.static <- function()
                 in.tmpl.pop.map       = file.path( in.dir.ssp, '${scenario}_NETCDF', 'total', 'netcdf', '${scenario}_${year}.nc' ),
 
                 # scenario input file - NetCDF files template
-                in.tmpl.scenario      = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
+                in.tmpl.scenario      = list(
+                                                "filename"                    = file.path( in.dir.ncdf, '${scenario}', 'FASST_75x75_${scenario}_${year}.nc' ),
+                                                "total_pm"                    = "TOT_PM_35",
+                                                "anthropogenic_pm"            = "ANT_PM_35",
+                                                "annual_mean_of_daily_mean"   = "ADM8h",
+                                                "seasonal_mean_of_daily_mean" = "SDM8h"
+                                        ),
 
                 # mortality base incidences - csv file templates
                 in.tmpl.mrate.copd    = file.path( in.dir.bsmrt,  'MRATE_COPD_GBD_${year}' ),

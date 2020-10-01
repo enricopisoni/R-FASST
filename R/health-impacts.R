@@ -266,7 +266,7 @@ health.impact <- function(
 
             # read the scenario input file (high resolution grid map)
             infile <- get.file.name.population(
-                                config $ file $ in.tmpl.scenario,
+                                config $ file $ in.tmpl.scenario $ filename,
                                 scen,
                                 year
                       )
@@ -275,10 +275,12 @@ health.impact <- function(
             # calculate attributable fractions AF = 1-1/RR for central values, low and high confidence interval bound
             print( sprintf( "Calculate AFs @ %s", format( Sys.time(), "%c" ) ) )
 
-            sc_hires      <- raster( infile, varname = 'TOT_PM_35' )  # extract total pm from SC structure and load into SC_HIRES variable
-            sc_ant_hires  <- raster( infile, varname = 'ANT_PM_35' )  # extract anthropogenic pm from SC structure and load into SC_HIRES variable
-            sc_adm8h      <- raster( infile, varname = 'ADM8h' )
-            sc_sdm8h      <- raster( infile, varname = 'SDM8h' )
+            # extract total pm from SC structure and load into SC_HIRES variable
+            sc_hires      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ total_pm )
+            # extract anthropogenic pm from SC structure and load into SC_HIRES variable
+            sc_ant_hires  <- raster( infile, varname = config $ file $ in.tmpl.scenario $ anthropogenic_pm )
+            sc_adm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ annual_mean_of_daily_mean )
+            sc_sdm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ seasonal_mean_of_daily_mean )
 
             af_copd  <- compute.attributable.functions(             # ALL AGES >25
                              sc_hires,
