@@ -51,7 +51,7 @@ health.impact.config <- function( file = NULL )
 
 health.impact.config.static <- function()
 {
-        in.dir.root     <- '.'
+        in.dir.root     <- file.path( '..', 'INPUT' )
         in.dir.ancil    <- file.path( in.dir.root,  'ANCILLARY' )
         in.dir.mort     <- file.path( in.dir.ancil, 'MORTALITY' )
         in.dir.gbd      <- file.path( in.dir.mort,  'BASEMORT2018' )
