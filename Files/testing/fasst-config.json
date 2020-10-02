@@ -32,6 +32,10 @@
 
   "in.tmpl.pop_age_fr":   "../INPUT/ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}",
 
+  "out.tmpl.countries":   "./${project}/tables/ALLCNTRIES_${project}_${model}_${version}",
+  "out.tmpl.mortalities": "./${project}/ncdf/${scenario}/FASST_05x05_MORTALITIES_${project}_${year}_${scenario}",
+
+
   "scenarios":
   {
     "name": [ "SSP2" ],

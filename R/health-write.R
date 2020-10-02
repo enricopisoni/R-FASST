@@ -2,7 +2,7 @@
 
 #' writes the output in text file in tabular format;
 #'
-#' @param dir.output    the output directory; it can be defined either with
+#' @param file.output   the output directory; it can be defined either with
 #'                      a full path or a relative path from the working
 #'                      directory; directory will be created if it does not
 #'                      exist; file will be overwritten if it already exists;
@@ -22,16 +22,17 @@
 #'                      }
 #'
 health.write.header <- function(
-                           dir.output,
+                           file.output,
                            parameters
                        )
 {
     # prepare output directories
-    dir.create( dir.output, recursive = TRUE, showWarnings = FALSE )
+    dir.name  <-  dirname( file.output )
+    dir.create( dir.name, recursive = TRUE, showWarnings = FALSE )
 
     # prepare file name
     file.name <- health.write.file.name(
-                     dir.output,
+                     file.output,
                      parameters
                  )
 
@@ -103,7 +104,7 @@ health.write.header <- function(
 
 #' Write country information.
 #'
-#' @param dir.output    the output directory; it can be defined either with
+#' @param file.output   the output directory; it can be defined either with
 #'                      a full path or a relative path from the working
 #'                      directory; directory will be created if it does not
 #'                      exist;
@@ -152,13 +153,13 @@ health.write.header <- function(
 #'                      }
 #'
 health.write.country <- function(
-                            dir.output,
+                            file.output,
                             parameters
                         )
 {
     # prepare file name
     file.name <- health.write.file.name(
-                     dir.output,
+                     file.output,
                      parameters
                  )
 
@@ -214,7 +215,7 @@ health.write.country <- function(
 
 #' Creates the full path name.
 #'
-#' @param dir.output    the output directory; it can be defined either with
+#' @param file.output   the output file; it can be defined either with
 #'                      a full path or a relative path from the working
 #'                      directory;
 #' @param parameters    named list with following entries:
@@ -225,18 +226,15 @@ health.write.country <- function(
 #'                      }
 #'
 health.write.file.name <- function(
-                              dir.output,
+                              file.output,
                               parameters
                           )
 {
-    file.path(
-               dir.output,
-               paste(
-                    paste( 'ALLCNTRIES', parameters$project.name, parameters$model.name, parameters$model.version, sep = '_' ),
-                    'TXT',
-                    sep = '.'
-               )
-           )
+    paste(
+         file.output,
+         'TXT',
+         sep = '.'
+    )
 }
 
 # ------------------------------------------------------------

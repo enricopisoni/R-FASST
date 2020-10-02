@@ -28,6 +28,9 @@ health.gridded.netcdf  <-  function(
                                parameters
                            )
 {
+    dir.name   <-  dirname( file.name )
+    dir.create( dir.name, recursive = TRUE, showWarnings = FALSE )
+
     name       <- paste( file.name, 'nc', sep = '.' )
 
     print( sprintf( "Creating: '%s'", normalizePath( name, winslash = '/', mustWork = FALSE ) ) )

@@ -70,11 +70,26 @@ In the last command, we run the script with testing files and arbitrary project 
 
 ## Output files ##
 
-Under the working directory, defined as argument, the script reads and writes the files listed here below.
+Under the working directory, defined as script argument, the script reads and writes the files listed here below.
 In detail, the list shows:
 
  - the file key as defined in the configuration file;
  - the file name used for test;
+
+Moreover, text between braces is replaced at runtime with the values as stated by following table:
+
+ - `project`
+        the project name as defined as script argument;
+ - `model`
+        the model name as defined as script argument;
+ - `version`
+        the version as defined as script argument;
+ - `scenario`
+        the current scenario name as defined in the configuration file under the path
+        `$.scenarios.name`
+ - `year`
+        the current year as defined in the configuration file under the path
+        `$.scenarios.year`
 
 ### Input files by key ###
  - `in.file.pop.country`
@@ -124,10 +139,12 @@ The following files have both extensions: `csv` and `nc`.
  - `in.tmpl.mrate.ihd`
      - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}`
  - `in.tmpl.mrate.stroke`
-     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${yea`
+     - `INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}`
  - `in.tmpl.pop_age_fr`
      - `INPUT/ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}`
 
 ### Output files ###
- - `<work directory> / <project name> / tables / ALLCNTRIES_<project name>_<model name>_<model version>.txt`
- - `<work directory> / <project name> / ncdf / <scenario> / FASST_05x05_MORTALITIES_<project name>_<year>_<scenario>.nc`
+ - `out.tmpl.countries`
+     - `${project}/tables/ALLCNTRIES_${project}_${model}_${version}`
+ - `out.tmpl.mortalities`
+     - `${project}/ncdf/${scenario}/FASST_05x05_MORTALITIES_${project}_${year}_${scenario}`

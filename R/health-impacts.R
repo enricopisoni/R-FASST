@@ -53,11 +53,15 @@ health.impact <- function(
     print( sprintf( "Working directory is now: '%s'", getwd() ) )
 
     # internal configuration
-    dir.output        <- file.path( '.', project )
-    dir.tables        <- file.path( dir.output, 'tables' )
-    dir.netcdf        <- file.path( dir.output, 'ncdf' )
-
     reduction.factor  <- config $ files $ reduction.factor
+
+    files.properties  <- list(
+                                project  = project,
+                                model    = model,
+                                version  = version,
+                                scene    = config $ file $ scenarios $ name[ 0 ],
+                                year     = config $ file $ scenarios $ year[ 0 ]
+                         )
 
     # ----------------------------------------------------------------------
     # ------------------------------- block 2 ------------------------------
@@ -193,8 +197,9 @@ health.impact <- function(
     # ----------------------------------------------------------------------
 
     # --- write output header ---
+    out.file.table  <-  get.file.name.by.tmpl( config $ files $ out.tmpl.countries, files.properties )
     health.write.header(
-             dir.tables,
+             out.file.table,
              list(
                    proname       = programme.name,
                    project.name  = project,
@@ -214,7 +219,10 @@ health.impact <- function(
     for ( iscen  in  seq_along( config $ file $ scenarios $ name ) )
         for ( year  in  config $ file $ scenarios $ year )
         {
-            scen  <-  config $ file $ scenarios $ name[ iscen ]
+            scen                      <-  config $ file $ scenarios $ name[ iscen ]
+
+            files.properties $ scene  <-  scen
+            files.properties $ year   <-  year
 
             print( sprintf( "Scenario name: '%s' - Year: %d", scen, year ) )
 
@@ -979,7 +987,7 @@ health.impact <- function(
 
                 # TXT table 1 line output for current scenario, year, country
                 health.write.country(
-                    dir.tables,
+                    out.file.table,
                     list(
                         project.name           = project,
                         model.name             = model,
@@ -1040,18 +1048,11 @@ health.impact <- function(
             # -------------------- store mortalities in gridded ncdf file ---------------------
             # ---------------------------------------------------------------------------------
 
-            # prepare output directories
-            pathnc   <-  file.path( dir.netcdf, scen )
-
-            dir.create( pathnc, recursive = TRUE, showWarnings = FALSE )
-
-            filenc2  <-  file.path(
-                             pathnc,
-                             sprintf( 'FASST_05x05_MORTALITIES_%s_%d_%s', project, year, scen )
-                         )
+            # prepare output file
+            out.file.mortalities  <-  get.file.name.by.tmpl( config $ files $ out.tmpl.mortalities, files.properties )
 
             health.gridded.netcdf(
-                filenc2,
+                out.file.mortalities,
                 list(
                     proname            =  programme.name,
                     scen               =  scen,
@@ -1184,6 +1185,35 @@ get.file.name.population <- function(
         str_replace_all( path.remplate, pattern )
 }
 
+# ------------------------------------------------------------
+
+#' Build up file name using a given template and current configuration;
+#'
+#' @param  path.template  file name template;
+#' @param  cfg            the current configuration as list of:
+#'                               \describe{
+#'                                  \item{project}  {the project name;}
+#'                                  \item{model}    {the model name;}
+#'                                  \item{version}  {the model version;}
+#'                                  \item{scene}    {the current scenario;}
+#'                                  \item{year}     {the current year;}
+#'                               }
+#'
+get.file.name.by.tmpl <- function(
+                                path.template,
+                                cfg
+                            )
+{
+        pattern <- c(
+                        '\\$\\{project\\}'  = cfg $ project,
+                        '\\$\\{model\\}'    = cfg $ model,
+                        '\\$\\{version\\}'  = cfg $ version,
+                        '\\$\\{scenario\\}' = cfg $ scene,
+                        '\\$\\{year\\}'     = cfg $ year
+                   )
+
+        str_replace_all( path.template, pattern )
+}
 # ------------------------------------------------------------
 
 #' The function computes the attributable functions for

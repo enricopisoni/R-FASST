@@ -62,6 +62,10 @@ health.impact.config.static <- function()
         in.dir.ciesin   <- file.path( in.dir.ancil, 'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
         in.dir.ncdf     <- file.path( in.dir.root,  'NCDF_IN' )
 
+        out.dir.root    <- file.path( '.', '${project}' )
+        out.dir.tables  <- file.path( out.dir.root, 'tables' )
+        out.dir.ncdf    <- file.path( out.dir.root, 'ncdf', '${scenario}' )
+
         list(
                 # reduction factor for medium resolution grid
                 reduction.factor      = 4L,
@@ -106,6 +110,12 @@ health.impact.config.static <- function()
 
                 # population fraction per age class for all classes
                 in.tmpl.pop_age_fr    = file.path( in.dir.mort,   'POP_AGE_CLASS_FRACTIONS_UN2017_${year}' ),
+
+                # output files: all countries
+                out.tmpl.countries    = file.path( out.dir.tables, 'ALLCNTRIES_${project}_${model}_${version}' ),
+                # output files: mortalities grid
+                out.tmpl.mortalities  = file.path( out.dir.ncdf, 'FASST_05x05_MORTALITIES_${project}_${year}_${scenario}' ),
+
 
                 # project dependent scenarios
                 scenarios             = list(
