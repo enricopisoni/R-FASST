@@ -290,6 +290,33 @@ health.impact <- function(
             sc_adm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ annual_mean_of_daily_mean )
             sc_sdm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ seasonal_mean_of_daily_mean )
 
+            # --- resample/aggregate and extend raster in order to they match ---
+            # check minimum size and resolution
+            grid.ext  <-  extent( -180, 180, -90, 90 )
+            grid.res  <-  c( 10, 10 )
+
+            grid.ext  <-  get.small.extention(    grid.ext, hrcntrcode )
+            grid.res  <-  get.minimum.resolution( grid.res, hrcntrcode )
+
+            grid.ext  <-  get.small.extention(    grid.ext, scenpop )
+            grid.res  <-  get.minimum.resolution( grid.res, scenpop )
+
+            grid.ext  <-  get.small.extention(    grid.ext, scenpopmask )
+            grid.res  <-  get.minimum.resolution( grid.res, scenpopmask )
+
+            grid.ext  <-  get.small.extention(    grid.ext, sc_hires )
+            grid.res  <-  get.minimum.resolution( grid.res, sc_hires )
+
+            grid.ext  <-  get.small.extention(    grid.ext, sc_ant_hires )
+            grid.res  <-  get.minimum.resolution( grid.res, sc_ant_hires )
+
+            grid.ext  <-  get.small.extention(    grid.ext, sc_adm8h )
+            grid.res  <-  get.minimum.resolution( grid.res, sc_adm8h )
+
+            grid.ext  <-  get.small.extention(    grid.ext, sc_sdm8h )
+            grid.res  <-  get.minimum.resolution( grid.res, sc_sdm8h )
+
+            # compute AFs
             af_copd  <- compute.attributable.functions(             # ALL AGES >25
                              sc_hires,
                              copd_med,
@@ -1310,4 +1337,49 @@ resolution.reduce  <- function(
         names( reduced )  <-  names( stack )
     }
     reduced
+}
+
+# ------------------------------------------------------------
+
+#' The function get the smaller extension between two areas;
+#'
+#' @param ext    given area extension;
+#' @param raster raster grid;
+#'
+#' @return the smaller area extension;
+#'
+get.small.extention  <- function(
+                            ext,
+                            raster
+                        )
+{
+print( 'get.small.extention - begin' )                                  #--remove--
+print( raster )
+    ext.1  <-  ext
+    ext.2  <-  extent( raster )
+
+    xmin   <-  max( ext.1 @ xmin, ext.2 @ xmin )
+    xmax   <-  min( ext.1 @ xmax, ext.2 @ xmax )
+    ymin   <-  max( ext.1 @ ymin, ext.2 @ ymin )
+    ymax   <-  min( ext.1 @ ymax, ext.2 @ ymax )
+
+print( 'get.small.extention - end' )                                  #--remove--
+    extent( xmin, xmax, ymin, ymax )
+}
+
+# ------------------------------------------------------------
+
+#' The function get the minimum resolution between two resolutions;
+#'
+#' @param res     given resolution;
+#' @param raster  raster grid;
+#'
+#' @return the minimum resolution;
+#'
+get.minimum.resolution  <- function(
+                               res,
+                               raster
+                        )
+{
+    pmin( res, res( raster ) )
 }
