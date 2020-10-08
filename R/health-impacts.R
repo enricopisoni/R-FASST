@@ -183,13 +183,6 @@ health.impact <- function(
     jmg          <- nrow( hrcntrcode )
     scale        <- img / ( xmax( hrcntrcode ) - xmin( hrcntrcode ) )
 
-    # med resolution lon lat dimensions
-    imed         <- img /  reduction.factor
-    jmed         <- jmg /  reduction.factor
-    scale        <- imed / 360
-    mr_lats      <- ( ( ( 0:( 180 * scale - 1 ) ) + 0.5 ) / scale - 90 )
-    mr_lons      <- ( ( ( 0:( 360 * scale - 1 ) ) + 0.5 ) / scale - 180 )
-
 
     # ----------------------------------------------------------------------
     # ------------------------------- block 3 ------------------------------
@@ -1087,6 +1080,18 @@ health.impact <- function(
             # ------------------------------------ block 7 ------------------------------------
             # -------------------- store mortalities in gridded ncdf file ---------------------
             # ---------------------------------------------------------------------------------
+
+            # med resolution lon lat dimensions
+            mr_lats               <- seq(
+                                         from       = ymin( cntrymaskmed ),
+                                         to         = ymax( cntrymaskmed ),
+                                         length.out = nrow( cntrymaskmed )
+                                     )
+            mr_lons               <- seq(
+                                         from       = xmin( cntrymaskmed ),
+                                         to         = xmax( cntrymaskmed ),
+                                         length.out = ncol( cntrymaskmed )
+                                     )
 
             # prepare output file
             out.file.mortalities  <-  get.file.name.by.tmpl( config $ files $ out.tmpl.mortalities, files.properties )
