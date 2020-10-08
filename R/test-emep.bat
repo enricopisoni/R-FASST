@@ -6,4 +6,4 @@ rem  and model version (1.0); the working directory will be '../Files/testing' a
 rem  in the latter directory the script will use the configuration
 rem  file './testing-config.json'.
 rem  
-call  fasst-4-sherpa.bat  prj-emep  EMEP  1.0  ../Files/testing  ./emep-config.json
+call  fasst-4-sherpa.bat  prj-emep  EMEP  1.0  ../Files/testing  ./config-emep.json

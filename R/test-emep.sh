@@ -6,4 +6,4 @@
 # in the latter directory the script will use the configuration
 # file './testing-config.json'.
 # 
-./fasst-4-sherpa.sh  prj-emep  EMEP  1.0  ../Files/testing  ./emep-config.json
+./fasst-4-sherpa.sh  prj-emep  EMEP  1.0  ../Files/testing  ./config-emep.json
