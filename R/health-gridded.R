@@ -3,6 +3,86 @@
 library( ncdf4 )
 
 
+#' Reduces the resolution of each raster in stack by
+#' given factor using a given function;
+#'
+#' @param stack   the layers to reduce resolution;
+#' @param factor  the reducing factor;
+#'                aggregation factor expressed as number of cells in each
+#'                direction (horizontally and vertically). Or two integers
+#'                (horizontal and vertial aggregation factor). Default is 2.
+#' @param how     function used to aggregate values (default = mean);
+#'
+#' @return stack with the same layers in \code{stack}, each layer
+#'         reduced by factor \code{factor} using the function \code{how}.
+#'
+
+gridded.resolution.reduce  <- function(
+                                  stack,
+                                  factor,
+                                  how
+                              )
+{
+    if ( factor <= 1 )
+    {
+        reduced  <- stack
+    } else {
+        reduced  <- brick()
+        for( ilayer in 1:nlayers( stack ) )
+        {
+            reduced  <- addLayer(
+                            reduced,
+                            aggregate(
+                                stack[[ ilayer ]],
+                                fact = factor,
+                                fun  = how
+                            )
+                        )
+        }
+        names( reduced )  <-  names( stack )
+    }
+    reduced
+}
+
+# ------------------------------------------------------------
+
+#' The function gets the raster with the smaller extension;
+#'
+#' @param r1 the first raster grid;
+#' @param r2 the second raster grid;
+#'
+#' @return the raster with the smaller area extension;
+#'
+gridded.get.smallest.extention  <- function(
+                                       r1,
+                                       r2
+                                   )
+{
+    ext.1  <-  extent( r1 )
+    ext.2  <-  extent( r2 )
+
+    if ( ext.1 > ext.2 ) r2 else r1
+}
+
+# ------------------------------------------------------------
+
+#' The function resamples a ratser against a reference one;
+#'
+#' @param raster     the ratser to resample;
+#' @param reference  the raster that \code{raster} should be resampled to;
+#'
+#' @return the raster resampled;
+#'
+gridded.resample  <-  function(
+                          raster,
+                          reference
+                      )
+{
+    resample( raster, reference, method="bilinear" )
+}
+
+# ------------------------------------------------------------
+
 #' stores raster in netCDF file;
 #'
 #' @param  file.name   output file name, without extension;
@@ -23,10 +103,10 @@ library( ncdf4 )
 #'                         \item{mres_dmort_o3_tu}  {}
 #'                      }
 #'
-health.gridded.netcdf  <-  function(
-                               file.name,
-                               parameters
-                           )
+gridded.netcdf  <-  function(
+                        file.name,
+                        parameters
+                    )
 {
     dir.name   <-  dirname( file.name )
     dir.create( dir.name, recursive = TRUE, showWarnings = FALSE )

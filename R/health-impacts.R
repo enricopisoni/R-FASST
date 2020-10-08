@@ -291,30 +291,25 @@ health.impact <- function(
             sc_sdm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ seasonal_mean_of_daily_mean )
 
             # --- resample/aggregate and extend raster in order to they match ---
-            # check minimum size and resolution
-            grid.ext  <-  extent( -180, 180, -90, 90 )
-            grid.res  <-  c( 10, 10 )
 
-            grid.ext  <-  get.small.extention(    grid.ext, hrcntrcode )
-            grid.res  <-  get.minimum.resolution( grid.res, hrcntrcode )
+            grid.reference  <-  gridded.get.smallest.extention( scenpop,        scenpopmask )
+            grid.reference  <-  gridded.get.smallest.extention( grid.reference, hrcntrcode )
+            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_hires )
+            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_ant_hires )
+            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_adm8h )
+            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_sdm8h )
 
-            grid.ext  <-  get.small.extention(    grid.ext, scenpop )
-            grid.res  <-  get.minimum.resolution( grid.res, scenpop )
 
-            grid.ext  <-  get.small.extention(    grid.ext, scenpopmask )
-            grid.res  <-  get.minimum.resolution( grid.res, scenpopmask )
+            scenpop         <-  gridded.resample( scenpop,      grid.reference )
+            scenpopmask     <-  gridded.resample( scenpopmask,  grid.reference )
+            hrcntrcode      <-  gridded.resample( hrcntrcode,   grid.reference )
+            sc_hires        <-  gridded.resample( sc_hires,     grid.reference )
+            sc_ant_hires    <-  gridded.resample( sc_ant_hires, grid.reference )
+            sc_adm8h        <-  gridded.resample( sc_adm8h,     grid.reference )
+            sc_sdm8h        <-  gridded.resample( sc_sdm8h,     grid.reference )
 
-            grid.ext  <-  get.small.extention(    grid.ext, sc_hires )
-            grid.res  <-  get.minimum.resolution( grid.res, sc_hires )
+            print( gc( full = TRUE ) )
 
-            grid.ext  <-  get.small.extention(    grid.ext, sc_ant_hires )
-            grid.res  <-  get.minimum.resolution( grid.res, sc_ant_hires )
-
-            grid.ext  <-  get.small.extention(    grid.ext, sc_adm8h )
-            grid.res  <-  get.minimum.resolution( grid.res, sc_adm8h )
-
-            grid.ext  <-  get.small.extention(    grid.ext, sc_sdm8h )
-            grid.res  <-  get.minimum.resolution( grid.res, sc_sdm8h )
 
             # compute AFs
             af_copd  <- compute.attributable.functions(             # ALL AGES >25
@@ -479,6 +474,16 @@ health.impact <- function(
             print( gc( full = TRUE ) )
 
 
+            mrate_copd      <-  gridded.resample( mrate_copd,   grid.reference )
+            mrate_lc        <-  gridded.resample( mrate_lc,     grid.reference )
+            mrate_lri       <-  gridded.resample( mrate_lri,    grid.reference )
+            mrate_dmt2      <-  gridded.resample( mrate_dmt2,   grid.reference )
+            mrate_ihd       <-  gridded.resample( mrate_ihd,    grid.reference )
+            mrate_stroke    <-  gridded.resample( mrate_stroke, grid.reference )
+
+            print( gc( full = TRUE ) )
+
+
             # ---------------------------------------------------------------------------------
             # ------------------------------------ block 3b -----------------------------------
             # ------------- RETRIEVE AGE STRUCTURE PER COUNTRY FROM UN2017 REVISION -----------
@@ -497,7 +502,11 @@ health.impact <- function(
                                 pop.age.tbl
                             )
 
+            pop_age_fr   <-  gridded.resample( pop_age_fr, grid.reference )
+
             rm( pop.age.tbl )
+            print( gc( full = TRUE ) )
+
 
             # CALCULATE APPROPRIATE AGE FRACTIONS
             frac_copd    <- sum.raster.age.structure(
@@ -811,14 +820,14 @@ health.impact <- function(
             {
                 max( 0, sum( cells ) )
             }
-            mres_dmort_copd        <-  resolution.reduce( dmort_copd,       reduction.factor, aggregate.dmort )
-            mres_dmort_lc          <-  resolution.reduce( dmort_lc,         reduction.factor, aggregate.dmort )
-            mres_dmort_lri         <-  resolution.reduce( dmort_lri,        reduction.factor, aggregate.dmort )
-            mres_dmort_dmt2        <-  resolution.reduce( dmort_dmt2,       reduction.factor, aggregate.dmort )
-            mres_dmort_ihd         <-  resolution.reduce( dmort_ihd_all,    reduction.factor, aggregate.dmort )
-            mres_dmort_stroke      <-  resolution.reduce( dmort_stroke_all, reduction.factor, aggregate.dmort )
-            mres_dmort_o3_tu       <-  resolution.reduce( dmort_o3_tu,      reduction.factor, aggregate.dmort )
-            mres_dmort_o3_gbd      <-  resolution.reduce( dmort_o3_gbd,     reduction.factor, aggregate.dmort )
+            mres_dmort_copd        <-  gridded.resolution.reduce( dmort_copd,       reduction.factor, aggregate.dmort )
+            mres_dmort_lc          <-  gridded.resolution.reduce( dmort_lc,         reduction.factor, aggregate.dmort )
+            mres_dmort_lri         <-  gridded.resolution.reduce( dmort_lri,        reduction.factor, aggregate.dmort )
+            mres_dmort_dmt2        <-  gridded.resolution.reduce( dmort_dmt2,       reduction.factor, aggregate.dmort )
+            mres_dmort_ihd         <-  gridded.resolution.reduce( dmort_ihd_all,    reduction.factor, aggregate.dmort )
+            mres_dmort_stroke      <-  gridded.resolution.reduce( dmort_stroke_all, reduction.factor, aggregate.dmort )
+            mres_dmort_o3_tu       <-  gridded.resolution.reduce( dmort_o3_tu,      reduction.factor, aggregate.dmort )
+            mres_dmort_o3_gbd      <-  gridded.resolution.reduce( dmort_o3_gbd,     reduction.factor, aggregate.dmort )
 
             rm( dmort_copd, dmort_lc, dmort_lri, dmort_dmt2, dmort_ihd, dmort_stroke )
             rm( dmort_ihd_all, dmort_stroke_all, dmort_o3_tu, dmort_o3_gbd )
@@ -870,8 +879,8 @@ health.impact <- function(
             med_pmtot_35      <-  sc_hires
             med_adma8         <-  sc_adm8h
             med_sdma8         <-  sc_sdm8h
-            med_pmnat_dry     <-  raster( infile, varname = 'NAT_PM_dry' )
-            med_nat_h2o35     <-  raster( infile, varname = 'H2O35_SS' )
+            med_pmnat_dry     <-  raster( infile, varname = config $ file $ in.tmpl.scenario $ natural.dust.ss )
+            med_nat_h2o35     <-  raster( infile, varname = config $ file $ in.tmpl.scenario $ residual.water.ss )
 
             if ( reduction.factor  > 1 )
             {
@@ -1078,7 +1087,7 @@ health.impact <- function(
             # prepare output file
             out.file.mortalities  <-  get.file.name.by.tmpl( config $ files $ out.tmpl.mortalities, files.properties )
 
-            health.gridded.netcdf(
+            gridded.netcdf(
                 out.file.mortalities,
                 list(
                     proname            =  programme.name,
@@ -1297,89 +1306,3 @@ compute.attributable.functions <- function(
 }
 
 # ------------------------------------------------------------
-
-#' Reduces the resolution of each raster in stack by
-#' given factor using a given function;
-#'
-#' @param stack   the layers to reduce resolution;
-#' @param factor  the reducing factor;
-#'                aggregation factor expressed as number of cells in each
-#'                direction (horizontally and vertically). Or two integers
-#'                (horizontal and vertial aggregation factor). Default is 2.
-#' @param how     function used to aggregate values (default = mean);
-#'
-#' @return stack with the same layers in \code{stack}, each layer
-#'         reduced by factor \code{factor} using the function \code{how}.
-#'
-
-resolution.reduce  <- function(
-                          stack,
-                          factor,
-                          how
-                      )
-{
-    if ( factor <= 1 )
-    {
-        reduced  <- stack
-    } else {
-        reduced  <- brick()
-        for( ilayer in 1:nlayers( stack ) )
-        {
-            reduced  <- addLayer(
-                            reduced,
-                            aggregate(
-                                stack[[ ilayer ]],
-                                fact = factor,
-                                fun  = how
-                            )
-                        )
-        }
-        names( reduced )  <-  names( stack )
-    }
-    reduced
-}
-
-# ------------------------------------------------------------
-
-#' The function get the smaller extension between two areas;
-#'
-#' @param ext    given area extension;
-#' @param raster raster grid;
-#'
-#' @return the smaller area extension;
-#'
-get.small.extention  <- function(
-                            ext,
-                            raster
-                        )
-{
-print( 'get.small.extention - begin' )                                  #--remove--
-print( raster )
-    ext.1  <-  ext
-    ext.2  <-  extent( raster )
-
-    xmin   <-  max( ext.1 @ xmin, ext.2 @ xmin )
-    xmax   <-  min( ext.1 @ xmax, ext.2 @ xmax )
-    ymin   <-  max( ext.1 @ ymin, ext.2 @ ymin )
-    ymax   <-  min( ext.1 @ ymax, ext.2 @ ymax )
-
-print( 'get.small.extention - end' )                                  #--remove--
-    extent( xmin, xmax, ymin, ymax )
-}
-
-# ------------------------------------------------------------
-
-#' The function get the minimum resolution between two resolutions;
-#'
-#' @param res     given resolution;
-#' @param raster  raster grid;
-#'
-#' @return the minimum resolution;
-#'
-get.minimum.resolution  <- function(
-                               res,
-                               raster
-                        )
-{
-    pmin( res, res( raster ) )
-}
