@@ -97,7 +97,9 @@ health.impact.config.static <- function()
                                                 "total_pm"                    = "TOT_PM_35",
                                                 "anthropogenic_pm"            = "ANT_PM_35",
                                                 "annual_mean_of_daily_mean"   = "ADM8h",
-                                                "seasonal_mean_of_daily_mean" = "SDM8h"
+                                                "seasonal_mean_of_daily_mean" = "SDM8h",
+                                                "natural.dust.ss"             = "NAT_PM_dry",
+                                                "residual.water.ss"           = "H2O35_SS"
                                         ),
 
                 # mortality base incidences - csv file templates

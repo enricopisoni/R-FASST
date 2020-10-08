@@ -20,7 +20,9 @@
     "total_pm":                    "TOT_PM_35",
     "anthropogenic_pm":            "ANT_PM_35",
     "annual_mean_of_daily_mean":   "ADM8h",
-    "seasonal_mean_of_daily_mean": "SDM8h"
+    "seasonal_mean_of_daily_mean": "SDM8h",
+    "natural.dust.ss":             "NAT_PM_dry",
+    "residual.water.ss":           "H2O35_SS"
   },
 
   "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",

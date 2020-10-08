@@ -19,7 +19,9 @@
     "total_pm":                    "SURF_ug_PM25_rh50",
     "anthropogenic_pm":            "SURF_ug_PM25_rh50",
     "annual_mean_of_daily_mean":   "SURF_MAXO3",
-    "seasonal_mean_of_daily_mean": "SURF_MAXO3"
+    "seasonal_mean_of_daily_mean": "SURF_MAXO3",
+    "natural.dust.ss":             "SURF_ug_DUST",
+    "residual.water.ss":           "SURF_ug_SS"
   },
 
   "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
