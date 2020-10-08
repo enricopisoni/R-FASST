@@ -52,4 +52,6 @@ Files/INPUT/
 
 # testing output files
 Files/testing/Project/**/
+Files/testing/prj-emep/**/
+Files/testing/prj-fasst/**/
 Files/testing/*.pdf
