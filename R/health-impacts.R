@@ -86,7 +86,7 @@ health.impact <- function(
                   )
 
     # read country identification gridmap (Ciesin GPW v4)
-    cntrgrid <- raster( config $ files $ in.file.cntrgrid )
+    cntrgrid <- raster( config $ files $ in.file.cntrgrid.hi )
 
     # increase both the area and the resolution
     hrcntrcode <- disaggregate(
@@ -866,20 +866,31 @@ health.impact <- function(
             cntrymaskmed <- hrcntrcode
             if ( reduction.factor  > 1 )
             {
-                aggregate.countries.cells <- function( cells, ... )
+                res.med     <- res( cntrymaskmed ) * reduction.factor
+
+                cntrgrid.lo <- raster( config $ files $ in.file.cntrgrid.lo )
+                res.lo      <- res( cntrgrid.lo )
+
+                if ( all( res.med == res.lo ) )
                 {
-                    moda <- modal(
-                                c( cells[ cells!= 0 ], 0 ),
-                                ties = 'first'
-                            )
-                    moda <- as.integer( moda )
-                    moda
-                }
-                cntrymaskmed <- aggregate(
-                                    cntrymaskmed,
-                                    fact = reduction.factor,
-                                    fun  = aggregate.countries.cells
+                    cntrymaskmed <- cntrgrid.lo
+                } else {
+                    aggregate.countries.cells <- function( cells, ... )
+                    {
+                        moda <- modal(
+                                    c( cells[ cells!= 0 ], 0 ),
+                                    ties = 'first'
                                 )
+                        moda <- as.integer( moda )
+                        moda
+                    }
+                    cntrymaskmed <- aggregate(
+                                        cntrymaskmed,
+                                        fact = reduction.factor,
+                                        fun  = aggregate.countries.cells
+                                    )
+                }
+                rm( cntrgrid.lo )
             }
             # --- For testing only: uncomment the line below to read the country mask
             # --- at lower resolution, the same mask used by IDL code;

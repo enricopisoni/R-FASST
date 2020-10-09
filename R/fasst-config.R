@@ -69,6 +69,10 @@ health.impact.config.static <- function()
                 # population per country
                 in.file.pop.country   = file.path( in.dir.gbd, 'POP_1990-2100_UN2017_AGEGRP.csv' ),
 
+                # countries grids
+                in.file.cntrgrid.hi   = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
+                in.file.cntrgrid.lo   = file.path( in.dir.ancil,  'FASST_REGION_MASK', '0.5x0.5_INDIV_COUNTRY_MASK.asc' ),
+
                 # files with base mortality rates (per 100k population)
                 in.file.copd          = file.path( in.dir.gbd,    'COPD_MORT_RATE_GBD2016.csv' ),
                 in.file.lc            = file.path( in.dir.gbd,    'LC_MORT_RATE_GBD2016.csv' ),
@@ -76,7 +80,6 @@ health.impact.config.static <- function()
                 in.file.lri           = file.path( in.dir.gbd,    'LRI_MORT_RATE_GBD2016.csv' ),
                 in.file.ihd           = file.path( in.dir.gbd,    'IHD_MORT_RATE_GBD2016.csv' ),
                 in.file.stroke        = file.path( in.dir.gbd,    'STROKE_MORT_RATE_GBD2016.csv' ),
-                in.file.cntrgrid      = file.path( in.dir.ciesin, 'gpw_v4_national_identifier_grid_rev10_15_min.asc' ),
 
                 # risk function parameters
                 in.file.rr            = file.path( in.dir.rr,     'RR_ALL_GBD_2017_FITTINGS_ANALYT.csv' ),

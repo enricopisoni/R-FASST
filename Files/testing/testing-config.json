@@ -2,13 +2,14 @@
   "reduction.factor":     4,
 
   "in.file.pop.country":  "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv",
+  "in.file.cntrgrid.hi":  "../INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+  "in.file.cntrgrid.lo":  "../INPUT/ANCILLARY/FASST_REGION_MASK/0.5x0.5_INDIV_COUNTRY_MASK.asc",
   "in.file.copd":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/COPD_MORT_RATE_GBD2016.csv",
   "in.file.lc":           "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LC_MORT_RATE_GBD2016.csv",
   "in.file.dmt2":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/DMT2_MORT_RATE_GBD2016.csv",
   "in.file.lri":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LRI_MORT_RATE_GBD2016.csv",
   "in.file.ihd":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/IHD_MORT_RATE_GBD2016.csv",
   "in.file.stroke":       "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/STROKE_MORT_RATE_GBD2016.csv",
-  "in.file.cntrgrid":     "../INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
 
   "in.file.rr":           "../INPUT/ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
 
