@@ -295,11 +295,11 @@ health.impact <- function(
 
             scenpop         <-  gridded.resample( scenpop,      grid.reference )
             scenpopmask     <-  gridded.resample( scenpopmask,  grid.reference )
-            hrcntrcode      <-  gridded.resample( hrcntrcode,   grid.reference )
             sc_hires        <-  gridded.resample( sc_hires,     grid.reference )
             sc_ant_hires    <-  gridded.resample( sc_ant_hires, grid.reference )
             sc_adm8h        <-  gridded.resample( sc_adm8h,     grid.reference )
             sc_sdm8h        <-  gridded.resample( sc_sdm8h,     grid.reference )
+            hrcntrcode      <-  gridded.resample( hrcntrcode,   grid.reference, method = "ngb" )
 
             print( gc( full = TRUE ) )
 

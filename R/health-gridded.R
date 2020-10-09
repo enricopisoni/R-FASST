@@ -75,10 +75,23 @@ gridded.get.smallest.extention  <- function(
 #'
 gridded.resample  <-  function(
                           raster,
-                          reference
+                          reference,
+                          method     = "bilinear"
                       )
 {
-    resample( raster, reference, method="bilinear" )
+    resampled  <- raster
+    res.ras    <-  res( raster )
+    res.ref    <-  res( reference )
+    if ( ! all( res.ras == res.ref ) )
+    {
+        ext.ras  <-  extent( raster )
+        ext.ref  <-  extent( reference )
+        if ( ! ( ext.ras == ext.ref ) )
+        {
+            resampled  <- resample( raster, reference, method )
+        }
+    }
+    resampled
 }
 
 # ------------------------------------------------------------
