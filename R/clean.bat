@@ -7,6 +7,8 @@ if ERRORLEVEL   2 goto :EOF
 
 del  /s /q  ..\Files\testing\Rplots.pdf
 del  /s /q  ..\Files\testing\Project\*.*
+del  /s /q  ..\Files\testing\prj-fasst\*.*
+del  /s /q  ..\Files\testing\prj-emep\*.*
 
 del         ..\Files\INPUT\ANCILLARY\MORTALITY\GBD_2017_BASEMORT_GRIDMAPS\*.csv
 del         ..\Files\INPUT\ANCILLARY\MORTALITY\GBD_2017_BASEMORT_GRIDMAPS\*.nc
