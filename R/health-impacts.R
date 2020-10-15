@@ -946,7 +946,7 @@ health.impact <- function(
                 }
                 cmask    <-  cntrymaskmed  ==  cntr.id
 
-                if ( any( cmask[] ) )
+                if ( any( cmask[], na.rm = TRUE ) )
                 {
                     print( sprintf( "%3d: %s - %s", icntr, cntr[ icntr, ] $ CNTR_ISO3, cntr[ icntr, ] $ CNTR_NAME ) )
 
