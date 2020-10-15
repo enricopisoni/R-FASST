@@ -46,12 +46,12 @@ gridded.resolution.reduce  <- function(
 
 # ------------------------------------------------------------
 
-#' The function gets the raster with the smaller extension;
+#' The function gets the smaller extension of two rasters;
 #'
 #' @param r1 the first raster grid;
 #' @param r2 the second raster grid;
 #'
-#' @return the raster with the smaller area extension;
+#' @return the smaller area extension;
 #'
 gridded.get.smallest.extention  <- function(
                                        r1,
@@ -61,12 +61,32 @@ gridded.get.smallest.extention  <- function(
     ext.1  <-  extent( r1 )
     ext.2  <-  extent( r2 )
 
-    if ( ext.1 > ext.2 ) r2 else r1
+    if ( ext.1 > ext.2 ) ext.2 else ext.1
 }
 
 # ------------------------------------------------------------
 
-#' The function resamples a ratser against a reference one;
+#' The function crops raster to a given extension;
+#'
+#' @param raster     the ratser to crop;
+#' @param extention  the area to crop;
+#'
+#' @return the raster resampled;
+#'
+gridded.crop  <-  function(
+                      raster,
+                      extention
+                  )
+{
+    if ( ! ( extent( raster ) == extention ) )
+        crop( raster, extention )
+    else
+        raster
+}
+
+# ------------------------------------------------------------
+
+#' The function resamples a raster against a reference one;
 #'
 #' @param raster     the ratser to resample;
 #' @param reference  the raster that \code{raster} should be resampled to;
@@ -79,17 +99,14 @@ gridded.resample  <-  function(
                           method     = "bilinear"
                       )
 {
-    resampled  <- raster
+    resampled  <-  raster
     res.ras    <-  res( raster )
     res.ref    <-  res( reference )
-    if ( ! all( res.ras == res.ref ) )
+    ext.ras    <-  extent( raster )
+    ext.ref    <-  extent( reference )
+    if ( ( ! all( res.ras == res.ref ) ) || ( ! ( ext.ras == ext.ref ) ) )
     {
-        ext.ras  <-  extent( raster )
-        ext.ref  <-  extent( reference )
-        if ( ! ( ext.ras == ext.ref ) )
-        {
-            resampled  <- resample( raster, reference, method )
-        }
+        resampled  <- resample( raster, reference, method )
     }
     resampled
 }

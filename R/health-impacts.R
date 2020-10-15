@@ -149,22 +149,22 @@ health.impact <- function(
     copd_lo    <- rr $ RRLO[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
     copd_hi    <- rr $ RRHI[  ( rr $ COD == 'COPD' ) & ( rr $ AGE == 99 ) ]
 
-    lri_med    <- rr $ RRMED[ ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
-    lri_lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
-    lri_hi     <- rr $ RRHI[  ( rr $ COD == 'LRI' ) & ( rr $ AGE == 99 ) ]
+    lri_med    <- rr $ RRMED[ ( rr $ COD == 'LRI' )  & ( rr $ AGE == 99 ) ]
+    lri_lo     <- rr $ RRLO[  ( rr $ COD == 'LRI' )  & ( rr $ AGE == 99 ) ]
+    lri_hi     <- rr $ RRHI[  ( rr $ COD == 'LRI' )  & ( rr $ AGE == 99 ) ]
 
-    lc_med     <- rr $ RRMED[ ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
-    lc_lo      <- rr $ RRLO[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
-    lc_hi      <- rr $ RRHI[  ( rr $ COD == 'LC' ) & ( rr $ AGE == 99 ) ]
+    lc_med     <- rr $ RRMED[ ( rr $ COD == 'LC' )   & ( rr $ AGE == 99 ) ]
+    lc_lo      <- rr $ RRLO[  ( rr $ COD == 'LC' )   & ( rr $ AGE == 99 ) ]
+    lc_hi      <- rr $ RRHI[  ( rr $ COD == 'LC' )   & ( rr $ AGE == 99 ) ]
 
-    dt2_med    <- rr $ RRMED[ ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
-    dt2_lo     <- rr $ RRLO[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
-    dt2_hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' ) & ( rr $ AGE == 99 ) ]
+    dt2_med    <- rr $ RRMED[ ( rr $ COD == 'DT2' )  & ( rr $ AGE == 99 ) ]
+    dt2_lo     <- rr $ RRLO[  ( rr $ COD == 'DT2' )  & ( rr $ AGE == 99 ) ]
+    dt2_hi     <- rr $ RRHI[  ( rr $ COD == 'DT2' )  & ( rr $ AGE == 99 ) ]
 
     # extract the appropriate RR parameters for each COD and assign to each variable - for easier tracking.
-    ihd_med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    ihd_lo     <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
-    ihd_hi     <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'IHD' & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_med    <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'IHD'    & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_lo     <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'IHD'    & rr $ AGE %in% config $ model $ AGE_GRP ] )
+    ihd_hi     <- matrix( nrow = 4, data = rr $ RRHI[  rr $ COD == 'IHD'    & rr $ AGE %in% config $ model $ AGE_GRP ] )
 
     stroke_med <- matrix( nrow = 4, data = rr $ RRMED[ rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
     stroke_lo  <- matrix( nrow = 4, data = rr $ RRLO[  rr $ COD == 'STROKE' & rr $ AGE %in% config $ model $ AGE_GRP ] )
@@ -283,23 +283,27 @@ health.impact <- function(
             sc_adm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ annual_mean_of_daily_mean )
             sc_sdm8h      <- raster( infile, varname = config $ file $ in.tmpl.scenario $ seasonal_mean_of_daily_mean )
 
-            # --- resample/aggregate and extend raster in order to they match ---
+            # --- get the smallest extetion ---
+            grid.ext.ref  <-  gridded.get.smallest.extention( hrcntrcode,   scenpop )
+            grid.ext.ref  <-  gridded.get.smallest.extention( grid.ext.ref, sc_hires )
+            grid.ext.ref  <-  gridded.get.smallest.extention( grid.ext.ref, sc_ant_hires )
+            grid.ext.ref  <-  gridded.get.smallest.extention( grid.ext.ref, sc_adm8h )
+            grid.ext.ref  <-  gridded.get.smallest.extention( grid.ext.ref, sc_sdm8h )
 
-            grid.reference  <-  gridded.get.smallest.extention( scenpop,        scenpopmask )
-            grid.reference  <-  gridded.get.smallest.extention( grid.reference, hrcntrcode )
-            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_hires )
-            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_ant_hires )
-            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_adm8h )
-            grid.reference  <-  gridded.get.smallest.extention( grid.reference, sc_sdm8h )
+            # --- resample emissions on nations and population grids ---
+            sc_hires        <-  gridded.resample( sc_hires,     hrcntrcode )
+            sc_ant_hires    <-  gridded.resample( sc_ant_hires, hrcntrcode )
+            sc_adm8h        <-  gridded.resample( sc_adm8h,     hrcntrcode )
+            sc_sdm8h        <-  gridded.resample( sc_sdm8h,     hrcntrcode )
 
-
-            scenpop         <-  gridded.resample( scenpop,      grid.reference )
-            scenpopmask     <-  gridded.resample( scenpopmask,  grid.reference )
-            sc_hires        <-  gridded.resample( sc_hires,     grid.reference )
-            sc_ant_hires    <-  gridded.resample( sc_ant_hires, grid.reference )
-            sc_adm8h        <-  gridded.resample( sc_adm8h,     grid.reference )
-            sc_sdm8h        <-  gridded.resample( sc_sdm8h,     grid.reference )
-            hrcntrcode      <-  gridded.resample( hrcntrcode,   grid.reference, method = "ngb" )
+            # --- crop on smallest area ---
+            hrcntrcode      <-  gridded.crop( hrcntrcode,   grid.ext.ref )
+            scenpop         <-  gridded.crop( scenpop,      grid.ext.ref )
+            scenpopmask     <-  gridded.crop( scenpopmask,  grid.ext.ref )
+            sc_hires        <-  gridded.crop( sc_hires,     grid.ext.ref )
+            sc_ant_hires    <-  gridded.crop( sc_ant_hires, grid.ext.ref )
+            sc_adm8h        <-  gridded.crop( sc_adm8h,     grid.ext.ref )
+            sc_sdm8h        <-  gridded.crop( sc_sdm8h,     grid.ext.ref )
 
             print( gc( full = TRUE ) )
 
@@ -467,12 +471,12 @@ health.impact <- function(
             print( gc( full = TRUE ) )
 
 
-            mrate_copd      <-  gridded.resample( mrate_copd,   grid.reference )
-            mrate_lc        <-  gridded.resample( mrate_lc,     grid.reference )
-            mrate_lri       <-  gridded.resample( mrate_lri,    grid.reference )
-            mrate_dmt2      <-  gridded.resample( mrate_dmt2,   grid.reference )
-            mrate_ihd       <-  gridded.resample( mrate_ihd,    grid.reference )
-            mrate_stroke    <-  gridded.resample( mrate_stroke, grid.reference )
+            mrate_copd      <-  gridded.crop( mrate_copd,   grid.ext.ref )
+            mrate_lc        <-  gridded.crop( mrate_lc,     grid.ext.ref )
+            mrate_lri       <-  gridded.crop( mrate_lri,    grid.ext.ref )
+            mrate_dmt2      <-  gridded.crop( mrate_dmt2,   grid.ext.ref )
+            mrate_ihd       <-  gridded.crop( mrate_ihd,    grid.ext.ref )
+            mrate_stroke    <-  gridded.crop( mrate_stroke, grid.ext.ref )
 
             print( gc( full = TRUE ) )
 
@@ -495,7 +499,7 @@ health.impact <- function(
                                 pop.age.tbl
                             )
 
-            pop_age_fr   <-  gridded.resample( pop_age_fr, grid.reference )
+            pop_age_fr   <-  gridded.crop( pop_age_fr, grid.ext.ref )
 
             rm( pop.age.tbl )
             print( gc( full = TRUE ) )
@@ -902,7 +906,7 @@ health.impact <- function(
             # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
             # IDL code loads this map from a .SAV file
 
-            cntrymaskmed <- hrcntrcode
+            cntrymaskmed  <-  hrcntrcode
             if ( reduction.factor  > 1 )
             {
                 res.med     <- res( cntrymaskmed ) * reduction.factor
@@ -931,6 +935,7 @@ health.impact <- function(
                 }
                 rm( cntrgrid.lo )
             }
+            cntrymaskmed   <-  gridded.crop( cntrymaskmed, grid.ext.ref )
             # --- For testing only: uncomment the line below to read the country mask
             # --- at lower resolution, the same mask used by IDL code;
             # --- cntrymaskmed <- raster( "../INPUT/ANCILLARY/FASST_REGION_MASK/0.5x0.5_INDIV_COUNTRY_MASK.asc" )
