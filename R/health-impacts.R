@@ -802,6 +802,9 @@ health.impact <- function(
             # ------------------------------------ block 5 ------------------------------------
             # ----------------- Pass to 0.5x0.5deg resolution for aggregation -----------------
             # ---------------------------------------------------------------------------------
+            if ( reduction.factor  >= 1 ) {
+                print( sprintf( 'Grids resolution is now reduced by factor: %d', reduction.factor ) )
+            }
 
             # --- make sum of 4x4 subgrids to pass from 7.5'x7.5' (=0.125x0.125deg) ---
             # --- to 0.5x0.5deg resolution                                          ---
@@ -812,6 +815,7 @@ health.impact <- function(
                                        } else {
                                            aggregate( scenpop, fact = reduction.factor, fun = sum )
                                        }
+            print( sprintf( 'Grids resolution: %s', paste( res( popmed ) ,collapse='x' ) ) )
 
             aggregate.dmort        <-  function( cells, ... )
             {
@@ -903,8 +907,8 @@ health.impact <- function(
 
             print( sprintf( "Aggregate countries @ %s", format( Sys.time(), "%c" ) ) )
 
-            # structure CNTRMASK_MEDRES with 0.5x0.5 resolution country masks
-            # IDL code loads this map from a .SAV file
+            # structure CNTRMASK_MEDRES with 0.5x0.5 resolution countries mask;
+            # IDL code loads this map from a .SAV file;
 
             cntrymaskmed  <-  hrcntrcode
             if ( reduction.factor  > 1 )
