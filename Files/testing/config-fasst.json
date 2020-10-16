@@ -1,5 +1,5 @@
 {
-  "reduction.factor":     1,
+  "reduction.factor":     4,
 
   "in.file.pop.country":  "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv",
   "in.file.cntrgrid.hi":  "../INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
