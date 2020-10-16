@@ -90,6 +90,8 @@ Moreover, text between braces is replaced at runtime with the values as stated b
  - `year`
         the current year as defined in the configuration file under the path
         `$.scenarios.year`
+ - `resolution`
+        the resolution of output grids;
 
 ### Input files by key ###
  - `in.file.pop.country`
@@ -147,4 +149,4 @@ The following files have both extensions: `csv` and `nc`.
  - `out.tmpl.countries`
      - `${project}/tables/ALLCNTRIES_${project}_${model}_${version}`
  - `out.tmpl.mortalities`
-     - `${project}/ncdf/${scenario}/FASST_05x05_MORTALITIES_${project}_${year}_${scenario}`
+     - `${project}/ncdf/${scenario}/FASST_${resolution}_MORTALITIES_${project}_${year}_${scenario}`

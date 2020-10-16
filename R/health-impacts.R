@@ -1103,7 +1103,11 @@ health.impact <- function(
                                      )
 
             # prepare output file
-            out.file.mortalities  <-  get.file.name.by.tmpl( config $ files $ out.tmpl.mortalities, files.properties )
+            files.properties $ resolution   <-  res( mort_sc[[ 1 ]] )
+            out.file.mortalities            <-  get.file.name.by.tmpl(
+                                                    config $ files $ out.tmpl.mortalities,
+                                                    files.properties
+                                                )
 
             gridded.netcdf(
                 out.file.mortalities,
@@ -1246,11 +1250,12 @@ get.file.name.population <- function(
 #' @param  path.template  file name template;
 #' @param  cfg            the current configuration as list of:
 #'                               \describe{
-#'                                  \item{project}  {the project name;}
-#'                                  \item{model}    {the model name;}
-#'                                  \item{version}  {the model version;}
-#'                                  \item{scene}    {the current scenario;}
-#'                                  \item{year}     {the current year;}
+#'                                  \item{project}     {the project name;}
+#'                                  \item{model}       {the model name;}
+#'                                  \item{version}     {the model version;}
+#'                                  \item{scene}       {the current scenario;}
+#'                                  \item{year}        {the current year;}
+#'                                  \item{resolution}  {the output grid resolution as vector of two items;}
 #'                               }
 #'
 get.file.name.by.tmpl <- function(
@@ -1259,11 +1264,12 @@ get.file.name.by.tmpl <- function(
                             )
 {
         pattern <- c(
-                        '\\$\\{project\\}'  = cfg $ project,
-                        '\\$\\{model\\}'    = cfg $ model,
-                        '\\$\\{version\\}'  = cfg $ version,
-                        '\\$\\{scenario\\}' = cfg $ scene,
-                        '\\$\\{year\\}'     = cfg $ year
+                        '\\$\\{project\\}'     = cfg $ project,
+                        '\\$\\{model\\}'       = cfg $ model,
+                        '\\$\\{version\\}'     = cfg $ version,
+                        '\\$\\{scenario\\}'    = cfg $ scene,
+                        '\\$\\{year\\}'        = cfg $ year,
+                        '\\$\\{resolution\\}'  = paste( cfg $ resolution ,collapse='x' )
                    )
 
         str_replace_all( path.template, pattern )
