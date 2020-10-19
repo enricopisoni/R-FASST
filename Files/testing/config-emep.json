@@ -1,0 +1,47 @@
+{
+  "reduction.factor":     1,
+
+  "in.file.pop.country":  "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/POP_1990-2100_UN2017_AGEGRP.csv",
+  "in.file.cntrgrid.hi":  "../INPUT/ANCILLARY/CIESIN_COUNTRY_MASK/CIESIN_V4/15minx15min/gpw_v4_national_identifier_grid_rev10_15_min.asc",
+  "in.file.cntrgrid.lo":  "../INPUT/ANCILLARY/FASST_REGION_MASK/0.5x0.5_INDIV_COUNTRY_MASK.asc",
+  "in.file.copd":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/COPD_MORT_RATE_GBD2016.csv",
+  "in.file.lc":           "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LC_MORT_RATE_GBD2016.csv",
+  "in.file.dmt2":         "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/DMT2_MORT_RATE_GBD2016.csv",
+  "in.file.lri":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/LRI_MORT_RATE_GBD2016.csv",
+  "in.file.ihd":          "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/IHD_MORT_RATE_GBD2016.csv",
+  "in.file.stroke":       "../INPUT/ANCILLARY/MORTALITY/BASEMORT2018/STROKE_MORT_RATE_GBD2016.csv",
+
+  "in.file.rr":           "../INPUT/ANCILLARY/MORTALITY/RRs2018/FIT/RR_ALL_GBD_2017_FITTINGS_ANALYT.csv",
+
+  "in.tmpl.pop.map":      "../INPUT/ANCILLARY/POPULATION_SSP/NETCDF/${scenario}_NETCDF/total/netcdf/${scenario}_${year}.nc",
+  "in.tmpl.scenario":
+  {
+    "filename":                    "../INPUT/NCDF_IN/EMEP01_L20EC_rv4_33_year.2018met_2017emis.nc",
+    "total_pm":                    "SURF_ug_PM25_rh50",
+    "anthropogenic_pm":            "SURF_ug_PM25_rh50",
+    "annual_mean_of_daily_mean":   "SURF_MAXO3",
+    "seasonal_mean_of_daily_mean": "SURF_MAXO3",
+    "natural.dust.ss":             "SURF_ug_DUST",
+    "residual.water.ss":           "SURF_ug_SS"
+  },
+
+  "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
+  "in.tmpl.mrate.lc":     "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
+  "in.tmpl.mrate.dmt2":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}",
+  "in.tmpl.mrate.lri":    "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}",
+  "in.tmpl.mrate.ihd":    "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}",
+  "in.tmpl.mrate.stroke": "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}",
+
+  "in.tmpl.pop_age_fr":   "../INPUT/ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}",
+
+  "out.tmpl.countries":   "./${project}/tables/ALLCNTRIES_${project}_${model}_${version}",
+  "out.tmpl.mortalities": "./${project}/ncdf/${scenario}/FASST_${resolution}_MORTALITIES_${project}_${year}_${scenario}",
+
+
+  "scenarios":
+  {
+    "name": [ "SSP2" ],
+    "year": [ 2015, 2017, 2020 ],
+    "ssp":  [ "SEP1" ]
+  }
+}

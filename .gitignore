@@ -47,5 +47,11 @@ vignettes/*.pdf
 # docs/
 # R environment files - end
 
+# ignore large files
+Files/INPUT/
+
 # testing output files
-Files/testing/**/
+Files/testing/Project/**/
+Files/testing/prj-emep/**/
+Files/testing/prj-fasst/**/
+Files/testing/*.pdf
