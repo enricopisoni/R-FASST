@@ -1,4 +1,4 @@
-# FASST #
+# R-FASST Health Impact Module #
 This code is the porting in R of the FASST 'impact module' (Van Dingenen et al., 2018). The code computes mortality due to O3 and PM air pollution exposure. It implements  the 'Burnett Integrated Exposure-Response Functions' (Burnett et al., 2020) following the methodology also used in the Global Burden of Disease 2017. For O3, mortality is also computed using the Turner/Malley approach.
 
 The steps implemented in the code for the Burnett approach are, broadly speaking, the following ones:
