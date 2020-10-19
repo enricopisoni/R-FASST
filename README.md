@@ -1,21 +1,21 @@
 # FASST #
-This code is the porting in R of the FASST 'impact module' (Van Dingenen et al., 2018). The code computes mortality due to O3 and PM air pollution exposure. It implements  the 'Burnett Integrated Exposure-Response Functions' (Burnett et al., 2020) following the methodology also used in the Global Burden of Disease 2017. For O3, mortality is also computed using the Turner/Malley approach.  
+This code is the porting in R of the FASST 'impact module' (Van Dingenen et al., 2018). The code computes mortality due to O3 and PM air pollution exposure. It implements  the 'Burnett Integrated Exposure-Response Functions' (Burnett et al., 2020) following the methodology also used in the Global Burden of Disease 2017. For O3, mortality is also computed using the Turner/Malley approach.
 
 The steps implemented in the code for the Burnett approach are, broadly speaking, the following ones:
 
 * Input data are loaded (i.e. gridded population from 2000 to 2100, base mortality rates per country, country masks, risk rate analytical function parameters, air pollution concentrations, etc...);
-* Attributable Fractions (AF) are computed for each of the considered Cause of Death (COD), with the equation AF = 1-1/RR", using Relative Risks (RR) and PM concentration in each grid cell; 
+* Attributable Fractions (AF) are computed for each of the considered Cause of Death (COD), with the equation AF = 1-1/RR", using Relative Risks (RR) and PM concentration in each grid cell;
 * The considered CODs for O3 are related to respiratory disease, while for PM are related to:
   + chronic obstructive pulmonary disease (COPD);
-  + lung cancer (LC); 
+  + lung cancer (LC);
   + acute lower respiratory airway infections (ALRIs);
-  + ischemic heart disease (IHD); 
-  + stroke; 
+  + ischemic heart disease (IHD);
+  + stroke;
   + type 2 Diabetes Mellitus (DMT2);
 * Mortality is then computed as: "AF * BaseMortality * Population * AgeFraction";
 * Mortalities are summed up (sum on the considered CODs) and saved as both grids and country totals.
 
-The FASST 'impact module' has been here generalized during the porting in R, to be able to compute health impact not only from FASST output, but also from output from any other Chemical Transport Model. The example provided with the R-FASST code works, e.g., with the EMEP air quality model output.  
+The FASST 'impact module' has been here generalized during the porting in R, to be able to compute health impact not only from FASST output, but also from output from any other Chemical Transport Model. The example provided with the R-FASST code works, e.g., with the EMEP air quality model output.
 
 Finally, the code has been generalized to  produce output (in terms of gridded mortality) both aggregating results using a given 'reduction factor', or keeping the final results at 0.125 degrees (the highest available spatial resolution). In the case of the FASST output, the default reduction factor is 4 (to move from a spatial resolution of 0.125 to a spatial resolution of 0.5). In case the concentrations as input to the R-FASST comes from a different (than FASST) model, the code performs the following steps:
 
@@ -68,4 +68,4 @@ To get these file, please ask the project owner.
 * Burnett et al., 2020. Relative Risk Functions for Estimating Excess Mortality Attributable to Outdoor PM2.5 Air Pollution: Evolution and State‐of‐the‐Ar, Atmosphere 2020, 11, 58.
 
 ## Contacts ##
-Rita Van Dingenen, Alessandro Mascherpa, Enrico Pisoni, Claudio Belis 
+Rita Van Dingenen, Alessandro Mascherpa, Enrico Pisoni, Claudio Belis
