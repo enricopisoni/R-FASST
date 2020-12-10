@@ -385,35 +385,35 @@ health.impact <- function(
             cntr.sliced        <- slice.countries.list( cntr )
 
             mrate_copd.table   <- get.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.copd,   files.properties ),
                                               year,
                                               cntr.sliced,
                                               copd
                                   )
 
             mrate_lc.table     <- get.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.lc,     files.properties ),
                                               year,
                                               cntr.sliced,
                                               lc
                                   )
 
             mrate_lri.table    <- get.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.lri,    files.properties ),
                                               year,
                                               cntr.sliced,
                                               lri
                                   )
 
             mrate_dmt2.table   <- get.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.dmt2,   files.properties ),
                                               year,
                                               cntr.sliced,
                                               dmt2
                                   )
 
             mrate_ihd.table    <- get.base.incidences.by.ages(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.ihd,    files.properties ),
                                               year,
                                               cntr.sliced,
                                               length( config $ model $ AGE_GRP ),
@@ -421,7 +421,7 @@ health.impact <- function(
                                   )
 
             mrate_stroke.table <- get.base.incidences.by.ages(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.stroke, files.properties ),
                                               year,
                                               cntr.sliced,
                                               length( config $ model $ AGE_GRP ),
@@ -430,38 +430,38 @@ health.impact <- function(
 
             # --- create raster images ---
             mrate_copd         <- raster.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.copd,   scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.copd,   files.properties ),
                                               hrcntrcode,
                                               mrate_copd.table
                                   )
 
             mrate_lc           <- raster.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.lc,     scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.lc,     files.properties ),
                                               hrcntrcode,
                                               mrate_lc.table
                                   )
 
             mrate_lri          <- raster.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.lri,    scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.lri,    files.properties ),
                                               hrcntrcode,
                                               mrate_lri.table
                                   )
 
             mrate_dmt2         <- raster.base.incidences(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.dmt2,   scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.dmt2,   files.properties ),
                                               hrcntrcode,
                                               mrate_dmt2.table
                                   )
 
             mrate_ihd          <- raster.base.incidences.by.ages(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.ihd,    scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.ihd,    files.properties ),
                                               hrcntrcode,
                                               length( config $ model $ AGE_GRP ),
                                               mrate_ihd.table
                                   )
 
             mrate_stroke       <- raster.base.incidences.by.ages(
-                                              get.file.name.population( config $ file $ in.tmpl.mrate.stroke, scen, year ),
+                                              get.file.name.by.tmpl( config $ file $ in.tmpl.mrate.stroke, files.properties ),
                                               hrcntrcode,
                                               length( config $ model $ AGE_GRP ),
                                               mrate_stroke.table
@@ -487,14 +487,14 @@ health.impact <- function(
             # ---------------------------------------------------------------------------------
 
             pop.age.tbl  <- get.age.structure(
-                                get.file.name.population( config $ file $ in.tmpl.pop_age_fr, scen, year ),
+                                get.file.name.by.tmpl( config $ file $ in.tmpl.pop_age_fr, files.properties ),
                                 year,
                                 cntr.sliced,
                                 pop
                             )
 
             pop_age_fr   <- raster.age.structure(
-                                get.file.name.population( config $ file $ in.tmpl.pop_age_fr, scen, year ),
+                                get.file.name.by.tmpl( config $ file $ in.tmpl.pop_age_fr, files.properties ),
                                 hrcntrcode,
                                 pop.age.tbl
                             )
@@ -1269,7 +1269,7 @@ get.file.name.by.tmpl <- function(
                         '\\$\\{version\\}'     = cfg $ version,
                         '\\$\\{scenario\\}'    = cfg $ scene,
                         '\\$\\{year\\}'        = cfg $ year,
-                        '\\$\\{resolution\\}'  = paste( cfg $ resolution ,collapse='x' )
+                        '\\$\\{resolution\\}'  = paste( cfg $ resolution, collapse='x' )
                    )
 
         str_replace_all( path.template, pattern )

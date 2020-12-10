@@ -25,14 +25,14 @@
     "residual.water.ss":           "H2O35_SS"
   },
 
-  "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
-  "in.tmpl.mrate.lc":     "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
-  "in.tmpl.mrate.dmt2":   "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}",
-  "in.tmpl.mrate.lri":    "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}",
-  "in.tmpl.mrate.ihd":    "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}",
-  "in.tmpl.mrate.stroke": "../INPUT/ANCILLARY/MORTALITY/GBD_2017_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}",
+  "in.tmpl.mrate.copd":   "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_COPD_GBD_${year}",
+  "in.tmpl.mrate.lc":     "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_LC_GBD_${year}",
+  "in.tmpl.mrate.dmt2":   "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_DMT2_GBD_${year}",
+  "in.tmpl.mrate.lri":    "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_LRI_GBD_${year}",
+  "in.tmpl.mrate.ihd":    "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_IHD_GBD_${year}",
+  "in.tmpl.mrate.stroke": "../INPUT/ANCILLARY/MORTALITY/${model}/GBD_${year}_BASEMORT_GRIDMAPS/MRATE_STROKE_GBD_${year}",
 
-  "in.tmpl.pop_age_fr":   "../INPUT/ANCILLARY/MORTALITY/POP_AGE_CLASS_FRACTIONS_UN2017_${year}",
+  "in.tmpl.pop_age_fr":   "../INPUT/ANCILLARY/MORTALITY/${model}/POP_AGE_CLASS_FRACTIONS_UN2017_${year}",
 
   "out.tmpl.countries":   "./${project}/tables/ALLCNTRIES_${project}_${model}_${version}",
   "out.tmpl.mortalities": "./${project}/ncdf/${scenario}/FASST_${resolution}_MORTALITIES_${project}_${year}_${scenario}",

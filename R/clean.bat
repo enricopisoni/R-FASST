@@ -15,6 +15,10 @@ del         ..\Files\INPUT\ANCILLARY\MORTALITY\GBD_2017_BASEMORT_GRIDMAPS\*.nc
 del         ..\Files\INPUT\ANCILLARY\MORTALITY\*.csv
 del         ..\Files\INPUT\ANCILLARY\MORTALITY\*.nc
 
+del  /s /q  ..\Files\INPUT\ANCILLARY\MORTALITY\EMEP\*.*
+del  /s /q  ..\Files\INPUT\ANCILLARY\MORTALITY\FASST\*.*
+
+
 echo All output and intermediate files erased.
 
 :EOF

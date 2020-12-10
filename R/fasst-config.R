@@ -52,15 +52,16 @@ health.impact.config <- function( file = NULL )
 health.impact.config.static <- function()
 {
         in.dir.root     <- file.path( '..', 'INPUT' )
-        in.dir.ancil    <- file.path( in.dir.root,  'ANCILLARY' )
-        in.dir.mort     <- file.path( in.dir.ancil, 'MORTALITY' )
-        in.dir.gbd      <- file.path( in.dir.mort,  'BASEMORT2018' )
-        in.dir.bsmrt    <- file.path( in.dir.mort,  'GBD_BASEMORT_GRIDMAPS' )
-        in.dir.rr       <- file.path( in.dir.mort,  'RRs2018', 'FIT' )
-        in.dir.tmpls    <- file.path( in.dir.root,  'CODE', 'TEMPLATES' )
-        in.dir.ssp      <- file.path( in.dir.ancil, 'POPULATION_SSP', 'NETCDF' )
-        in.dir.ciesin   <- file.path( in.dir.ancil, 'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
-        in.dir.ncdf     <- file.path( in.dir.root,  'NCDF_IN' )
+        in.dir.ancil    <- file.path( in.dir.root,   'ANCILLARY' )
+        in.dir.mort     <- file.path( in.dir.ancil,  'MORTALITY' )
+        in.dir.mrtmdl   <- file.path( in.dir.mort,   '${model}' )
+        in.dir.gbd      <- file.path( in.dir.mort,   'BASEMORT2018' )
+        in.dir.bsmrt    <- file.path( in.dir.mrtmdl, 'GBD_BASEMORT_GRIDMAPS' )
+        in.dir.rr       <- file.path( in.dir.mort,   'RRs2018', 'FIT' )
+        in.dir.tmpls    <- file.path( in.dir.root,   'CODE', 'TEMPLATES' )
+        in.dir.ssp      <- file.path( in.dir.ancil,  'POPULATION_SSP', 'NETCDF' )
+        in.dir.ciesin   <- file.path( in.dir.ancil,  'CIESIN_COUNTRY_MASK', 'CIESIN_V4', '15minx15min' )
+        in.dir.ncdf     <- file.path( in.dir.root,   'NCDF_IN' )
 
         out.dir.root    <- file.path( '.', '${project}' )
         out.dir.tables  <- file.path( out.dir.root, 'tables' )
@@ -111,7 +112,7 @@ health.impact.config.static <- function()
                 in.tmpl.mrate.stroke  = file.path( in.dir.bsmrt,  'MRATE_STROKE_GBD_${year}' ),
 
                 # population fraction per age class for all classes
-                in.tmpl.pop_age_fr    = file.path( in.dir.mort,   'POP_AGE_CLASS_FRACTIONS_UN2017_${year}' ),
+                in.tmpl.pop_age_fr    = file.path( in.dir.mrtmdl, 'POP_AGE_CLASS_FRACTIONS_UN2017_${year}' ),
 
                 # output files: all countries
                 out.tmpl.countries    = file.path( out.dir.tables, 'ALLCNTRIES_${project}_${model}_${version}' ),
